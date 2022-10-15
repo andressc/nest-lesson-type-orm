@@ -1,6 +1,5 @@
-export class QueryBlogDto {
-	id: string;
-	name: string;
-	youtubeUrl: string;
-	createdAt: string;
+import { QueryDto } from '../general/query.dto';
+
+export class QueryBlogDto extends QueryDto {
+	searchNameTerm?: string;
 }

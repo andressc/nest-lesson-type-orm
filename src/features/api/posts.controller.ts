@@ -8,6 +8,7 @@ import {
 	HttpCode,
 	Put,
 	UseGuards,
+	Query,
 } from '@nestjs/common';
 import { ObjectIdDto } from '../dto/general/object-id.dto';
 import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
@@ -15,6 +16,7 @@ import { CreatePostDto } from '../dto/posts/create-post.dto';
 import { PostsService } from '../application/posts.service';
 import { UpdatePostDto } from '../dto/posts/update-post.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
+import { QueryPostDto } from '../dto/posts/query-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -31,8 +33,8 @@ export class PostsController {
 	}
 
 	@Get()
-	findAllPosts() {
-		return this.queryPostRepository.findAllPosts();
+	findAllPosts(@Query() query: QueryPostDto) {
+		return this.queryPostRepository.findAllPosts(query);
 	}
 
 	@Get(':id')

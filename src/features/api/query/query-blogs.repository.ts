@@ -1,28 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { QueryBlogDto } from '../../dto/blogs/query-blog.dto';
+import { ResponseBlogDto } from '../../dto/blogs/response-blog.dto';
 import { Blog, BlogModel } from '../../../entity/blog.schema';
 import { BlogNotFoundException } from '../../../common/exceptions/BlogNotFoundException';
+import { PaginationCalc, PaginationDto } from '../../dto/general/pagination.dto';
+import { PaginationService } from '../../application/pagination.service';
+import { QueryBlogDto } from '../../dto/blogs/query-blog.dto';
 
 @Injectable()
 export class QueryBlogsRepository {
-	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
+	constructor(
+		@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>,
+		private readonly paginationService: PaginationService,
+	) {}
 
-	async findAllBlogs(): Promise<QueryBlogDto[]> {
-		const blog: BlogModel[] = await this.blogModel.find();
-		return this.mapBlogs(blog);
+	async findAllBlogs(query: QueryBlogDto): Promise<PaginationDto<ResponseBlogDto[]>> {
+		const searchString = query.searchNameTerm ? { name: query.searchNameTerm } : {};
+
+		const totalCount: number = await this.blogModel.countDocuments(searchString);
+		const paginationData: PaginationCalc = this.paginationService.pagination({
+			...query,
+			totalCount,
+		});
+
+		const blog: BlogModel[] = await this.blogModel
+			.find(searchString)
+			.sort(paginationData.sortBy)
+			.skip(paginationData.skip)
+			.limit(paginationData.pageSize);
+
+		return {
+			pagesCount: paginationData.pagesCount,
+			page: paginationData.pageNumber,
+			pageSize: paginationData.pageSize,
+			totalCount: totalCount,
+			items: this.mapBlogs(blog),
+		};
 	}
 
-	async findOneBlog(id: string): Promise<QueryBlogDto> {
+	async findOneBlog(id: string): Promise<ResponseBlogDto> {
 		const blog: BlogModel | null = await this.blogModel.findById(id);
 		if (!blog) throw new BlogNotFoundException(id);
 
 		return {
 			id: blog._id,
 			youtubeUrl: blog.youtubeUrl,
-			createdAt: blog.createdAt,
 			name: blog.name,
+			createdAt: blog.createdAt,
 		};
 	}
 

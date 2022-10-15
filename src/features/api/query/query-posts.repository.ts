@@ -1,20 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { QueryPostDto } from '../../dto/posts/query-post.dto';
+import { ResponsePostDto } from '../../dto/posts/response-post.dto';
 import { Post, PostModel } from '../../../entity/post.schema';
 import { PostNotFoundException } from '../../../common/exceptions/PostNotFoundException';
+import { PaginationCalc, PaginationDto } from '../../dto/general/pagination.dto';
+import { QueryDto } from '../../dto/general/query.dto';
+import { PaginationService } from '../../application/pagination.service';
 
 @Injectable()
 export class QueryPostsRepository {
-	constructor(@InjectModel(Post.name) private readonly postModel: Model<PostModel>) {}
+	constructor(
+		@InjectModel(Post.name) private readonly postModel: Model<PostModel>,
+		private readonly paginationService: PaginationService,
+	) {}
 
-	async findAllPosts(): Promise<QueryPostDto[]> {
-		const post: PostModel[] = await this.postModel.find();
-		return this.mapPosts(post);
+	async findAllPosts(query: QueryDto, blogId?: string): Promise<PaginationDto<ResponsePostDto[]>> {
+		const searchString = blogId ? { blogId } : {};
+
+		const totalCount: number = await this.postModel.countDocuments(searchString);
+
+		const paginationData: PaginationCalc = this.paginationService.pagination({
+			...query,
+			totalCount,
+		});
+
+		const post: PostModel[] = await this.postModel
+			.find(searchString)
+			.sort(paginationData.sortBy)
+			.skip(paginationData.skip)
+			.limit(paginationData.pageSize);
+
+		return {
+			pagesCount: paginationData.pagesCount,
+			page: paginationData.pageNumber,
+			pageSize: paginationData.pageSize,
+			totalCount: totalCount,
+			items: this.mapPosts(post),
+		};
 	}
 
-	async findOnePost(id: string): Promise<QueryPostDto> {
+	async findOnePost(id: string): Promise<ResponsePostDto> {
 		const post: PostModel | null = await this.postModel.findById(id);
 		if (!post) throw new PostNotFoundException(id);
 

@@ -14,6 +14,7 @@ import { PostsController } from './api/posts.controller';
 import { TestingService } from './application/testing.service';
 import { TestingController } from './api/testing.controller';
 import { IsUserCommentValidatorConstraint } from '../common/decorators/ValidationDecorators/validate-blog-id.decorator';
+import { PaginationService } from './application/pagination.service';
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { IsUserCommentValidatorConstraint } from '../common/decorators/Validatio
 		ValidationService,
 		PostsService,
 		TestingService,
+		PaginationService,
 		IsUserCommentValidatorConstraint,
 
 		QueryBlogsRepository,

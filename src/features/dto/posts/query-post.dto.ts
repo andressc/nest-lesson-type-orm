@@ -1,9 +1,3 @@
-export class QueryPostDto {
-	id: string;
-	title: string;
-	shortDescription: string;
-	content: string;
-	blogId: string;
-	blogName: string;
-	createdAt: string;
-}
+import { QueryDto } from '../general/query.dto';
+
+export class QueryPostDto extends QueryDto {}
