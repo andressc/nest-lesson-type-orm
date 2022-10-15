@@ -21,6 +21,9 @@ export class Post {
 	@Prop({ required: true })
 	blogName: string;
 
+	@Prop({ required: true })
+	createdAt: string;
+
 	updateData(data: UpdatePostExtendsDto): this {
 		this.title = data.title;
 		this.shortDescription = data.shortDescription;

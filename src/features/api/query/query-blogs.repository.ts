@@ -21,6 +21,7 @@ export class QueryBlogsRepository {
 		return {
 			id: blog._id,
 			youtubeUrl: blog.youtubeUrl,
+			createdAt: blog.createdAt,
 			name: blog.name,
 		};
 	}
@@ -30,6 +31,7 @@ export class QueryBlogsRepository {
 			id: v._id.toString(),
 			youtubeUrl: v.youtubeUrl,
 			name: v.name,
+			createdAt: v.createdAt,
 		}));
 	}
 }

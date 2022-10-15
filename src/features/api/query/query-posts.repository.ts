@@ -25,6 +25,7 @@ export class QueryPostsRepository {
 			content: post.content,
 			blogId: post.blogId,
 			blogName: post.blogName,
+			createdAt: post.createdAt,
 		};
 	}
 
@@ -36,6 +37,7 @@ export class QueryPostsRepository {
 			content: v.content,
 			blogId: v.blogId,
 			blogName: v.blogName,
+			createdAt: v.createdAt,
 		}));
 	}
 }

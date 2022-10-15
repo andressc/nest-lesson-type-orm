@@ -5,6 +5,7 @@ import { ValidationService } from './validation.service';
 import { CreateBlogDto } from '../dto/blogs/create-blog.dto';
 import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';
 import { BlogNotFoundException } from '../../common/exceptions/BlogNotFoundException';
+import { createDate } from '../../common/helpers/date.helper';
 
 @Injectable()
 export class BlogsService {
@@ -16,7 +17,7 @@ export class BlogsService {
 	async createBlog(data: CreateBlogDto): Promise<string> {
 		await this.validationService.validate(data, CreateBlogDto);
 
-		return this.blogRepository.createBlog(data);
+		return this.blogRepository.createBlog({ ...data, createdAt: createDate() });
 	}
 
 	async updateBlog(id: string, data: UpdateBlogDto): Promise<void> {
