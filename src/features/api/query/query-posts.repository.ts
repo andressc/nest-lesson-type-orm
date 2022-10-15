@@ -7,16 +7,22 @@ import { PostNotFoundException } from '../../../common/exceptions/PostNotFoundEx
 import { PaginationCalc, PaginationDto } from '../../dto/general/pagination.dto';
 import { QueryDto } from '../../dto/general/query.dto';
 import { PaginationService } from '../../application/pagination.service';
+import { Blog, BlogModel } from '../../../entity/blog.schema';
+import { BlogNotFoundException } from '../../../common/exceptions/BlogNotFoundException';
 
 @Injectable()
 export class QueryPostsRepository {
 	constructor(
 		@InjectModel(Post.name) private readonly postModel: Model<PostModel>,
+		@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>,
 		private readonly paginationService: PaginationService,
 	) {}
 
 	async findAllPosts(query: QueryDto, blogId?: string): Promise<PaginationDto<ResponsePostDto[]>> {
 		const searchString = blogId ? { blogId } : {};
+
+		const blog: BlogModel | null = blogId ? await this.blogModel.findById(blogId) : null;
+		if (!blog) throw new BlogNotFoundException(blogId);
 
 		const totalCount: number = await this.postModel.countDocuments(searchString);
 
