@@ -9,6 +9,7 @@ import { BlogModel } from '../../entity/blog.schema';
 import { BlogNotFoundException } from '../../common/exceptions/BlogNotFoundException';
 import { PostNotFoundException } from '../../common/exceptions/PostNotFoundException';
 import { createDate } from '../../common/helpers/date.helper';
+import { CreatePostBlogDto } from '../dto/posts/create-post-blog.dto';
 
 @Injectable()
 export class PostsService {
@@ -24,6 +25,14 @@ export class PostsService {
 		const blogName: string = await this.blogExists(data.blogId);
 
 		return this.postRepository.createPost({ ...data, blogName, createdAt: createDate() });
+	}
+
+	async createPostBlog(data: CreatePostBlogDto, blogId: string): Promise<string> {
+		await this.validationService.validate(data, CreatePostBlogDto);
+
+		const blogName: string = await this.blogExists(blogId);
+
+		return this.postRepository.createPost({ ...data, blogId, blogName, createdAt: createDate() });
 	}
 
 	async updatePost(id: string, data: UpdatePostDto): Promise<void> {

@@ -21,8 +21,8 @@ export class QueryPostsRepository {
 	async findAllPosts(query: QueryDto, blogId?: string): Promise<PaginationDto<ResponsePostDto[]>> {
 		const searchString = blogId ? { blogId } : {};
 
-		const blog: BlogModel | null = blogId ? await this.blogModel.findById(blogId) : null;
-		if (!blog) throw new BlogNotFoundException(blogId);
+		const blog: BlogModel | null = await this.blogModel.findById(blogId);
+		if (!blog && blogId) throw new BlogNotFoundException(blogId);
 
 		const totalCount: number = await this.postModel.countDocuments(searchString);
 

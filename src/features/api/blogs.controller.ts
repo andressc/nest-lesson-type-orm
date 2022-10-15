@@ -41,7 +41,7 @@ export class BlogsController {
 	@UseGuards(BasicAuthGuard)
 	@Post(':id/posts')
 	async createPostBlog(@Body() data: CreatePostBlogDto, @Param() param: ObjectIdDto) {
-		const postId = await this.postsService.createPost({ ...data, blogId: param.id });
+		const postId = await this.postsService.createPostBlog(data, param.id);
 		return this.queryPostRepository.findOnePost(postId);
 	}
 
