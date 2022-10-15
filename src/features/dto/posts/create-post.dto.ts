@@ -1,4 +1,5 @@
 import { IsMongoId, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { ValidateBlogIdDecorator } from '../../../common/decorators/Validation/validate-blog-id.decorator';
 
 export class CreatePostDto {
 	@IsNotEmpty()
@@ -15,5 +16,6 @@ export class CreatePostDto {
 
 	@IsMongoId()
 	@IsString()
+	@ValidateBlogIdDecorator()
 	blogId: string;
 }

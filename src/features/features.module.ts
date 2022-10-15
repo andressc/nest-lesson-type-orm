@@ -13,6 +13,7 @@ import { Post, PostSchema } from '../entity/post.schema';
 import { PostsController } from './api/posts.controller';
 import { TestingService } from './application/testing.service';
 import { TestingController } from './api/testing.controller';
+import { IsUserCommentValidatorConstraint } from '../common/decorators/Validation/validate-blog-id.decorator';
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { TestingController } from './api/testing.controller';
 		ValidationService,
 		PostsService,
 		TestingService,
+		IsUserCommentValidatorConstraint,
 
 		QueryBlogsRepository,
 		QueryPostsRepository,
