@@ -16,7 +16,7 @@ export class QueryBlogsRepository {
 	) {}
 
 	async findAllBlogs(query: QueryBlogDto): Promise<PaginationDto<ResponseBlogDto[]>> {
-		const searchString = query.searchNameTerm ? { name: query.searchNameTerm } : {};
+		const searchString = query.searchNameTerm ? { name: { $regex: query.searchNameTerm } } : {};
 
 		const totalCount: number = await this.blogModel.countDocuments(searchString);
 		const paginationData: PaginationCalc = this.paginationService.pagination({
