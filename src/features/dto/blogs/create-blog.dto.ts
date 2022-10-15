@@ -1,7 +1,10 @@
 import { IsNotEmpty, Matches, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { trim } from '../../../common/helpers/transform.helper';
 
 export class CreateBlogDto {
 	@IsNotEmpty()
+	@Transform(({ value }) => trim(value))
 	@MaxLength(10)
 	name: string;
 
