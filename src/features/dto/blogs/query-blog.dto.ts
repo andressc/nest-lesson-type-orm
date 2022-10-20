@@ -1,4 +1,4 @@
-import { QueryDto } from '../general/query.dto';
+import { QueryDto } from '../../../common/dto/query.dto';
 
 export class QueryBlogDto extends QueryDto {
 	searchNameTerm?: string;

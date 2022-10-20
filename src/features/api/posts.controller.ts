@@ -10,7 +10,7 @@ import {
 	UseGuards,
 	Query,
 } from '@nestjs/common';
-import { ObjectIdDto } from '../dto/general/object-id.dto';
+import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
 import { CreatePostDto } from '../dto/posts/create-post.dto';
 import { PostsService } from '../application/posts.service';

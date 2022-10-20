@@ -14,7 +14,7 @@ import { CreateBlogDto } from '../dto/blogs/create-blog.dto';
 import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';
 import { BlogsService } from '../application/blogs.service';
 import { QueryBlogsRepository } from './query/query-blogs.repository';
-import { ObjectIdDto } from '../dto/general/object-id.dto';
+import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
 import { QueryBlogDto } from '../dto/blogs/query-blog.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';

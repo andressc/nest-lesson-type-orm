@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ResponseBlogDto } from '../../dto/blogs/response-blog.dto';
 import { Blog, BlogModel } from '../../../entity/blog.schema';
 import { BlogNotFoundException } from '../../../common/exceptions/BlogNotFoundException';
-import { PaginationCalc, PaginationDto } from '../../dto/general/pagination.dto';
+import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
 import { PaginationService } from '../../application/pagination.service';
 import { QueryBlogDto } from '../../dto/blogs/query-blog.dto';
 

@@ -15,11 +15,13 @@ import { TestingService } from './application/testing.service';
 import { TestingController } from './api/testing.controller';
 import { IsUserCommentValidatorConstraint } from '../common/decorators/ValidationDecorators/validate-blog-id.decorator';
 import { PaginationService } from './application/pagination.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 		MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+		UsersModule,
 	],
 	controllers: [BlogsController, PostsController, TestingController],
 	providers: [

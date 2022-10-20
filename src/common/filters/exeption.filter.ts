@@ -23,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			return response.status(status).json(errorsResponse);
 		}
 
-		if (status === 404) {
+		if (status === 404 || status === 403) {
 			const errorsResponse = {
 				errorsMessages: [],
 			};
