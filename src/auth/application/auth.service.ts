@@ -3,6 +3,7 @@ import { UsersService } from '../../users/application/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 import { UserModel } from '../../entity/user.schema';
+import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,11 +26,25 @@ export class AuthService {
 		return null;
 	}
 
-	async login(user: any) {
+	/*async login(user: any) {
 		//console.log(user);
-		/*const payload = { sub: user.userId };
+		const payload = { sub: user.userId };
 		return {
 			access_token: this.jwtService.sign(payload),
-		};*/
+		};
+
+	}*/
+
+	async login(data: LoginDto) {
+		const user: UserModel | null = await this.usersRepository.findUserModelByLoginAndPassword(
+			data.login,
+			data.password,
+		);
+
+		if (user && user.password === data.password && user.login === data.login) {
+			return user;
+		}
+
+		return null;
 	}
 }
