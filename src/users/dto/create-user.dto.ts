@@ -5,6 +5,7 @@ export class CreateUserDto {
 	login: string;
 
 	@IsNotEmpty()
+	@MaxLength(20)
 	password: string;
 
 	@IsNotEmpty()

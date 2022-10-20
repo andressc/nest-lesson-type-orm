@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../../users/application/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
@@ -41,9 +41,8 @@ export class AuthService {
 			data.password,
 		);
 
-		if (user && user.password === data.password && user.login === data.login) {
-			return user;
-		}
+		if (!user || user.password !== data.password || user.login !== data.login)
+			throw new UnauthorizedException();
 
 		return null;
 	}
