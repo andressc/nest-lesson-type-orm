@@ -8,11 +8,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './api/auth.controller';
 import { BasicStrategy } from './strategies/basic.strategy';
+import { FeaturesModule } from '../features/features.module';
 
 @Module({
 	imports: [
 		UsersModule,
 		PassportModule,
+		FeaturesModule,
 		JwtModule.register({
 			secret: jwtConstants.secret,
 			signOptions: { expiresIn: '10m' },

@@ -48,5 +48,7 @@ import { Comment, CommentSchema } from '../entity/comment.schema';
 		PostsRepository,
 		CommentsRepository,
 	],
+
+	exports: [ValidationService],
 })
 export class FeaturesModule {}

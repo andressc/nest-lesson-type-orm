@@ -25,20 +25,20 @@ export class UsersController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post()
-	async createBlog(@Body() data: CreateUserDto) {
-		const userId = await this.usersService.createUser(data);
+	async createUser(@Body() data: CreateUserDto) {
+		const userId = await this.usersService.createUser(data, true);
 		return this.queryUserRepository.findOneUser(userId);
 	}
 
 	@Get()
-	findAllBlogs(@Query() query: QueryUserDto) {
+	findAllUsers(@Query() query: QueryUserDto) {
 		return this.queryUserRepository.findAllUsers(query);
 	}
 
 	@HttpCode(204)
 	@UseGuards(BasicAuthGuard)
 	@Delete(':id')
-	async remove(@Param() param: ObjectIdDto) {
+	async removeUser(@Param() param: ObjectIdDto) {
 		await this.usersService.removeUser(param.id);
 	}
 }

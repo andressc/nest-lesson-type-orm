@@ -31,10 +31,19 @@ export class UsersRepository {
 		return this.userModel.findOne({ $or: [{ login }, { email }] });
 	}
 
-	async findUserModelByLoginAndPassword(
-		login: string,
-		password: string,
-	): Promise<UserModel | null> {
-		return this.userModel.findOne({ login, password });
+	async findUserModelByLogin(login: string): Promise<UserModel | null> {
+		return this.userModel.findOne({ login });
+	}
+
+	async findUserModelByEmail(email: string): Promise<UserModel | null> {
+		return this.userModel.findOne({ email });
+	}
+
+	async findUserModelByConfirmationCode(confirmationCode: string): Promise<UserModel | null> {
+		return this.userModel.findOne({ confirmationCode });
+	}
+
+	async updateIsConfirmed(user: UserModel): Promise<void> {
+		await user.updateIsConfirmed(true).save();
 	}
 }

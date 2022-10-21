@@ -6,6 +6,9 @@ import { UsersRepository } from '../infrastructure/repository/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { ValidationService } from '../../features/application/validation.service';
 import { UserExistsException } from '../../common/exceptions/UserExistsException';
+import { generateHash } from '../../common/helpers/generateHash.helper';
+import * as bcrypt from 'bcrypt';
+import { generateConfirmationCode } from '../../common/helpers/generateConfirmationCode.helper';
 
 @Injectable()
 export class UsersService {
@@ -14,11 +17,23 @@ export class UsersService {
 		private readonly validationService: ValidationService,
 	) {}
 
-	async createUser(data: CreateUserDto): Promise<string> {
+	async createUser(data: CreateUserDto, isConfirmed = false): Promise<string> {
 		await this.validationService.validate(data, CreateUserDto);
 		await this.checkUserExists(data.login, data.email);
 
-		return this.userRepository.createUser({ ...data, createdAt: createDate() });
+		const passwordSalt = await bcrypt.genSalt(10);
+		const passwordHash = await generateHash(data.password, passwordSalt);
+
+		const emailConfirmation = generateConfirmationCode(isConfirmed);
+
+		return this.userRepository.createUser({
+			login: data.login,
+			password: passwordHash,
+			email: data.email,
+			salt: passwordSalt,
+			...emailConfirmation,
+			createdAt: createDate(),
+		});
 	}
 
 	async removeUser(id: string): Promise<void> {

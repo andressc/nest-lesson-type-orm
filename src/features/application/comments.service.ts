@@ -62,7 +62,6 @@ export class CommentsService {
 
 	private async checkCommentExists(id: string): Promise<CommentModel> {
 		const comment: CommentModel | null = await this.commentsRepository.findCommentModel(id);
-		console.log('dfdgf');
 		if (!comment) throw new CommentNotFoundException(id);
 		return comment;
 	}
