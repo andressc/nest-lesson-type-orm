@@ -2,7 +2,7 @@ import { IsNotEmpty, MaxLength } from 'class-validator';
 import { trim } from '../../../common/helpers/transform.helper';
 import { Transform } from 'class-transformer';
 
-export class CreatePostBlogDto {
+export class CreatePostOfBlogDto {
 	@IsNotEmpty()
 	@Transform(({ value }) => trim(value))
 	@MaxLength(30)

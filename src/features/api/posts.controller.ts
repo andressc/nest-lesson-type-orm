@@ -17,12 +17,20 @@ import { PostsService } from '../application/posts.service';
 import { UpdatePostDto } from '../dto/posts/update-post.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
 import { QueryPostDto } from '../dto/posts/query-post.dto';
+import { QueryCommentsRepository } from './query/query-comments.repository';
+import { QueryCommentDto } from '../dto/comments/query-comment.dto';
+import { CommentsService } from '../application/comments.service';
+import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
 
 @Controller('posts')
 export class PostsController {
 	constructor(
 		private readonly postsService: PostsService,
+		private readonly commentsService: CommentsService,
 		private readonly queryPostRepository: QueryPostsRepository,
+		private readonly queryCommentsRepository: QueryCommentsRepository,
 	) {}
 
 	@UseGuards(BasicAuthGuard)
@@ -32,9 +40,25 @@ export class PostsController {
 		return this.queryPostRepository.findOnePost(postId);
 	}
 
+	@UseGuards(JwtAuthGuard)
+	@Post(':id/comments')
+	async createCommentOfPost(
+		@Body() data: CreateCommentOfPostDto,
+		@Param() param: ObjectIdDto,
+		@CurrentUserId() currentUserId,
+	) {
+		const commentId = await this.commentsService.createCommentOfPost(data, param.id, currentUserId);
+		return this.queryCommentsRepository.findOneComment(commentId);
+	}
+
 	@Get()
 	findAllPosts(@Query() query: QueryPostDto) {
 		return this.queryPostRepository.findAllPosts(query);
+	}
+
+	@Get(':id/comments')
+	findAllCommentsOfPost(@Param() param: ObjectIdDto, @Query() query: QueryCommentDto) {
+		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id);
 	}
 
 	@Get(':id')
@@ -52,7 +76,7 @@ export class PostsController {
 	@HttpCode(204)
 	@UseGuards(BasicAuthGuard)
 	@Delete(':id')
-	async remove(@Param() param: ObjectIdDto) {
+	async removePost(@Param() param: ObjectIdDto) {
 		await this.postsService.removePost(param.id);
 	}
 }

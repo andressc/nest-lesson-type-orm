@@ -19,6 +19,6 @@ import { PaginationService } from '../features/application/pagination.service';
 		QueryUsersRepository,
 		PaginationService,
 	],
-	exports: [UsersService, UsersRepository],
+	exports: [UsersService, UsersRepository, QueryUsersRepository],
 })
 export class UsersModule {}

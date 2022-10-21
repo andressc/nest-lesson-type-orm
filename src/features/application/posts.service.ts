@@ -9,13 +9,13 @@ import { BlogModel } from '../../entity/blog.schema';
 import { BlogNotFoundException } from '../../common/exceptions/BlogNotFoundException';
 import { PostNotFoundException } from '../../common/exceptions/PostNotFoundException';
 import { createDate } from '../../common/helpers/date.helper';
-import { CreatePostBlogDto } from '../dto/posts/create-post-blog.dto';
+import { CreatePostOfBlogDto } from '../dto/posts/create-post-of-blog.dto';
 
 @Injectable()
 export class PostsService {
 	constructor(
-		private readonly blogRepository: BlogsRepository,
-		private readonly postRepository: PostsRepository,
+		private readonly blogsRepository: BlogsRepository,
+		private readonly postsRepository: PostsRepository,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -24,15 +24,15 @@ export class PostsService {
 
 		const blogName: string = await this.blogExists(data.blogId);
 
-		return this.postRepository.createPost({ ...data, blogName, createdAt: createDate() });
+		return this.postsRepository.createPost({ ...data, blogName, createdAt: createDate() });
 	}
 
-	async createPostBlog(data: CreatePostBlogDto, blogId: string): Promise<string> {
-		await this.validationService.validate(data, CreatePostBlogDto);
+	async createPostOfBlog(data: CreatePostOfBlogDto, blogId: string): Promise<string> {
+		await this.validationService.validate(data, CreatePostOfBlogDto);
 
 		const blogName: string = await this.blogExists(blogId);
 
-		return this.postRepository.createPost({ ...data, blogId, blogName, createdAt: createDate() });
+		return this.postsRepository.createPost({ ...data, blogId, blogName, createdAt: createDate() });
 	}
 
 	async updatePost(id: string, data: UpdatePostDto): Promise<void> {
@@ -41,22 +41,22 @@ export class PostsService {
 		const blogName: string = await this.blogExists(data.blogId);
 
 		const post: PostModel = await this.checkPostExists(id);
-		await this.postRepository.updatePost(post, { ...data, blogName });
+		await this.postsRepository.updatePost(post, { ...data, blogName });
 	}
 
 	async removePost(id: string): Promise<void> {
 		const post: PostModel = await this.checkPostExists(id);
-		await this.postRepository.removePost(post);
+		await this.postsRepository.removePost(post);
 	}
 
 	private async checkPostExists(id: string): Promise<PostModel> {
-		const post: PostModel | null = await this.postRepository.findPostModel(id);
+		const post: PostModel | null = await this.postsRepository.findPostModel(id);
 		if (!post) throw new PostNotFoundException(id);
 		return post;
 	}
 
 	private async blogExists(id: string): Promise<string> {
-		const blog: BlogModel = await this.blogRepository.findBlogModel(id);
+		const blog: BlogModel = await this.blogsRepository.findBlogModel(id);
 		if (!blog) throw new BlogNotFoundException(id);
 		return blog.name;
 	}

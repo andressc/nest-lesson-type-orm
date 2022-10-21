@@ -20,7 +20,7 @@ import { QueryBlogDto } from '../dto/blogs/query-blog.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
 import { QueryPostDto } from '../dto/posts/query-post.dto';
 import { PostsService } from '../application/posts.service';
-import { CreatePostBlogDto } from '../dto/posts/create-post-blog.dto';
+import { CreatePostOfBlogDto } from '../dto/posts/create-post-of-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -40,8 +40,8 @@ export class BlogsController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post(':id/posts')
-	async createPostBlog(@Body() data: CreatePostBlogDto, @Param() param: ObjectIdDto) {
-		const postId = await this.postsService.createPostBlog(data, param.id);
+	async createPostOfBlog(@Body() data: CreatePostOfBlogDto, @Param() param: ObjectIdDto) {
+		const postId = await this.postsService.createPostOfBlog(data, param.id);
 		return this.queryPostRepository.findOnePost(postId);
 	}
 
@@ -51,7 +51,7 @@ export class BlogsController {
 	}
 
 	@Get(':id/posts')
-	findAllPostsBlog(@Query() query: QueryPostDto, @Param() param: ObjectIdDto) {
+	findAllPostsOfBlog(@Query() query: QueryPostDto, @Param() param: ObjectIdDto) {
 		return this.queryPostRepository.findAllPosts(query, param.id);
 	}
 
@@ -70,7 +70,7 @@ export class BlogsController {
 	@HttpCode(204)
 	@UseGuards(BasicAuthGuard)
 	@Delete(':id')
-	async remove(@Param() param: ObjectIdDto) {
+	async removeBlog(@Param() param: ObjectIdDto) {
 		await this.blogsService.removeBlog(param.id);
 	}
 }

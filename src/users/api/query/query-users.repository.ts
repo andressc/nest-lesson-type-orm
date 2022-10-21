@@ -7,6 +7,7 @@ import { User, UserModel } from '../../../entity/user.schema';
 import { UserNotFoundException } from '../../../common/exceptions/UserNotFoundException';
 import { PaginationService } from '../../../features/application/pagination.service';
 import { QueryUserDto } from '../../dto/query-user.dto';
+import { ResponseUserMeDto } from '../../dto/response-user-me.dto';
 
 @Injectable()
 export class QueryUsersRepository {
@@ -48,6 +49,17 @@ export class QueryUsersRepository {
 			login: user.login,
 			email: user.email,
 			createdAt: user.createdAt,
+		};
+	}
+
+	async findMe(id: string): Promise<ResponseUserMeDto> {
+		const user: UserModel | null = await this.userModel.findById(id);
+		if (!user) throw new UserNotFoundException(id);
+
+		return {
+			email: user.email,
+			login: user.login,
+			userId: user._id,
 		};
 	}
 

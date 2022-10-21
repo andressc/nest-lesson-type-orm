@@ -16,27 +16,37 @@ import { TestingController } from './api/testing.controller';
 import { IsUserCommentValidatorConstraint } from '../common/decorators/ValidationDecorators/validate-blog-id.decorator';
 import { PaginationService } from './application/pagination.service';
 import { UsersModule } from '../users/users.module';
+import { CommentsService } from './application/comments.service';
+import { QueryCommentsRepository } from './api/query/query-comments.repository';
+import { CommentsRepository } from './infrastructure/repository/comments.repository';
+import { CommentsController } from './api/comments.controller';
+import { Comment, CommentSchema } from '../entity/comment.schema';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 		MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+		MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
 		UsersModule,
 	],
-	controllers: [BlogsController, PostsController, TestingController],
+	controllers: [BlogsController, PostsController, TestingController, CommentsController],
 	providers: [
 		BlogsService,
 		ValidationService,
 		PostsService,
 		TestingService,
+		CommentsService,
+
 		PaginationService,
 		IsUserCommentValidatorConstraint,
 
 		QueryBlogsRepository,
 		QueryPostsRepository,
+		QueryCommentsRepository,
 
 		BlogsRepository,
 		PostsRepository,
+		CommentsRepository,
 	],
 })
 export class FeaturesModule {}
