@@ -1,4 +1,4 @@
-import { Injectable, RequestTimeoutException } from '@nestjs/common';
+import { Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../../users/application/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
@@ -13,6 +13,8 @@ import { ConfirmCodeBadRequestException } from '../../common/exceptions/confirmC
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 import { EmailBadRequestException } from '../../common/exceptions/emailBadRequestException';
 import { v4 as uuidv4 } from 'uuid';
+import { jwtConstants } from '../constants';
+import { AuthRepository } from '../infrastructure/repository/auth-repository';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,7 @@ export class AuthService {
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService,
 		private readonly usersRepository: UsersRepository,
+		private readonly authRepository: AuthRepository,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -35,10 +38,17 @@ export class AuthService {
 		return null;
 	}
 
-	async login(user: any) {
+	async createTokens(user: UserModel) {
 		const payload = { sub: user._id };
 		return {
-			accessToken: this.jwtService.sign(payload),
+			accessToken: this.jwtService.sign(payload, {
+				secret: jwtConstants.secretAccessToken,
+				expiresIn: '10s',
+			}),
+			refreshToken: this.jwtService.sign(payload, {
+				secret: jwtConstants.secretRefreshToken,
+				expiresIn: '20s',
+			}),
 		};
 	}
 
@@ -87,15 +97,24 @@ export class AuthService {
 		}
 	}
 
-	/*async login(data: LoginDto) {
-		const user: UserModel | null = await this.usersRepository.findUserModelByLoginAndPassword(
-			data.login,
-			data.password,
-		);
+	async refreshToken(userId: string, token: string) {
+		const tokenValidation = await this.authRepository.findRefreshToken(token);
+		if (tokenValidation) throw new UnauthorizedException();
 
-		if (!user || user.password !== data.password || user.login !== data.login)
-			throw new UnauthorizedException();
+		const oldRefreshToken = await this.authRepository.createRefreshToken(token);
+		if (!oldRefreshToken) throw new UnauthorizedException();
 
-		return null;
-	}*/
+		const user: UserModel = await this.usersRepository.findUserModel(userId);
+		if (!user) throw new UnauthorizedException();
+
+		return await this.createTokens(user);
+	}
+
+	async destroyRefreshToken(token: string): Promise<void> {
+		const tokenValidation = await this.authRepository.findRefreshToken(token);
+		if (tokenValidation) throw new UnauthorizedException();
+
+		const oldRefreshToken = await this.authRepository.createRefreshToken(token);
+		if (!oldRefreshToken) throw new UnauthorizedException();
+	}
 }

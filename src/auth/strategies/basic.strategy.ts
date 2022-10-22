@@ -8,6 +8,6 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
 		if ('admin' === username && 'qwerty' === password) {
 			return true;
 		}
-		throw new UnauthorizedException();
+		throw new UnauthorizedException(['dvdfvdfg']);
 	};
 }

@@ -21,7 +21,7 @@ import { QueryCommentsRepository } from './query/query-comments.repository';
 import { QueryCommentDto } from '../dto/comments/query-comment.dto';
 import { CommentsService } from '../application/comments.service';
 import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { AccessTokenGuard } from '../../common/guards/accessToken.guard';
 import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
 
 @Controller('posts')
@@ -40,7 +40,7 @@ export class PostsController {
 		return this.queryPostRepository.findOnePost(postId);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(AccessTokenGuard)
 	@Post(':id/comments')
 	async createCommentOfPost(
 		@Body() data: CreateCommentOfPostDto,

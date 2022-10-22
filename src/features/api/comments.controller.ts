@@ -3,7 +3,7 @@ import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { QueryCommentsRepository } from './query/query-comments.repository';
 import { UpdateCommentDto } from '../dto/comments/update-comment.dto';
 import { CommentsService } from '../application/comments.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { AccessTokenGuard } from '../../common/guards/accessToken.guard';
 import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
 
 @Controller('comments')
@@ -19,7 +19,7 @@ export class CommentsController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(AccessTokenGuard)
 	@Put(':id')
 	async updateComment(
 		@Param() param: ObjectIdDto,
@@ -30,7 +30,7 @@ export class CommentsController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(AccessTokenGuard)
 	@Delete(':id')
 	async removeComment(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
 		await this.commentsService.removeComment(param.id, currentUserId);

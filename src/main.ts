@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/exeption.filter';
 import { useContainer } from 'class-validator';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, { cors: true });
@@ -28,6 +29,7 @@ async function bootstrap() {
 	useContainer(app.select(AppModule), { fallbackOnErrors: true });
 	app.useGlobalFilters(new HttpExceptionFilter());
 	app.enableCors();
+	app.use(cookieParser());
 	await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
