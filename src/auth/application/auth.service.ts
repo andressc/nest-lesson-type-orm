@@ -64,6 +64,7 @@ export class AuthService {
 		);
 
 		if (!user) throw new ConfirmCodeBadRequestException();
+		if (user.isConfirmed) throw new IsConfirmedBadRequestException();
 
 		await this.usersRepository.updateIsConfirmed(user);
 	}
