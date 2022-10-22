@@ -12,7 +12,6 @@ import { RegistrationDto } from '../dto/registration.dto';
 import { ConfirmCodeBadRequestException } from '../../common/exceptions/confirmCodeBadRequestException';
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 import { EmailBadRequestException } from '../../common/exceptions/emailBadRequestException';
-import { IsConfirmedBadRequestException } from '../../common/exceptions/isConfirmedBadRequestException';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -65,7 +64,7 @@ export class AuthService {
 		);
 
 		if (!user) throw new ConfirmCodeBadRequestException();
-		if (user.isConfirmed) throw new IsConfirmedBadRequestException();
+		if (user.isConfirmed) throw new ConfirmCodeBadRequestException();
 
 		await this.usersRepository.updateIsConfirmed(user);
 	}
@@ -76,7 +75,7 @@ export class AuthService {
 		const user: UserModel | null = await this.usersRepository.findUserModelByEmail(data.email);
 
 		if (!user) throw new EmailBadRequestException();
-		if (user.isConfirmed) throw new IsConfirmedBadRequestException();
+		if (user.isConfirmed) throw new EmailBadRequestException();
 
 		const newConfirmationCode = uuidv4();
 		await this.usersRepository.updateConfirmationCode(user, newConfirmationCode);
