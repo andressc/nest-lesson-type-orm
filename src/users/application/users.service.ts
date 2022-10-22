@@ -20,7 +20,7 @@ export class UsersService {
 
 	async createUser(data: CreateUserDto, isConfirmed = false): Promise<string> {
 		await this.validationService.validate(data, CreateUserDto);
-		await this.checkUserExistsByLogin(data.login, data.email);
+		await this.checkUserExistsByLogin(data.login);
 		await this.checkUserExistsByEmail(data.email);
 
 		const passwordSalt = await bcrypt.genSalt(10);
