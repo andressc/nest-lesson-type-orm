@@ -33,8 +33,14 @@ export class User {
 		this.isConfirmed = isConfirmed;
 		return this;
 	}
+
+	updateConfirmationCode(confirmationCode: string): this {
+		this.confirmationCode = confirmationCode;
+		return this;
+	}
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.methods.updateIsConfirmed = User.prototype.updateIsConfirmed;
+UserSchema.methods.updateConfirmationCode = User.prototype.updateConfirmationCode;

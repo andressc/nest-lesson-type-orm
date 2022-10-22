@@ -9,8 +9,6 @@ export const generateConfirmationCode = (isConfirmed: boolean) => {
 			hours: 1,
 			minutes: 30,
 		}),
-
-		//expirationDate: new Date(),
 		isConfirmed,
 	};
 };

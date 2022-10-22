@@ -46,4 +46,8 @@ export class UsersRepository {
 	async updateIsConfirmed(user: UserModel): Promise<void> {
 		await user.updateIsConfirmed(true).save();
 	}
+
+	async updateConfirmationCode(user, ConfirmationCode: string): Promise<void> {
+		await user.updateConfirmationCode(ConfirmationCode).save();
+	}
 }

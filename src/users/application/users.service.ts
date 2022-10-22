@@ -5,10 +5,11 @@ import { createDate } from '../../common/helpers/date.helper';
 import { UsersRepository } from '../infrastructure/repository/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { ValidationService } from '../../features/application/validation.service';
-import { UserExistsException } from '../../common/exceptions/UserExistsException';
+import { UserExistsLoginException } from '../../common/exceptions/UserExistsLoginException';
 import { generateHash } from '../../common/helpers/generateHash.helper';
 import * as bcrypt from 'bcrypt';
 import { generateConfirmationCode } from '../../common/helpers/generateConfirmationCode.helper';
+import { UserExistsEmailException } from '../../common/exceptions/UserExistsEmailException';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +20,8 @@ export class UsersService {
 
 	async createUser(data: CreateUserDto, isConfirmed = false): Promise<string> {
 		await this.validationService.validate(data, CreateUserDto);
-		await this.checkUserExists(data.login, data.email);
+		await this.checkUserExistsByLogin(data.login, data.email);
+		await this.checkUserExistsByEmail(data.email);
 
 		const passwordSalt = await bcrypt.genSalt(10);
 		const passwordHash = await generateHash(data.password, passwordSalt);
@@ -47,12 +49,15 @@ export class UsersService {
 		return user;
 	}
 
-	private async checkUserExists(login: string, email: string): Promise<UserModel> {
-		const user: UserModel | null = await this.userRepository.findUserModelByEmailOrLogin(
-			login,
-			email,
-		);
-		if (user) throw new UserExistsException(login, email);
+	private async checkUserExistsByLogin(login: string): Promise<UserModel> {
+		const user: UserModel | null = await this.userRepository.findUserModelByLogin(login);
+		if (user) throw new UserExistsLoginException(login);
+		return user;
+	}
+
+	private async checkUserExistsByEmail(email: string): Promise<UserModel> {
+		const user: UserModel | null = await this.userRepository.findUserModelByEmail(email);
+		if (user) throw new UserExistsEmailException(email);
 		return user;
 	}
 }
