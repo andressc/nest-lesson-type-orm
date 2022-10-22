@@ -5,7 +5,7 @@ export class UserExistsException extends BadRequestException {
 		super([
 			{
 				message: `user login = ${login} or email = ${email} already exists`,
-				field: ['email', 'login'],
+				field: ['email'],
 			},
 		]);
 	}
