@@ -21,21 +21,34 @@ import { QueryCommentsRepository } from './api/query/query-comments.repository';
 import { CommentsRepository } from './infrastructure/repository/comments.repository';
 import { CommentsController } from './api/comments.controller';
 import { Comment, CommentSchema } from '../entity/comment.schema';
+import { Session, SessionSchema } from '../entity/session.schema';
+import { QuerySessionsRepository } from './api/query/query-sessions.repository';
+import { SessionsController } from './api/sessions.controller';
+import { SessionsService } from './application/sessions.service';
+import { SessionsRepository } from './infrastructure/repository/sessions.repository';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 		MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
 		MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+		MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }]),
 		UsersModule,
 	],
-	controllers: [BlogsController, PostsController, TestingController, CommentsController],
+	controllers: [
+		BlogsController,
+		PostsController,
+		TestingController,
+		CommentsController,
+		SessionsController,
+	],
 	providers: [
 		BlogsService,
 		ValidationService,
 		PostsService,
 		TestingService,
 		CommentsService,
+		SessionsService,
 
 		PaginationService,
 		IsUserCommentValidatorConstraint,
@@ -43,12 +56,14 @@ import { Comment, CommentSchema } from '../entity/comment.schema';
 		QueryBlogsRepository,
 		QueryPostsRepository,
 		QueryCommentsRepository,
+		QuerySessionsRepository,
 
 		BlogsRepository,
 		PostsRepository,
 		CommentsRepository,
+		SessionsRepository,
 	],
 
-	exports: [ValidationService],
+	exports: [ValidationService, SessionsRepository, SessionsService],
 })
 export class FeaturesModule {}

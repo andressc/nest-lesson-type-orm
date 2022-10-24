@@ -25,7 +25,6 @@ export class CommentsRepository {
 	}
 
 	async findCommentModel(id: string): Promise<CommentModel | null> {
-		console.log(id);
 		return this.commentModel.findById(id);
 	}
 

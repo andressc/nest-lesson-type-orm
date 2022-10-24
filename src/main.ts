@@ -30,6 +30,7 @@ async function bootstrap() {
 	app.useGlobalFilters(new HttpExceptionFilter());
 	app.enableCors();
 	app.use(cookieParser());
+
 	await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

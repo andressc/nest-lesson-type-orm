@@ -49,7 +49,6 @@ export class QueryCommentsRepository {
 	}
 
 	async findOneComment(id: string): Promise<ResponseCommentDto> {
-		console.log(id, ' 344');
 		const comment: CommentModel | null = await this.commentModel.findById(id);
 		if (!comment) throw new CommentNotFoundException(id);
 

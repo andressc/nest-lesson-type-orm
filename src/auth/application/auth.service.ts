@@ -14,7 +14,10 @@ import { RegistrationEmailResendingDto } from '../dto/registration-email-resendi
 import { EmailBadRequestException } from '../../common/exceptions/emailBadRequestException';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../constants';
-import { AuthRepository } from '../infrastructure/repository/auth-repository';
+import { createDate } from '../../common/helpers/date.helper';
+import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
+import { SessionModel } from '../../entity/session.schema';
+import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
 
 @Injectable()
 export class AuthService {
@@ -22,12 +25,13 @@ export class AuthService {
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService,
 		private readonly usersRepository: UsersRepository,
-		private readonly authRepository: AuthRepository,
+		private readonly sessionsRepository: SessionsRepository,
 		private readonly validationService: ValidationService,
 	) {}
 
 	async validateUser(login: string, password: string): Promise<UserModel | null> {
 		const user: UserModel | null = await this.usersRepository.findUserModelByLogin(login);
+		if (!user) throw new UnauthorizedException();
 
 		const passwordHash = await generateHash(password, user.salt);
 
@@ -38,17 +42,37 @@ export class AuthService {
 		return null;
 	}
 
-	async createTokens(user: UserModel) {
-		const payload = { sub: user._id };
+	async login(userId: string, ip: string, userAgent: string) {
+		const lastActiveDate = createDate();
+		const deviceId = uuidv4();
+
+		await this.sessionsRepository.createNewSession({
+			lastActiveDate,
+			deviceId,
+			ip,
+			title: userAgent,
+			userId,
+		});
+
+		return this.createTokens(userId, lastActiveDate, deviceId);
+	}
+
+	async createTokens(userId, lastActiveDate: string, deviceId: string) {
 		return {
-			accessToken: this.jwtService.sign(payload, {
-				secret: jwtConstants.secretAccessToken,
-				expiresIn: '10s',
-			}),
-			refreshToken: this.jwtService.sign(payload, {
-				secret: jwtConstants.secretRefreshToken,
-				expiresIn: '20s',
-			}),
+			accessToken: this.jwtService.sign(
+				{ sub: userId },
+				{
+					secret: jwtConstants.secretAccessToken,
+					expiresIn: '10s',
+				},
+			),
+			refreshToken: this.jwtService.sign(
+				{ sub: userId, deviceId, lastActiveDate },
+				{
+					secret: jwtConstants.secretRefreshToken,
+					expiresIn: '20s',
+				},
+			),
 		};
 	}
 
@@ -97,24 +121,26 @@ export class AuthService {
 		}
 	}
 
-	async refreshToken(userId: string, token: string) {
-		const tokenValidation = await this.authRepository.findRefreshToken(token);
-		if (tokenValidation) throw new UnauthorizedException();
+	async refreshToken(refreshTokenData: RefreshTokenDataDto) {
+		const session: SessionModel | null = await this.sessionsRepository.findSessionModel(
+			refreshTokenData.userId,
+			refreshTokenData.deviceId,
+			refreshTokenData.lastActiveDate,
+		);
+		if (!session) throw new UnauthorizedException();
 
-		const oldRefreshToken = await this.authRepository.createRefreshToken(token);
-		if (!oldRefreshToken) throw new UnauthorizedException();
+		const lastActiveDate = createDate();
+		await this.sessionsRepository.updateSession(
+			session,
+			lastActiveDate,
+			refreshTokenData.ip,
+			refreshTokenData.userAgent,
+		);
 
-		const user: UserModel = await this.usersRepository.findUserModel(userId);
-		if (!user) throw new UnauthorizedException();
-
-		return await this.createTokens(user);
-	}
-
-	async destroyRefreshToken(token: string): Promise<void> {
-		const tokenValidation = await this.authRepository.findRefreshToken(token);
-		if (tokenValidation) throw new UnauthorizedException();
-
-		const oldRefreshToken = await this.authRepository.createRefreshToken(token);
-		if (!oldRefreshToken) throw new UnauthorizedException();
+		return await this.createTokens(
+			refreshTokenData.userId,
+			lastActiveDate,
+			refreshTokenData.deviceId,
+		);
 	}
 }

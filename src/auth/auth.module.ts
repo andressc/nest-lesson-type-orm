@@ -9,27 +9,21 @@ import { AuthController } from './api/auth.controller';
 import { BasicStrategy } from './strategies/basic.strategy';
 import { FeaturesModule } from '../features/features.module';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
-import { AuthRepository } from './infrastructure/repository/auth-repository';
-import { MongooseModule } from '@nestjs/mongoose';
-import { RefreshToken, RefreshTokenSchema } from '../entity/refreshToken.schema';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),
+		ThrottlerModule.forRoot({
+			ttl: 10,
+			limit: 5,
+		}),
 		UsersModule,
 		PassportModule,
 		FeaturesModule,
 		JwtModule.register({}),
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		AuthRepository,
-		LocalStrategy,
-		AccessTokenStrategy,
-		RefreshTokenStrategy,
-		BasicStrategy,
-	],
+	providers: [AuthService, LocalStrategy, AccessTokenStrategy, RefreshTokenStrategy, BasicStrategy],
 	exports: [AuthService],
 })
 export class AuthModule {}
