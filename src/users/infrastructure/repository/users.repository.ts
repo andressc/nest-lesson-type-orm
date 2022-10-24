@@ -50,4 +50,9 @@ export class UsersRepository {
 	async updateConfirmationCode(user, ConfirmationCode: string): Promise<void> {
 		await user.updateConfirmationCode(ConfirmationCode).save();
 	}
+
+	async updatePassword(user, password: string): Promise<void> {
+		const userUpdate = await user.updatePassword(password);
+		await userUpdate.save();
+	}
 }

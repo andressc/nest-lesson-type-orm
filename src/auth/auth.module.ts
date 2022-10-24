@@ -10,6 +10,7 @@ import { BasicStrategy } from './strategies/basic.strategy';
 import { FeaturesModule } from '../features/features.module';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { PasswordRecoveryTokenStrategy } from './strategies/passwordRecoveryToken.strategy';
 
 @Module({
 	imports: [
@@ -23,7 +24,14 @@ import { ThrottlerModule } from '@nestjs/throttler';
 		JwtModule.register({}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, LocalStrategy, AccessTokenStrategy, RefreshTokenStrategy, BasicStrategy],
+	providers: [
+		AuthService,
+		LocalStrategy,
+		AccessTokenStrategy,
+		RefreshTokenStrategy,
+		BasicStrategy,
+		PasswordRecoveryTokenStrategy,
+	],
 	exports: [AuthService],
 })
 export class AuthModule {}

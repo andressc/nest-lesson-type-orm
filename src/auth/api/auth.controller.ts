@@ -1,20 +1,30 @@
 import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
-import { AccessTokenGuard } from '../../common/guards/accessToken.guard';
-import { LocalAuthGuard } from '../../common/guards/local-auth.guard';
-import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
 import { QueryUsersRepository } from '../../users/api/query/query-users.repository';
 import { RegistrationConfirmationDto } from '../dto/registration-confirmation.dto';
 import { RegistrationDto } from '../dto/registration.dto';
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
-import { RefreshTokenGuard } from '../../common/guards/refreshToken.guard';
+
 import { Response } from 'express';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
-import { RefreshTokenData } from '../../common/decorators/refresh-token-data.decorator';
-import { CurrentUserIp } from '../../common/decorators/current-user-ip.decorator';
-import { CurrentUserAgent } from '../../common/decorators/current-user-agent.decorator';
+
 import { SessionsService } from '../../features/application/sessions.service';
-import { ThrottlerProxyGuard } from '../../common/guards/throttler-proxy.guard';
+
+import { optionsCookie } from '../constants';
+import {
+	CurrentUserAgent,
+	CurrentUserId,
+	CurrentUserIp,
+	RefreshTokenData,
+} from '../../common/decorators';
+import {
+	AccessTokenGuard,
+	LocalAuthGuard,
+	RateLimitGuard,
+	RefreshTokenGuard,
+} from '../../common/guards';
+import { PasswordRecoveryTokenGuard } from '../../common/guards/password-recovery-token.guard';
+import { NewPasswordDto } from '../dto/newPassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +36,7 @@ export class AuthController {
 
 	@HttpCode(200)
 	@UseGuards(LocalAuthGuard)
-	@UseGuards(ThrottlerProxyGuard)
+	@UseGuards(RateLimitGuard)
 	@Post('login')
 	async login(
 		@CurrentUserId() currentUserId: string,
@@ -35,11 +45,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		const tokens = await this.authService.login(currentUserId, ip, userAgent);
-		res.cookie('refreshToken', tokens.refreshToken, {
-			httpOnly: true,
-			secure: true,
-			maxAge: 60 * 1000 * 10,
-		});
+		res.cookie('refreshToken', tokens.refreshToken, optionsCookie);
 		return { accessToken: tokens.accessToken };
 	}
 
@@ -57,11 +63,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		const tokens = await this.authService.refreshToken(refreshTokenData);
-		res.cookie('refreshToken', tokens.refreshToken, {
-			httpOnly: true,
-			secure: true,
-			maxAge: 60 * 1000 * 10,
-		});
+		res.cookie('refreshToken', tokens.refreshToken, optionsCookie);
 		return { accessToken: tokens.accessToken };
 	}
 
@@ -76,23 +78,38 @@ export class AuthController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(ThrottlerProxyGuard)
+	@UseGuards(RateLimitGuard)
 	@Post('registration')
 	async registration(@Body() data: RegistrationDto) {
 		await this.authService.registration(data);
 	}
 
 	@HttpCode(204)
-	@UseGuards(ThrottlerProxyGuard)
+	@UseGuards(RateLimitGuard)
 	@Post('registration-confirmation')
 	async registrationConfirmation(@Body() data: RegistrationConfirmationDto) {
 		await this.authService.registrationConfirmation(data);
 	}
 
 	@HttpCode(204)
-	@UseGuards(ThrottlerProxyGuard)
+	@UseGuards(RateLimitGuard)
 	@Post('registration-email-resending')
 	async registrationEmailResending(@Body() data: RegistrationEmailResendingDto) {
 		await this.authService.registrationEmailResending(data);
+	}
+
+	@HttpCode(204)
+	@UseGuards(RateLimitGuard)
+	@Post('password-recovery')
+	async passwordRecovery(@Body() data: RegistrationEmailResendingDto) {
+		await this.authService.passwordRecovery(data);
+	}
+
+	@HttpCode(204)
+	@UseGuards(PasswordRecoveryTokenGuard)
+	@UseGuards(RateLimitGuard)
+	@Post('new-password')
+	async newPassword(@Body() data: NewPasswordDto, @CurrentUserId() currentUserId: string) {
+		await this.authService.newPassword(data, currentUserId);
 	}
 }

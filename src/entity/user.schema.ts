@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import { generateHash } from '../common/helpers/generateHash.helper';
 
 export type UserModel = User & Document;
 
@@ -38,9 +40,19 @@ export class User {
 		this.confirmationCode = confirmationCode;
 		return this;
 	}
+
+	async updatePassword(password: string): Promise<this> {
+		const passwordSalt = await bcrypt.genSalt(10);
+		const passwordHash = await generateHash(password, passwordSalt);
+
+		this.password = passwordHash;
+		this.salt = passwordSalt;
+		return this;
+	}
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.methods.updateIsConfirmed = User.prototype.updateIsConfirmed;
 UserSchema.methods.updateConfirmationCode = User.prototype.updateConfirmationCode;
+UserSchema.methods.updatePassword = User.prototype.updatePassword;

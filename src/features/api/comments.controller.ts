@@ -3,8 +3,8 @@ import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { QueryCommentsRepository } from './query/query-comments.repository';
 import { UpdateCommentDto } from '../dto/comments/update-comment.dto';
 import { CommentsService } from '../application/comments.service';
-import { AccessTokenGuard } from '../../common/guards/accessToken.guard';
-import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
+import { AccessTokenGuard } from '../../common/guards';
+import { CurrentUserId } from '../../common/decorators';
 
 @Controller('comments')
 export class CommentsController {

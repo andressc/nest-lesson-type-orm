@@ -13,7 +13,7 @@ import { Post, PostSchema } from '../entity/post.schema';
 import { PostsController } from './api/posts.controller';
 import { TestingService } from './application/testing.service';
 import { TestingController } from './api/testing.controller';
-import { IsUserCommentValidatorConstraint } from '../common/decorators/ValidationDecorators/validate-blog-id.decorator';
+import { IsUserCommentValidatorConstraint } from '../common/decorators/Validation/validate-blog-id.decorator';
 import { PaginationService } from './application/pagination.service';
 import { UsersModule } from '../users/users.module';
 import { CommentsService } from './application/comments.service';

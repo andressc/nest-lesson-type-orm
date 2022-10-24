@@ -11,7 +11,7 @@ import {
 	Query,
 } from '@nestjs/common';
 import { ObjectIdDto } from '../../common/dto/object-id.dto';
-import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
+import { AccessTokenGuard, BasicAuthGuard } from '../../common/guards';
 import { CreatePostDto } from '../dto/posts/create-post.dto';
 import { PostsService } from '../application/posts.service';
 import { UpdatePostDto } from '../dto/posts/update-post.dto';
@@ -21,8 +21,7 @@ import { QueryCommentsRepository } from './query/query-comments.repository';
 import { QueryCommentDto } from '../dto/comments/query-comment.dto';
 import { CommentsService } from '../application/comments.service';
 import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
-import { AccessTokenGuard } from '../../common/guards/accessToken.guard';
-import { CurrentUserId } from '../../common/decorators/current-user-id.decorator';
+import { CurrentUserId } from '../../common/decorators';
 
 @Controller('posts')
 export class PostsController {

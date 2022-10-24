@@ -18,6 +18,7 @@ import { createDate } from '../../common/helpers/date.helper';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 import { SessionModel } from '../../entity/session.schema';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
+import { NewPasswordDto } from '../dto/newPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,14 +64,14 @@ export class AuthService {
 				{ sub: userId },
 				{
 					secret: jwtConstants.secretAccessToken,
-					expiresIn: '10s',
+					expiresIn: '10m',
 				},
 			),
 			refreshToken: this.jwtService.sign(
 				{ sub: userId, deviceId, lastActiveDate },
 				{
 					secret: jwtConstants.secretRefreshToken,
-					expiresIn: '20s',
+					expiresIn: '20m',
 				},
 			),
 		};
@@ -121,6 +122,24 @@ export class AuthService {
 		}
 	}
 
+	async passwordRecovery(data: RegistrationEmailResendingDto): Promise<void> {
+		await this.validationService.validate(data, RegistrationEmailResendingDto);
+
+		const recoveryCode = this.jwtService.sign(
+			{ sub: data.email },
+			{
+				secret: jwtConstants.passwordRecoveryToken,
+				expiresIn: '10m',
+			},
+		);
+
+		try {
+			await emailManager.sendEmailPasswordRecovery(data.email, recoveryCode);
+		} catch (e) {
+			throw new RequestTimeoutException('Message not sent' + e);
+		}
+	}
+
 	async refreshToken(refreshTokenData: RefreshTokenDataDto) {
 		const session: SessionModel | null = await this.sessionsRepository.findSessionModel(
 			refreshTokenData.userId,
@@ -142,5 +161,12 @@ export class AuthService {
 			lastActiveDate,
 			refreshTokenData.deviceId,
 		);
+	}
+
+	async newPassword(data: NewPasswordDto, userId: string): Promise<void> {
+		const user: UserModel | null = await this.usersRepository.findUserModel(userId);
+		if (!user) throw new UserNotFoundException(userId);
+
+		await this.usersRepository.updatePassword(user, data.newPassword);
 	}
 }
