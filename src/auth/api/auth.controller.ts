@@ -25,8 +25,8 @@ export class AuthController {
 	) {}
 
 	@HttpCode(200)
-	@UseGuards(ThrottlerProxyGuard)
 	@UseGuards(LocalAuthGuard)
+	@UseGuards(ThrottlerProxyGuard)
 	@Post('login')
 	async login(
 		@CurrentUserId() currentUserId: string,
