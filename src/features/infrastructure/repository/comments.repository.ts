@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../../entity/comment.schema';
 import { UpdateCommentDto } from '../../dto/comments/update-comment.dto';
 import { CreateCommentExtendsDto } from '../../dto/comments/create-comment-extends.dto';
+import { CreateLikeDto } from '../../dto/comments/create-like.dto';
 
 @Injectable()
 export class CommentsRepository {
@@ -18,6 +19,23 @@ export class CommentsRepository {
 
 	async updateComment(comment: CommentModel, data: UpdateCommentDto): Promise<void> {
 		await comment.updateData(data).save();
+	}
+
+	async setLike(comment: CommentModel, data: CreateLikeDto, authUserId: string): Promise<void> {
+		const updateComment = await comment.setLike(data, authUserId);
+		await updateComment.save();
+		/*await comment.updateOne(
+			{ likes: { userId: authUserId, likeStatus: data.likeStatus } },
+			{ $set: { likes: { userId: authUserId, likeStatus: data.likeStatus } } },
+		);*/
+		/*await comment.update(
+			{ likes: { userId: authUserId, likeStatus: data.likeStatus } },
+			{ $addToSet: { likes: { likeStatus: data.likeStatus } } },
+		);*/
+		/*await comment.update(
+			{ likes: { userId: authUserId } },
+			{ $push: { likes: { userId: authUserId, likeStatus: data.likeStatus } } },
+		);*/
 	}
 
 	async removeComment(comment: CommentModel): Promise<void> {

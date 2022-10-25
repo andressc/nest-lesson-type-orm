@@ -7,7 +7,7 @@ export const RefreshTokenData = createParamDecorator((data: unknown, context: Ex
 		userId: request.user.userId,
 		deviceId: request.user.deviceId,
 		lastActiveDate: request.user.lastActiveDate,
-		userAgent: request.headers['user-agent'],
-		ip: request.ip,
+		userAgent: request.user.userAgent,
+		ip: request.user.ip,
 	};
 });

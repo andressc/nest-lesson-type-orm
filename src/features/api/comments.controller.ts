@@ -5,6 +5,7 @@ import { UpdateCommentDto } from '../dto/comments/update-comment.dto';
 import { CommentsService } from '../application/comments.service';
 import { AccessTokenGuard } from '../../common/guards';
 import { CurrentUserId } from '../../common/decorators';
+import { CreateLikeDto } from '../dto/comments/create-like.dto';
 
 @Controller('comments')
 export class CommentsController {
@@ -14,8 +15,9 @@ export class CommentsController {
 	) {}
 
 	@Get(':id')
-	findOneComment(@Param() param: ObjectIdDto) {
-		return this.queryCommentsRepository.findOneComment(param.id);
+	@UseGuards(AccessTokenGuard)
+	findOneComment(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
+		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
 	}
 
 	@HttpCode(204)
@@ -34,5 +36,16 @@ export class CommentsController {
 	@Delete(':id')
 	async removeComment(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
 		await this.commentsService.removeComment(param.id, currentUserId);
+	}
+
+	@HttpCode(204)
+	@UseGuards(AccessTokenGuard)
+	@Put(':id/like-status')
+	async setLike(
+		@Param() param: ObjectIdDto,
+		@CurrentUserId() currentUserId,
+		@Body() data: CreateLikeDto,
+	) {
+		await this.commentsService.setLike(param.id, currentUserId, data);
 	}
 }

@@ -6,6 +6,6 @@ export const jwtConstants = {
 
 export const optionsCookie = {
 	httpOnly: true,
-	secure: true,
+	//secure: true,
 	maxAge: 60 * 1000 * 10,
 };

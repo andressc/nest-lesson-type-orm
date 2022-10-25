@@ -15,13 +15,22 @@ export class Session {
 	lastActiveDate: string;
 
 	@Prop({ required: true })
+	expirationDate: string;
+
+	@Prop({ required: true })
 	deviceId: string;
 
 	@Prop({ required: true })
 	userId: string;
 
-	updateSession(lastActiveDate: string, ip: string, userAgent: string): this {
+	updateSession(
+		lastActiveDate: string,
+		expirationDate: string,
+		ip: string,
+		userAgent: string,
+	): this {
 		this.lastActiveDate = lastActiveDate;
+		this.expirationDate = expirationDate;
 		this.ip = ip;
 		this.title = userAgent;
 		return this;

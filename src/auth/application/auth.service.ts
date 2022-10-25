@@ -14,11 +14,13 @@ import { RegistrationEmailResendingDto } from '../dto/registration-email-resendi
 import { EmailBadRequestException } from '../../common/exceptions/emailBadRequestException';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../constants';
-import { createDate } from '../../common/helpers/date.helper';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 import { SessionModel } from '../../entity/session.schema';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
 import { NewPasswordDto } from '../dto/newPassword.dto';
+import { payloadDateCreator } from '../../common/helpers/payloadDateCreatior.helper';
+import { PayloadTokenDto } from '../dto/payloadToken.dto';
+import { ResponseTokensDto } from '../dto/responseTokens.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,38 +45,21 @@ export class AuthService {
 		return null;
 	}
 
-	async login(userId: string, ip: string, userAgent: string) {
-		const lastActiveDate = createDate();
+	async login(userId: string, ip: string, userAgent: string): Promise<ResponseTokensDto> {
 		const deviceId = uuidv4();
+		const tokens: ResponseTokensDto = await this.createTokens(userId, deviceId);
+		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
 
 		await this.sessionsRepository.createNewSession({
-			lastActiveDate,
+			lastActiveDate: payloadDateCreator(payload.iat),
+			expirationDate: payloadDateCreator(payload.exp),
 			deviceId,
 			ip,
 			title: userAgent,
 			userId,
 		});
 
-		return this.createTokens(userId, lastActiveDate, deviceId);
-	}
-
-	async createTokens(userId, lastActiveDate: string, deviceId: string) {
-		return {
-			accessToken: this.jwtService.sign(
-				{ sub: userId },
-				{
-					secret: jwtConstants.secretAccessToken,
-					expiresIn: '10m',
-				},
-			),
-			refreshToken: this.jwtService.sign(
-				{ sub: userId, deviceId, lastActiveDate },
-				{
-					secret: jwtConstants.secretRefreshToken,
-					expiresIn: '20m',
-				},
-			),
-		};
+		return tokens;
 	}
 
 	async registration(data: RegistrationDto): Promise<void> {
@@ -125,13 +110,7 @@ export class AuthService {
 	async passwordRecovery(data: RegistrationEmailResendingDto): Promise<void> {
 		await this.validationService.validate(data, RegistrationEmailResendingDto);
 
-		const recoveryCode = this.jwtService.sign(
-			{ sub: data.email },
-			{
-				secret: jwtConstants.passwordRecoveryToken,
-				expiresIn: '10m',
-			},
-		);
+		const recoveryCode: string = await this.createPasswordRecoveryToken(data.email);
 
 		try {
 			await emailManager.sendEmailPasswordRecovery(data.email, recoveryCode);
@@ -140,7 +119,7 @@ export class AuthService {
 		}
 	}
 
-	async refreshToken(refreshTokenData: RefreshTokenDataDto) {
+	async refreshToken(refreshTokenData: RefreshTokenDataDto): Promise<ResponseTokensDto> {
 		const session: SessionModel | null = await this.sessionsRepository.findSessionModel(
 			refreshTokenData.userId,
 			refreshTokenData.deviceId,
@@ -148,19 +127,21 @@ export class AuthService {
 		);
 		if (!session) throw new UnauthorizedException();
 
-		const lastActiveDate = createDate();
+		const tokens: ResponseTokensDto = await this.createTokens(
+			refreshTokenData.userId,
+			refreshTokenData.deviceId,
+		);
+		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
+
 		await this.sessionsRepository.updateSession(
 			session,
-			lastActiveDate,
+			payloadDateCreator(payload.iat),
+			payloadDateCreator(payload.exp),
 			refreshTokenData.ip,
 			refreshTokenData.userAgent,
 		);
 
-		return await this.createTokens(
-			refreshTokenData.userId,
-			lastActiveDate,
-			refreshTokenData.deviceId,
-		);
+		return tokens;
 	}
 
 	async newPassword(data: NewPasswordDto, userId: string): Promise<void> {
@@ -168,5 +149,34 @@ export class AuthService {
 		if (!user) throw new UserNotFoundException(userId);
 
 		await this.usersRepository.updatePassword(user, data.newPassword);
+	}
+
+	private async createTokens(userId, deviceId: string): Promise<ResponseTokensDto> {
+		return {
+			accessToken: this.jwtService.sign(
+				{ sub: userId },
+				{
+					secret: jwtConstants.secretAccessToken,
+					expiresIn: '10m',
+				},
+			),
+			refreshToken: this.jwtService.sign(
+				{ sub: userId, deviceId },
+				{
+					secret: jwtConstants.secretRefreshToken,
+					expiresIn: '20m',
+				},
+			),
+		};
+	}
+
+	private async createPasswordRecoveryToken(email: string): Promise<string> {
+		return this.jwtService.sign(
+			{ sub: email },
+			{
+				secret: jwtConstants.passwordRecoveryToken,
+				expiresIn: '10m',
+			},
+		);
 	}
 }

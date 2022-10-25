@@ -47,7 +47,7 @@ export class PostsController {
 		@CurrentUserId() currentUserId,
 	) {
 		const commentId = await this.commentsService.createCommentOfPost(data, param.id, currentUserId);
-		return this.queryCommentsRepository.findOneComment(commentId);
+		return this.queryCommentsRepository.findOneComment(commentId, currentUserId);
 	}
 
 	@Get()
@@ -55,9 +55,14 @@ export class PostsController {
 		return this.queryPostRepository.findAllPosts(query);
 	}
 
+	@UseGuards(AccessTokenGuard)
 	@Get(':id/comments')
-	findAllCommentsOfPost(@Param() param: ObjectIdDto, @Query() query: QueryCommentDto) {
-		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id);
+	findAllCommentsOfPost(
+		@Param() param: ObjectIdDto,
+		@Query() query: QueryCommentDto,
+		@CurrentUserId() currentUserId,
+	) {
+		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id, currentUserId);
 	}
 
 	@Get(':id')

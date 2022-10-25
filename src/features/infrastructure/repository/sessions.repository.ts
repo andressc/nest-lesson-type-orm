@@ -22,8 +22,8 @@ export class SessionsRepository {
 		return this.sessionModel.findOne({ deviceId });
 	}
 
-	async updateSession(session, lastActiveDate, ip, userAgent): Promise<void> {
-		await session.updateSession(lastActiveDate, ip, userAgent).save();
+	async updateSession(session, lastActiveDate, expirationDate, ip, userAgent): Promise<void> {
+		await session.updateSession(lastActiveDate, expirationDate, ip, userAgent).save();
 	}
 
 	async removeAllUserSessions(userId: string, deviceId: string): Promise<void> {

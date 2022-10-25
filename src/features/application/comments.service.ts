@@ -12,6 +12,7 @@ import { UserNotFoundException } from '../../common/exceptions/UserNotFoundExcep
 import { PostNotFoundException } from '../../common/exceptions/PostNotFoundException';
 import { PostModel } from '../../entity/post.schema';
 import { PostsRepository } from '../infrastructure/repository/posts.repository';
+import { CreateLikeDto } from '../dto/comments/create-like.dto';
 
 @Injectable()
 export class CommentsService {
@@ -58,6 +59,14 @@ export class CommentsService {
 		if (comment.userId !== authUserId) throw new ForbiddenException();
 
 		await this.commentsRepository.removeComment(comment);
+	}
+
+	async setLike(commentId: string, authUserId: string, data: CreateLikeDto): Promise<void> {
+		await this.validationService.validate(data, CreateLikeDto);
+
+		await this.checkUserExists(authUserId);
+		const comment: CommentModel = await this.checkCommentExists(commentId);
+		await this.commentsRepository.setLike(comment, data, authUserId);
 	}
 
 	private async checkCommentExists(id: string): Promise<CommentModel> {

@@ -8,6 +8,8 @@ import { UserModel } from '../../entity/user.schema';
 import { SessionModel } from '../../entity/session.schema';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
+import { payloadDateCreator } from '../../common/helpers/payloadDateCreatior.helper';
+import { PayloadTokenDto } from '../dto/payloadToken.dto';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -28,21 +30,21 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
 		});
 	}
 
-	async validate(req: Request, payload: any): Promise<RefreshTokenDataDto> {
+	async validate(req: Request, payload: PayloadTokenDto): Promise<RefreshTokenDataDto> {
 		const user: UserModel = await this.usersRepository.findUserModel(payload.sub);
 		if (!user) throw new UnauthorizedException();
 
 		const session: SessionModel | null = await this.sessionsRepository.findSessionModel(
 			payload.sub,
 			payload.deviceId,
-			payload.lastActiveDate,
+			payloadDateCreator(payload.iat),
 		);
 		if (!session) throw new UnauthorizedException();
 
 		return {
 			userId: payload.sub,
 			deviceId: payload.deviceId,
-			lastActiveDate: payload.lastActiveDate,
+			lastActiveDate: payloadDateCreator(payload.iat),
 			userAgent: req.headers['user-agent'],
 			ip: req.ip,
 		};

@@ -25,6 +25,7 @@ import {
 } from '../../common/guards';
 import { PasswordRecoveryTokenGuard } from '../../common/guards/password-recovery-token.guard';
 import { NewPasswordDto } from '../dto/newPassword.dto';
+import { ResponseTokensDto } from '../dto/responseTokens.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -44,7 +45,7 @@ export class AuthController {
 		@CurrentUserAgent() userAgent: string,
 		@Res({ passthrough: true }) res: Response,
 	) {
-		const tokens = await this.authService.login(currentUserId, ip, userAgent);
+		const tokens: ResponseTokensDto = await this.authService.login(currentUserId, ip, userAgent);
 		res.cookie('refreshToken', tokens.refreshToken, optionsCookie);
 		return { accessToken: tokens.accessToken };
 	}
