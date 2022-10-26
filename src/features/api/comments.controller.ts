@@ -15,9 +15,8 @@ export class CommentsController {
 	) {}
 
 	@Get(':id')
-	@UseGuards(AccessTokenGuard)
-	findOneComment(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
-		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
+	findOneComment(@Param() param: ObjectIdDto) {
+		return this.queryCommentsRepository.findOneComment(param.id);
 	}
 
 	@HttpCode(204)

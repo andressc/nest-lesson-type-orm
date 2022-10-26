@@ -55,14 +55,9 @@ export class PostsController {
 		return this.queryPostRepository.findAllPosts(query);
 	}
 
-	@UseGuards(AccessTokenGuard)
 	@Get(':id/comments')
-	findAllCommentsOfPost(
-		@Param() param: ObjectIdDto,
-		@Query() query: QueryCommentDto,
-		@CurrentUserId() currentUserId,
-	) {
-		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id, currentUserId);
+	findAllCommentsOfPost(@Param() param: ObjectIdDto, @Query() query: QueryCommentDto) {
+		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id);
 	}
 
 	@Get(':id')
