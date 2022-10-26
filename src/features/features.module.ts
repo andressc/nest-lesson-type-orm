@@ -26,6 +26,7 @@ import { QuerySessionsRepository } from './api/query/query-sessions.repository';
 import { SessionsController } from './api/sessions.controller';
 import { SessionsService } from './application/sessions.service';
 import { SessionsRepository } from './infrastructure/repository/sessions.repository';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { SessionsRepository } from './infrastructure/repository/sessions.reposit
 		MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
 		MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
 		MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }]),
+		JwtModule.register({}),
 		UsersModule,
 	],
 	controllers: [

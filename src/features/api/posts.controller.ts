@@ -22,6 +22,8 @@ import { QueryCommentDto } from '../dto/comments/query-comment.dto';
 import { CommentsService } from '../application/comments.service';
 import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
 import { CurrentUserId } from '../../common/decorators';
+import { NotAuthorizedGuard } from '../../common/guards/not-authorized.guard';
+import { CurrentUserIdNonAuthorized } from '../../common/decorators/Param/current-user-id-non-authorized.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -55,9 +57,14 @@ export class PostsController {
 		return this.queryPostRepository.findAllPosts(query);
 	}
 
+	@UseGuards(NotAuthorizedGuard)
 	@Get(':id/comments')
-	findAllCommentsOfPost(@Param() param: ObjectIdDto, @Query() query: QueryCommentDto) {
-		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id);
+	findAllCommentsOfPost(
+		@Param() param: ObjectIdDto,
+		@Query() query: QueryCommentDto,
+		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+	) {
+		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id, currentUserId);
 	}
 
 	@Get(':id')

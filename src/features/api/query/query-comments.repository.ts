@@ -23,7 +23,7 @@ export class QueryCommentsRepository {
 	async findAllCommentsOfPost(
 		query: QueryCommentDto,
 		postId: string,
-		currentUserId?: string,
+		currentUserId: string | null,
 	): Promise<PaginationDto<ResponseCommentDto[]>> {
 		const searchString = { postId: postId };
 
@@ -51,7 +51,7 @@ export class QueryCommentsRepository {
 		};
 	}
 
-	async findOneComment(id: string, currentUserId?: string): Promise<ResponseCommentDto> {
+	async findOneComment(id: string, currentUserId: string | null): Promise<ResponseCommentDto> {
 		const comment: CommentModel | null = await this.commentModel.findById(id);
 		if (!comment) throw new CommentNotFoundException(id);
 
@@ -67,7 +67,7 @@ export class QueryCommentsRepository {
 		};
 	}
 
-	private mapComments(comment: CommentModel[], currentUserId?: string) {
+	private mapComments(comment: CommentModel[], currentUserId: string | null) {
 		let likesInfo;
 		return comment.map((v: CommentModel) => {
 			likesInfo = this.countLikes(v, currentUserId);
@@ -83,7 +83,7 @@ export class QueryCommentsRepository {
 		});
 	}
 
-	private countLikes(comment: CommentModel, currentUserId?: string): LikesInfo {
+	private countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {
 		let myStatus = LikeStatusEnum.None;
 
 		const likesCount = comment.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;

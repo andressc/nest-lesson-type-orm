@@ -6,6 +6,8 @@ import { CommentsService } from '../application/comments.service';
 import { AccessTokenGuard } from '../../common/guards';
 import { CurrentUserId } from '../../common/decorators';
 import { CreateLikeDto } from '../dto/comments/create-like.dto';
+import { NotAuthorizedGuard } from '../../common/guards/not-authorized.guard';
+import { CurrentUserIdNonAuthorized } from '../../common/decorators/Param/current-user-id-non-authorized.decorator';
 
 @Controller('comments')
 export class CommentsController {
@@ -15,8 +17,12 @@ export class CommentsController {
 	) {}
 
 	@Get(':id')
-	findOneComment(@Param() param: ObjectIdDto) {
-		return this.queryCommentsRepository.findOneComment(param.id);
+	@UseGuards(NotAuthorizedGuard)
+	findOneComment(
+		@Param() param: ObjectIdDto,
+		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+	) {
+		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
 	}
 
 	@HttpCode(204)
