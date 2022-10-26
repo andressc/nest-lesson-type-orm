@@ -5,7 +5,7 @@ import { RecoveryCodeBadRequestException } from '../exceptions/recoveryCodeBadRe
 
 @Injectable()
 export class PasswordRecoveryTokenGuard extends AuthGuard('jwt-recovery-password') {
-	handleRequest(err: any, user: any, info: any, context: any, status: any) {
+	handleRequest(err: any, user: any, info: JsonWebTokenError, context: any, status: any) {
 		if (info instanceof JsonWebTokenError) {
 			throw new RecoveryCodeBadRequestException();
 		}

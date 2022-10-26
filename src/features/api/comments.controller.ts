@@ -6,7 +6,7 @@ import { CommentsService } from '../application/comments.service';
 import { AccessTokenGuard } from '../../common/guards';
 import { CurrentUserId } from '../../common/decorators';
 import { CreateLikeDto } from '../dto/comments/create-like.dto';
-import { NotAuthorizedGuard } from '../../common/guards/not-authorized.guard';
+import { GuestGuard } from '../../common/guards/guest.guard';
 import { CurrentUserIdNonAuthorized } from '../../common/decorators/Param/current-user-id-non-authorized.decorator';
 
 @Controller('comments')
@@ -17,7 +17,7 @@ export class CommentsController {
 	) {}
 
 	@Get(':id')
-	@UseGuards(NotAuthorizedGuard)
+	@UseGuards(GuestGuard)
 	findOneComment(
 		@Param() param: ObjectIdDto,
 		@CurrentUserIdNonAuthorized() currentUserId: string | null,
