@@ -100,7 +100,7 @@ export class QueryPostsRepository {
 
 		const newestLikes = post.likes
 			.slice()
-			.filter((v) => v.likeStatus !== LikeStatusEnum.None)
+			.filter((v) => v.likeStatus === LikeStatusEnum.Like)
 			.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
 			.map((v) => ({
 				addedAt: v.addedAt,
