@@ -32,7 +32,7 @@ export class PostsController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post()
-	async createPost(@Body() data: CreatePostDto, @CurrentUserId() currentUserId) {
+	async createPost(@Body() data: CreatePostDto, @CurrentUserIdNonAuthorized() currentUserId) {
 		const postId = await this.postsService.createPost(data);
 		return this.queryPostRepository.findOnePost(postId, currentUserId);
 	}

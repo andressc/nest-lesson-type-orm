@@ -20,6 +20,8 @@ import { QueryBlogDto } from '../dto/blogs/query-blog.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
 import { QueryPostDto, CreatePostOfBlogDto } from '../dto/posts';
 import { PostsService } from '../application/posts.service';
+import { CurrentUserIdNonAuthorized } from '../../common/decorators';
+import { GuestGuard } from '../../common/guards/guest.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -39,9 +41,13 @@ export class BlogsController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post(':id/posts')
-	async createPostOfBlog(@Body() data: CreatePostOfBlogDto, @Param() param: ObjectIdDto) {
+	async createPostOfBlog(
+		@Body() data: CreatePostOfBlogDto,
+		@Param() param: ObjectIdDto,
+		@CurrentUserIdNonAuthorized() currentUserId,
+	) {
 		const postId = await this.postsService.createPostOfBlog(data, param.id);
-		return this.queryPostRepository.findOnePostBlog(postId);
+		return this.queryPostRepository.findOnePost(postId, currentUserId);
 	}
 
 	@Get()
@@ -50,8 +56,13 @@ export class BlogsController {
 	}
 
 	@Get(':id/posts')
-	findAllPostsOfBlog(@Query() query: QueryPostDto, @Param() param: ObjectIdDto) {
-		return this.queryPostRepository.findAllPostsBlog(query, param.id);
+	@UseGuards(GuestGuard)
+	findAllPostsOfBlog(
+		@Query() query: QueryPostDto,
+		@Param() param: ObjectIdDto,
+		@CurrentUserIdNonAuthorized() currentUserId,
+	) {
+		return this.queryPostRepository.findAllPosts(query, currentUserId, param.id);
 	}
 
 	@Get(':id')

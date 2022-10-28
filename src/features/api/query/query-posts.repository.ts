@@ -11,7 +11,6 @@ import { Blog, BlogModel } from '../../../entity/blog.schema';
 import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
 import { LikesDto } from '../../../common/dto/likes.dto';
 import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
-import { ResponsePostBlogDto } from '../../dto/posts/response-post-blog.dto';
 
 @Injectable()
 export class QueryPostsRepository {
@@ -24,8 +23,12 @@ export class QueryPostsRepository {
 	async findAllPosts(
 		query: QueryDto,
 		currentUserId: string | null,
+		blogId?: string,
 	): Promise<PaginationDto<ResponsePostDto[]>> {
-		const searchString = {};
+		const searchString = blogId ? { blogId } : {};
+
+		const blog: BlogModel | null = await this.blogModel.findById(blogId);
+		if (!blog && blogId) throw new BlogNotFoundException(blogId);
 
 		const totalCount: number = await this.postModel.countDocuments(searchString);
 
@@ -67,52 +70,6 @@ export class QueryPostsRepository {
 		};
 	}
 
-	async findAllPostsBlog(
-		query: QueryDto,
-		blogId: string,
-	): Promise<PaginationDto<ResponsePostBlogDto[]>> {
-		const searchString = blogId ? { blogId } : {};
-
-		const blog: BlogModel | null = await this.blogModel.findById(blogId);
-		if (!blog && blogId) throw new BlogNotFoundException(blogId);
-
-		const totalCount: number = await this.postModel.countDocuments(searchString);
-
-		const paginationData: PaginationCalc = this.paginationService.pagination({
-			...query,
-			totalCount,
-		});
-
-		const post: PostModel[] = await this.postModel
-			.find(searchString)
-			.sort(paginationData.sortBy)
-			.skip(paginationData.skip)
-			.limit(paginationData.pageSize);
-
-		return {
-			pagesCount: paginationData.pagesCount,
-			page: paginationData.pageNumber,
-			pageSize: paginationData.pageSize,
-			totalCount: totalCount,
-			items: this.mapPostsBlog(post),
-		};
-	}
-
-	async findOnePostBlog(id: string): Promise<ResponsePostBlogDto> {
-		const post: PostModel | null = await this.postModel.findById(id);
-		if (!post) throw new PostNotFoundException(id);
-
-		return {
-			id: post.id.toString(),
-			title: post.title,
-			shortDescription: post.shortDescription,
-			content: post.content,
-			blogId: post.blogId,
-			blogName: post.blogName,
-			createdAt: post.createdAt,
-		};
-	}
-
 	private mapPosts(post: PostModel[], currentUserId: string | null) {
 		let likesInfo;
 		return post.map((v: PostModel) => {
@@ -129,18 +86,6 @@ export class QueryPostsRepository {
 				extendedLikesInfo: likesInfo,
 			};
 		});
-	}
-
-	private mapPostsBlog(post: PostModel[]) {
-		return post.map((v: PostModel) => ({
-			id: v._id.toString(),
-			title: v.title,
-			shortDescription: v.shortDescription,
-			content: v.content,
-			blogId: v.blogId,
-			blogName: v.blogName,
-			createdAt: v.createdAt,
-		}));
 	}
 
 	private countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
