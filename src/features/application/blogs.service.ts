@@ -4,8 +4,8 @@ import { BlogModel } from '../../entity/blog.schema';
 import { ValidationService } from './validation.service';
 import { CreateBlogDto } from '../dto/blogs/create-blog.dto';
 import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';
-import { BlogNotFoundException } from '../../common/exceptions/BlogNotFoundException';
-import { createDate } from '../../common/helpers/date.helper';
+import { BlogNotFoundException } from '../../common/exceptions';
+import { createDate } from '../../common/helpers';
 
 @Injectable()
 export class BlogsService {

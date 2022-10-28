@@ -12,18 +12,14 @@ import {
 } from '@nestjs/common';
 import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { AccessTokenGuard, BasicAuthGuard } from '../../common/guards';
-import { CreatePostDto } from '../dto/posts/create-post.dto';
+import { CreatePostDto, UpdatePostDto, QueryPostDto } from '../dto/posts';
 import { PostsService } from '../application/posts.service';
-import { UpdatePostDto } from '../dto/posts/update-post.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
-import { QueryPostDto } from '../dto/posts/query-post.dto';
 import { QueryCommentsRepository } from './query/query-comments.repository';
-import { QueryCommentDto } from '../dto/comments/query-comment.dto';
+import { QueryCommentDto, CreateCommentOfPostDto, CreateLikeDto } from '../dto/comments';
 import { CommentsService } from '../application/comments.service';
-import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
-import { CurrentUserId } from '../../common/decorators';
+import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../common/decorators';
 import { GuestGuard } from '../../common/guards/guest.guard';
-import { CurrentUserIdNonAuthorized } from '../../common/decorators/Param/current-user-id-non-authorized.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -36,9 +32,9 @@ export class PostsController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post()
-	async createPost(@Body() data: CreatePostDto) {
+	async createPost(@Body() data: CreatePostDto, @CurrentUserId() currentUserId) {
 		const postId = await this.postsService.createPost(data);
-		return this.queryPostRepository.findOnePost(postId);
+		return this.queryPostRepository.findOnePost(postId, currentUserId);
 	}
 
 	@UseGuards(AccessTokenGuard)
@@ -53,8 +49,12 @@ export class PostsController {
 	}
 
 	@Get()
-	findAllPosts(@Query() query: QueryPostDto) {
-		return this.queryPostRepository.findAllPosts(query);
+	@UseGuards(GuestGuard)
+	findAllPosts(
+		@Query() query: QueryPostDto,
+		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+	) {
+		return this.queryPostRepository.findAllPosts(query, currentUserId);
 	}
 
 	@UseGuards(GuestGuard)
@@ -69,8 +69,12 @@ export class PostsController {
 	}
 
 	@Get(':id')
-	findOnePost(@Param() param: ObjectIdDto) {
-		return this.queryPostRepository.findOnePost(param.id);
+	@UseGuards(GuestGuard)
+	findOnePost(
+		@Param() param: ObjectIdDto,
+		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+	) {
+		return this.queryPostRepository.findOnePost(param.id, currentUserId);
 	}
 
 	@HttpCode(204)
@@ -85,5 +89,16 @@ export class PostsController {
 	@Delete(':id')
 	async removePost(@Param() param: ObjectIdDto) {
 		await this.postsService.removePost(param.id);
+	}
+
+	@HttpCode(204)
+	@UseGuards(AccessTokenGuard)
+	@Put(':id/like-status')
+	async setLike(
+		@Param() param: ObjectIdDto,
+		@CurrentUserId() currentUserId,
+		@Body() data: CreateLikeDto,
+	) {
+		await this.postsService.setLike(param.id, currentUserId, data);
 	}
 }

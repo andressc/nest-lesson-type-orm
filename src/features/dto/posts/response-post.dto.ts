@@ -1,3 +1,5 @@
+import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
+
 export class ResponsePostDto {
 	id: string;
 	title: string;
@@ -6,4 +8,5 @@ export class ResponsePostDto {
 	blogId: string;
 	blogName: string;
 	createdAt: string;
+	extendedLikesInfo: LikesInfoExtended;
 }

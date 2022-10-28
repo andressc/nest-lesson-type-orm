@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
 import { ResponseUserDto } from '../../dto/response-user.dto';
 import { User, UserModel } from '../../../entity/user.schema';
-import { UserNotFoundException } from '../../../common/exceptions/UserNotFoundException';
+import { UserNotFoundException } from '../../../common/exceptions';
 import { PaginationService } from '../../../features/application/pagination.service';
 import { QueryUserDto } from '../../dto/query-user.dto';
 import { ResponseUserMeDto } from '../../dto/response-user-me.dto';

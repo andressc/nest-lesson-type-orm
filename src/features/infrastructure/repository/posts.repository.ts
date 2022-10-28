@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostModel } from '../../../entity/post.schema';
-import { UpdatePostExtendsDto } from '../../dto/posts/update-post-extends.dto';
-import { CreatePostExtendsDto } from '../../dto/posts/create-post-extends.dto';
+import { UpdatePostExtendsDto, CreatePostExtendsDto } from '../../dto/posts';
+import { CreateLikeDto } from '../../dto/comments';
 
 @Injectable()
 export class PostsRepository {
@@ -18,6 +18,16 @@ export class PostsRepository {
 
 	async updatePost(post: PostModel, data: UpdatePostExtendsDto): Promise<void> {
 		await post.updateData(data).save();
+	}
+
+	async setLike(
+		post: PostModel,
+		data: CreateLikeDto,
+		authUserId: string,
+		userLogin: string,
+	): Promise<void> {
+		const updatePost = await post.setLike(data, authUserId, userLogin);
+		await updatePost.save();
 	}
 
 	async removePost(post: PostModel): Promise<void> {

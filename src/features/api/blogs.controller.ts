@@ -15,12 +15,11 @@ import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';
 import { BlogsService } from '../application/blogs.service';
 import { QueryBlogsRepository } from './query/query-blogs.repository';
 import { ObjectIdDto } from '../../common/dto/object-id.dto';
-import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
+import { BasicAuthGuard } from '../../common/guards';
 import { QueryBlogDto } from '../dto/blogs/query-blog.dto';
 import { QueryPostsRepository } from './query/query-posts.repository';
-import { QueryPostDto } from '../dto/posts/query-post.dto';
+import { QueryPostDto, CreatePostOfBlogDto } from '../dto/posts';
 import { PostsService } from '../application/posts.service';
-import { CreatePostOfBlogDto } from '../dto/posts/create-post-of-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -42,7 +41,7 @@ export class BlogsController {
 	@Post(':id/posts')
 	async createPostOfBlog(@Body() data: CreatePostOfBlogDto, @Param() param: ObjectIdDto) {
 		const postId = await this.postsService.createPostOfBlog(data, param.id);
-		return this.queryPostRepository.findOnePost(postId);
+		return this.queryPostRepository.findOnePostBlog(postId);
 	}
 
 	@Get()
@@ -52,7 +51,7 @@ export class BlogsController {
 
 	@Get(':id/posts')
 	findAllPostsOfBlog(@Query() query: QueryPostDto, @Param() param: ObjectIdDto) {
-		return this.queryPostRepository.findAllPosts(query, param.id);
+		return this.queryPostRepository.findAllPostsBlog(query, param.id);
 	}
 
 	@Get(':id')

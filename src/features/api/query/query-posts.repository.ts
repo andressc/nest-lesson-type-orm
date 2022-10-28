@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ResponsePostDto } from '../../dto/posts/response-post.dto';
+import { ResponsePostDto } from '../../dto/posts';
 import { Post, PostModel } from '../../../entity/post.schema';
-import { PostNotFoundException } from '../../../common/exceptions/PostNotFoundException';
+import { PostNotFoundException, BlogNotFoundException } from '../../../common/exceptions';
 import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
 import { QueryDto } from '../../../common/dto/query.dto';
 import { PaginationService } from '../../application/pagination.service';
 import { Blog, BlogModel } from '../../../entity/blog.schema';
-import { BlogNotFoundException } from '../../../common/exceptions/BlogNotFoundException';
+import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
+import { LikesDto } from '../../../common/dto/likes.dto';
+import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
+import { ResponsePostBlogDto } from '../../dto/posts/response-post-blog.dto';
 
 @Injectable()
 export class QueryPostsRepository {
@@ -18,7 +21,56 @@ export class QueryPostsRepository {
 		private readonly paginationService: PaginationService,
 	) {}
 
-	async findAllPosts(query: QueryDto, blogId?: string): Promise<PaginationDto<ResponsePostDto[]>> {
+	async findAllPosts(
+		query: QueryDto,
+		currentUserId: string | null,
+	): Promise<PaginationDto<ResponsePostDto[]>> {
+		const searchString = {};
+
+		const totalCount: number = await this.postModel.countDocuments(searchString);
+
+		const paginationData: PaginationCalc = this.paginationService.pagination({
+			...query,
+			totalCount,
+		});
+
+		const post: PostModel[] = await this.postModel
+			.find(searchString)
+			.sort(paginationData.sortBy)
+			.skip(paginationData.skip)
+			.limit(paginationData.pageSize);
+
+		return {
+			pagesCount: paginationData.pagesCount,
+			page: paginationData.pageNumber,
+			pageSize: paginationData.pageSize,
+			totalCount: totalCount,
+			items: this.mapPosts(post, currentUserId),
+		};
+	}
+
+	async findOnePost(id: string, currentUserId: string | null): Promise<ResponsePostDto> {
+		const post: PostModel | null = await this.postModel.findById(id);
+		if (!post) throw new PostNotFoundException(id);
+
+		const likesInfo = this.countLikes(post, currentUserId);
+
+		return {
+			id: post.id.toString(),
+			title: post.title,
+			shortDescription: post.shortDescription,
+			content: post.content,
+			blogId: post.blogId,
+			blogName: post.blogName,
+			createdAt: post.createdAt,
+			extendedLikesInfo: likesInfo,
+		};
+	}
+
+	async findAllPostsBlog(
+		query: QueryDto,
+		blogId: string,
+	): Promise<PaginationDto<ResponsePostBlogDto[]>> {
 		const searchString = blogId ? { blogId } : {};
 
 		const blog: BlogModel | null = await this.blogModel.findById(blogId);
@@ -42,11 +94,11 @@ export class QueryPostsRepository {
 			page: paginationData.pageNumber,
 			pageSize: paginationData.pageSize,
 			totalCount: totalCount,
-			items: this.mapPosts(post),
+			items: this.mapPostsBlog(post),
 		};
 	}
 
-	async findOnePost(id: string): Promise<ResponsePostDto> {
+	async findOnePostBlog(id: string): Promise<ResponsePostBlogDto> {
 		const post: PostModel | null = await this.postModel.findById(id);
 		if (!post) throw new PostNotFoundException(id);
 
@@ -61,7 +113,25 @@ export class QueryPostsRepository {
 		};
 	}
 
-	private mapPosts(post: PostModel[]) {
+	private mapPosts(post: PostModel[], currentUserId: string | null) {
+		let likesInfo;
+		return post.map((v: PostModel) => {
+			likesInfo = this.countLikes(v, currentUserId);
+
+			return {
+				id: v._id.toString(),
+				title: v.title,
+				shortDescription: v.shortDescription,
+				content: v.content,
+				blogId: v.blogId,
+				blogName: v.blogName,
+				createdAt: v.createdAt,
+				extendedLikesInfo: likesInfo,
+			};
+		});
+	}
+
+	private mapPostsBlog(post: PostModel[]) {
 		return post.map((v: PostModel) => ({
 			id: v._id.toString(),
 			title: v.title,
@@ -71,5 +141,34 @@ export class QueryPostsRepository {
 			blogName: v.blogName,
 			createdAt: v.createdAt,
 		}));
+	}
+
+	private countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
+		let myStatus = LikeStatusEnum.None;
+
+		const likesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
+		const dislikesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Dislike).length;
+
+		const findMyStatus: undefined | LikesDto = post.likes.find((v) => v.userId === currentUserId);
+
+		if (findMyStatus) myStatus = findMyStatus.likeStatus;
+
+		const newestLikes = post.likes
+			.slice()
+			.filter((v) => v.likeStatus !== LikeStatusEnum.None)
+			.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
+			.map((v) => ({
+				addedAt: v.addedAt,
+				userId: v.userId,
+				login: v.login,
+			}))
+			.slice(0, 3);
+
+		return {
+			likesCount,
+			dislikesCount,
+			myStatus,
+			newestLikes,
+		};
 	}
 }

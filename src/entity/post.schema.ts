@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UpdatePostExtendsDto } from '../features/dto/posts/update-post-extends.dto';
+import { UpdatePostExtendsDto } from '../features/dto/posts';
+import { CreateLikeDto, LikesDto } from '../features/dto/comments';
+import { createDate } from '../common/helpers';
 
 export type PostModel = Post & Document;
 
@@ -24,6 +26,9 @@ export class Post {
 	@Prop({ required: true })
 	createdAt: string;
 
+	@Prop({ type: [] })
+	likes: LikesDto[];
+
 	updateData(data: UpdatePostExtendsDto): this {
 		this.title = data.title;
 		this.shortDescription = data.shortDescription;
@@ -32,8 +37,35 @@ export class Post {
 		this.blogName = data.blogName;
 		return this;
 	}
+
+	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<this> {
+		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
+
+		if (!isLikeExist)
+			this.likes.push({
+				userId: authUserId,
+				login: userLogin,
+				likeStatus: data.likeStatus,
+				addedAt: createDate(),
+			});
+
+		if (isLikeExist) {
+			this.likes = this.likes.map((v) =>
+				v.userId === authUserId
+					? {
+							userId: v.userId,
+							login: v.login,
+							likeStatus: data.likeStatus,
+							addedAt: createDate(),
+					  }
+					: v,
+			);
+		}
+		return this;
+	}
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 
 PostSchema.methods.updateData = Post.prototype.updateData;
+PostSchema.methods.setLike = Post.prototype.setLike;

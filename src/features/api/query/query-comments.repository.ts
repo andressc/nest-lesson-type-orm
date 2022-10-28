@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikesInfo, ResponseCommentDto } from '../../dto/comments/response-comment.dto';
+import { ResponseCommentDto, QueryCommentDto } from '../../dto/comments';
 import { PaginationService } from '../../application/pagination.service';
-import { CommentNotFoundException } from '../../../common/exceptions/CommentNotFoundException';
+import { CommentNotFoundException, PostNotFoundException } from '../../../common/exceptions';
 import { Comment, CommentModel } from '../../../entity/comment.schema';
 import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
-import { QueryCommentDto } from '../../dto/comments/query-comment.dto';
 import { Post, PostModel } from '../../../entity/post.schema';
-import { PostNotFoundException } from '../../../common/exceptions/PostNotFoundException';
-import { LikeStatusEnum } from '../../dto/comments/like-status.enum';
-import { LikesDto } from '../../dto/comments/likes.dto';
+import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
+import { LikesDto } from '../../../common/dto/likes.dto';
+import { LikesInfo } from '../../../common/dto/likes-info.dto';
 
 @Injectable()
 export class QueryCommentsRepository {

@@ -3,22 +3,23 @@ import { UsersService } from '../../users/application/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 import { UserModel } from '../../entity/user.schema';
-import { generateHash } from '../../common/helpers/generateHash.helper';
+import { generateHash, payloadDateCreator } from '../../common/helpers';
 import { RegistrationConfirmationDto } from '../dto/registration-confirmation.dto';
 import { ValidationService } from '../../features/application/validation.service';
-import { UserNotFoundException } from '../../common/exceptions/UserNotFoundException';
+import {
+	UserNotFoundException,
+	ConfirmCodeBadRequestException,
+	EmailBadRequestException,
+} from '../../common/exceptions';
 import { emailManager } from '../../common/mailer/email-manager';
 import { RegistrationDto } from '../dto/registration.dto';
-import { ConfirmCodeBadRequestException } from '../../common/exceptions/confirmCodeBadRequestException';
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
-import { EmailBadRequestException } from '../../common/exceptions/emailBadRequestException';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from '../constants';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 import { SessionModel } from '../../entity/session.schema';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
 import { NewPasswordDto } from '../dto/newPassword.dto';
-import { payloadDateCreator } from '../../common/helpers/payloadDateCreatior.helper';
 import { PayloadTokenDto } from '../dto/payloadToken.dto';
 import { ResponseTokensDto } from '../dto/responseTokens.dto';
 

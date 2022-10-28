@@ -1,18 +1,18 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from './validation.service';
-import { UpdateCommentDto } from '../dto/comments/update-comment.dto';
-import { CommentNotFoundException } from '../../common/exceptions/CommentNotFoundException';
+import { UpdateCommentDto, CreateCommentOfPostDto, CreateLikeDto } from '../dto/comments';
+import {
+	CommentNotFoundException,
+	UserNotFoundException,
+	PostNotFoundException,
+} from '../../common/exceptions';
 import { CommentsRepository } from '../infrastructure/repository/comments.repository';
-import { createDate } from '../../common/helpers/date.helper';
-import { CreateCommentOfPostDto } from '../dto/comments/create-comment-of-post.dto';
+import { createDate } from '../../common/helpers';
 import { UserModel } from '../../entity/user.schema';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
-import { UserNotFoundException } from '../../common/exceptions/UserNotFoundException';
-import { PostNotFoundException } from '../../common/exceptions/PostNotFoundException';
 import { PostModel } from '../../entity/post.schema';
 import { PostsRepository } from '../infrastructure/repository/posts.repository';
-import { CreateLikeDto } from '../dto/comments/create-like.dto';
 
 @Injectable()
 export class CommentsService {
@@ -64,9 +64,9 @@ export class CommentsService {
 	async setLike(commentId: string, authUserId: string, data: CreateLikeDto): Promise<void> {
 		await this.validationService.validate(data, CreateLikeDto);
 
-		await this.checkUserExists(authUserId);
+		const userLogin = await this.checkUserExists(authUserId);
 		const comment: CommentModel = await this.checkCommentExists(commentId);
-		await this.commentsRepository.setLike(comment, data, authUserId);
+		await this.commentsRepository.setLike(comment, data, authUserId, userLogin);
 	}
 
 	private async checkCommentExists(id: string): Promise<CommentModel> {

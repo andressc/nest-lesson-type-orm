@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../../entity/comment.schema';
-import { UpdateCommentDto } from '../../dto/comments/update-comment.dto';
-import { CreateCommentExtendsDto } from '../../dto/comments/create-comment-extends.dto';
-import { CreateLikeDto } from '../../dto/comments/create-like.dto';
+import { UpdateCommentDto, CreateCommentExtendsDto, CreateLikeDto } from '../../dto/comments';
 
 @Injectable()
 export class CommentsRepository {
@@ -21,8 +19,13 @@ export class CommentsRepository {
 		await comment.updateData(data).save();
 	}
 
-	async setLike(comment: CommentModel, data: CreateLikeDto, authUserId: string): Promise<void> {
-		const updateComment = await comment.setLike(data, authUserId);
+	async setLike(
+		comment: CommentModel,
+		data: CreateLikeDto,
+		authUserId: string,
+		userLogin: string,
+	): Promise<void> {
+		const updateComment = await comment.setLike(data, authUserId, userLogin);
 		await updateComment.save();
 		/*await comment.updateOne(
 			{ likes: { userId: authUserId, likeStatus: data.likeStatus } },
