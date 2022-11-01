@@ -32,7 +32,10 @@ export class PostsController {
 
 	@UseGuards(BasicAuthGuard)
 	@Post()
-	async createPost(@Body() data: CreatePostDto, @CurrentUserIdNonAuthorized() currentUserId) {
+	async createPost(
+		@Body() data: CreatePostDto,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
+	) {
 		const postId = await this.postsService.createPost(data);
 		return this.queryPostRepository.findOnePost(postId, currentUserId);
 	}
@@ -52,7 +55,7 @@ export class PostsController {
 	@UseGuards(GuestGuard)
 	findAllPosts(
 		@Query() query: QueryPostDto,
-		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
 	) {
 		return this.queryPostRepository.findAllPosts(query, currentUserId);
 	}
@@ -62,9 +65,8 @@ export class PostsController {
 	findAllCommentsOfPost(
 		@Param() param: ObjectIdDto,
 		@Query() query: QueryCommentDto,
-		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
 	) {
-		console.log(currentUserId);
 		return this.queryCommentsRepository.findAllCommentsOfPost(query, param.id, currentUserId);
 	}
 
@@ -72,7 +74,7 @@ export class PostsController {
 	@UseGuards(GuestGuard)
 	findOnePost(
 		@Param() param: ObjectIdDto,
-		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
 	) {
 		return this.queryPostRepository.findOnePost(param.id, currentUserId);
 	}

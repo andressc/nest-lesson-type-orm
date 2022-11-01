@@ -10,6 +10,7 @@ import { Post, PostModel } from '../../../entity/post.schema';
 import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
 import { LikesDto } from '../../../common/dto/likes.dto';
 import { LikesInfo } from '../../../common/dto/likes-info.dto';
+import { ObjectIdDto } from '../../../common/dto/object-id.dto';
 
 @Injectable()
 export class QueryCommentsRepository {
@@ -22,7 +23,7 @@ export class QueryCommentsRepository {
 	async findAllCommentsOfPost(
 		query: QueryCommentDto,
 		postId: string,
-		currentUserId: string | null,
+		currentUserId: ObjectIdDto | null,
 	): Promise<PaginationDto<ResponseCommentDto[]>> {
 		const searchString = { postId: postId };
 
@@ -50,7 +51,7 @@ export class QueryCommentsRepository {
 		};
 	}
 
-	async findOneComment(id: string, currentUserId: string | null): Promise<ResponseCommentDto> {
+	async findOneComment(id: string, currentUserId: ObjectIdDto | null): Promise<ResponseCommentDto> {
 		const comment: CommentModel | null = await this.commentModel.findById(id);
 		if (!comment) throw new CommentNotFoundException(id);
 
@@ -66,7 +67,7 @@ export class QueryCommentsRepository {
 		};
 	}
 
-	private mapComments(comment: CommentModel[], currentUserId: string | null) {
+	private mapComments(comment: CommentModel[], currentUserId: ObjectIdDto | null) {
 		let likesInfo;
 		return comment.map((v: CommentModel) => {
 			likesInfo = this.countLikes(v, currentUserId);
@@ -82,7 +83,7 @@ export class QueryCommentsRepository {
 		});
 	}
 
-	private countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {
+	private countLikes(comment: CommentModel, currentUserId: ObjectIdDto | null): LikesInfo {
 		let myStatus = LikeStatusEnum.None;
 
 		const likesCount = comment.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
@@ -91,7 +92,7 @@ export class QueryCommentsRepository {
 		).length;
 
 		const findMyStatus: undefined | LikesDto = comment.likes.find(
-			(v) => v.userId === currentUserId,
+			(v) => v.userId === currentUserId.id,
 		);
 
 		if (findMyStatus) myStatus = findMyStatus.likeStatus;

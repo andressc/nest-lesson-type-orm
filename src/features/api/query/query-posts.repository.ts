@@ -11,6 +11,7 @@ import { Blog, BlogModel } from '../../../entity/blog.schema';
 import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
 import { LikesDto } from '../../../common/dto/likes.dto';
 import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
+import { ObjectIdDto } from '../../../common/dto/object-id.dto';
 
 @Injectable()
 export class QueryPostsRepository {
@@ -22,7 +23,7 @@ export class QueryPostsRepository {
 
 	async findAllPosts(
 		query: QueryDto,
-		currentUserId: string | null,
+		currentUserId: ObjectIdDto | null,
 		blogId?: string,
 	): Promise<PaginationDto<ResponsePostDto[]>> {
 		const searchString = blogId ? { blogId } : {};
@@ -52,7 +53,7 @@ export class QueryPostsRepository {
 		};
 	}
 
-	async findOnePost(id: string, currentUserId: string | null): Promise<ResponsePostDto> {
+	async findOnePost(id: string, currentUserId: ObjectIdDto | null): Promise<ResponsePostDto> {
 		const post: PostModel | null = await this.postModel.findById(id);
 		if (!post) throw new PostNotFoundException(id);
 
@@ -70,7 +71,7 @@ export class QueryPostsRepository {
 		};
 	}
 
-	private mapPosts(post: PostModel[], currentUserId: string | null) {
+	private mapPosts(post: PostModel[], currentUserId: ObjectIdDto | null) {
 		let likesInfo;
 		return post.map((v: PostModel) => {
 			likesInfo = this.countLikes(v, currentUserId);
@@ -88,13 +89,15 @@ export class QueryPostsRepository {
 		});
 	}
 
-	private countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
+	private countLikes(post: PostModel, currentUserId: ObjectIdDto | null): LikesInfoExtended {
 		let myStatus = LikeStatusEnum.None;
 
 		const likesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
 		const dislikesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Dislike).length;
 
-		const findMyStatus: undefined | LikesDto = post.likes.find((v) => v.userId === currentUserId);
+		const findMyStatus: undefined | LikesDto = post.likes.find(
+			(v) => v.userId === currentUserId.id,
+		);
 
 		if (findMyStatus) myStatus = findMyStatus.likeStatus;
 

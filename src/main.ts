@@ -5,9 +5,10 @@ import { HttpExceptionFilter } from './common/filters/exeption.filter';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { InitModule } from './init.module';
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+	const app = await NestFactory.create<NestExpressApplication>(InitModule, { cors: true });
 	app.set('trust proxy', 1);
 	app.useGlobalPipes(
 		new ValidationPipe({

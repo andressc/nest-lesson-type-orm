@@ -1,13 +1,12 @@
 import { Controller, Get, Body, Param, Delete, HttpCode, Put, UseGuards } from '@nestjs/common';
 import { ObjectIdDto } from '../../common/dto/object-id.dto';
 import { QueryCommentsRepository } from './query/query-comments.repository';
-import { UpdateCommentDto } from '../dto/comments/update-comment.dto';
+import { UpdateCommentDto, CreateLikeDto } from '../dto/comments';
 import { CommentsService } from '../application/comments.service';
 import { AccessTokenGuard } from '../../common/guards';
 import { CurrentUserId } from '../../common/decorators';
-import { CreateLikeDto } from '../dto/comments/create-like.dto';
 import { GuestGuard } from '../../common/guards/guest.guard';
-import { CurrentUserIdNonAuthorized } from '../../common/decorators/Param/current-user-id-non-authorized.decorator';
+import { CurrentUserIdNonAuthorized } from '../../common/decorators';
 
 @Controller('comments')
 export class CommentsController {
@@ -20,7 +19,7 @@ export class CommentsController {
 	@UseGuards(GuestGuard)
 	findOneComment(
 		@Param() param: ObjectIdDto,
-		@CurrentUserIdNonAuthorized() currentUserId: string | null,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
 	) {
 		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
 	}
