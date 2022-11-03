@@ -4,19 +4,39 @@ import { closeInMongodConnection } from '../src/common/utils/mongo/mongooseTestM
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { Blog } from '../src/entity/blog.schema';
-import { runTestApp } from './run-test-app';
+import { mainT } from '../src/mainT';
 import { Post } from '../src/entity/post.schema';
+import { Comment } from '../src/entity/comment.schema';
+import { Session } from '../src/entity/session.schema';
+import { User } from '../src/entity/user.schema';
+import request from 'supertest';
+import { blogCreator } from '../src/common/utils/mongo/dbSeeding/blogCreator';
+import { commentCreator } from '../src/common/utils/mongo/dbSeeding/commentCreator';
+import { postCreator } from '../src/common/utils/mongo/dbSeeding/postCreator';
+import { userCreator } from '../src/common/utils/mongo/dbSeeding/userCreator';
+import { sessionCreator } from '../src/common/utils/mongo/dbSeeding/sessionCreator';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: any };
 	let BlogModel: Model<Blog>;
 	let PostModel: Model<Post>;
+	let CommentModel: Model<Comment>;
+	let SessionModel: Model<Session>;
+	let UserModel: Model<User>;
+
 	let connection: any;
 	let app: INestApplication;
 	let module: TestingModule;
 
+	const postData = {
+		shortDescription: 'shortDescription',
+		content: 'content',
+		blogId: 'blogId',
+		blogName: 'blogName',
+	};
+
 	beforeAll(async () => {
-		dataApp = await runTestApp();
+		dataApp = await mainT();
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();
@@ -24,6 +44,9 @@ describe('PostController (e2e)', () => {
 
 		BlogModel = module.get<Model<Blog>>(getModelToken(Blog.name));
 		PostModel = module.get<Model<Post>>(getModelToken(Post.name));
+		CommentModel = module.get<Model<Comment>>(getModelToken(Comment.name));
+		SessionModel = module.get<Model<Session>>(getModelToken(Session.name));
+		UserModel = module.get<Model<User>>(getModelToken(User.name));
 	});
 
 	afterAll(async () => {
@@ -31,79 +54,18 @@ describe('PostController (e2e)', () => {
 		await dataApp.app.close();
 	});
 
-	it('void', async () => {
-		expect(1).toBe(1);
-	});
-
-	/*describe('delete all data', () => {
+	describe('delete all data', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
-
-			await PostModel.create({
-				_id: idCreator(),
-				title: 'title',
-				shortDescription: 'shortDescription',
-				content: 'content',
-				blogId: idCreator(),
-				blogName: 'blogName',
-				createdAt: new Date().toISOString(),
-			});
-
-			await BlogModel.create({
-				_id: idCreator(),
-				name: 'name',
-				youtubeUrl: 'youtubeUrl',
-				createdAt: new Date().toISOString(),
-			});
-
-			await UserModel.create({
-				_id: idCreator(),
-				emailConfirmation: {
-					confirmationCode: 'confirmationCode',
-					expirationDate: new Date().toISOString(),
-					isConfirmed: true,
-				},
-				accountData: {
-					login: 'login',
-					email: 'email@email',
-					passwordHash: 'passwordHash',
-				},
-				createdAt: new Date().toISOString(),
-			});
-
-			await CommentModel.create({
-				_id: idCreator(),
-				content: 'content',
-				userId: idCreator(),
-				userLogin: 'userLogin',
-				postId: idCreator(),
-				createdAt: new Date().toISOString(),
-			});
-
-			await RemoteUserIpModel.create({
-				_id: idCreator(),
-				ip: 'ip',
-				url: 'url',
-				date: new Date().toISOString(),
-			});
-
-			await RefreshTokenModel.create({
-				refreshToken: 'refreshToken',
-			});
-
-			await LikeModel.create({
-				_id: idCreator(),
-				type: 'type',
-				login: 'login',
-				userId: idCreator(),
-				itemId: idCreator(),
-				likeStatus: 'likeStatus',
-				addedAt: new Date().toISOString(),
-			});
+			await PostModel.create(postCreator('title', postData, 1));
+			await BlogModel.create(blogCreator('name', 1, 'youtubeUrl'));
+			await UserModel.create(userCreator('login', 'email', 1));
+			await CommentModel.create(commentCreator('content', 'userId', 'userLogin', 'postId', 1));
+			await SessionModel.create(sessionCreator());
 		});
 
 		it('delete all', async () => {
-			await request(app).delete('/testing/all-data').expect(HttpStatusCode.NO_CONTENT);
+			await request(app).delete('/testing/all-data').expect(204);
 		});
 
 		it('find after deleting', async () => {
@@ -111,17 +73,13 @@ describe('PostController (e2e)', () => {
 			const blogCount = await BlogModel.countDocuments({});
 			const userCount = await UserModel.countDocuments({});
 			const commentCount = await CommentModel.countDocuments({});
-			const remoteUserIpCount = await RemoteUserIpModel.countDocuments({});
-			const refreshToken = await RefreshTokenModel.countDocuments({});
-			const likeCount = await LikeModel.countDocuments({});
+			const sessionIpCount = await SessionModel.countDocuments({});
 
 			expect(postCount).toBe(0);
 			expect(blogCount).toBe(0);
 			expect(userCount).toBe(0);
 			expect(commentCount).toBe(0);
-			expect(remoteUserIpCount).toBe(0);
-			expect(refreshToken).toBe(0);
-			expect(likeCount).toBe(0);
+			expect(sessionIpCount).toBe(0);
 		});
-	});*/
+	});
 });

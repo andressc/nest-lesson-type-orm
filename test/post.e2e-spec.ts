@@ -5,11 +5,11 @@ import { closeInMongodConnection } from '../src/common/utils/mongo/mongooseTestM
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { Blog } from '../src/entity/blog.schema';
-import { runTestApp } from './run-test-app';
+import { mainT } from '../src/mainT';
 import { ObjectId } from 'mongodb';
 import { Post } from '../src/entity/post.schema';
-import { blogCreator } from './creators/blogCreator';
-import { postCreator } from './creators/postCreator';
+import { blogCreator } from '../src/common/utils/mongo/dbSeeding/blogCreator';
+import { postCreator } from '../src/common/utils/mongo/dbSeeding/postCreator';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: any };
@@ -68,7 +68,7 @@ describe('PostController (e2e)', () => {
 	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
 
 	beforeAll(async () => {
-		dataApp = await runTestApp();
+		dataApp = await mainT();
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();

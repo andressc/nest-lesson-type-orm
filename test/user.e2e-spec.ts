@@ -4,10 +4,10 @@ import request from 'supertest';
 import { closeInMongodConnection } from '../src/common/utils/mongo/mongooseTestModule';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { runTestApp } from './run-test-app';
+import { mainT } from '../src/mainT';
 import { ObjectId } from 'mongodb';
 import { User } from '../src/entity/user.schema';
-import { userCreator } from './creators/userCreator';
+import { userCreator } from '../src/common/utils/mongo/dbSeeding/userCreator';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: any };
@@ -51,7 +51,7 @@ describe('BlogController (e2e)', () => {
 	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
 
 	beforeAll(async () => {
-		dataApp = await runTestApp();
+		dataApp = await mainT();
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();

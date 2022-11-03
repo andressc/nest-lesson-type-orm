@@ -1,14 +1,15 @@
 import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from '../src/common/filters/exeption.filter';
+import { HttpExceptionFilter } from './common/filters/exeption.filter';
 import { Test, TestingModule } from '@nestjs/testing';
-import { rootMongooseTestModule } from '../src/common/utils/mongo/mongooseTestModule';
-import { AppModule } from '../src/app.module';
+import { rootMongooseTestModule } from './common/utils/mongo/mongooseTestModule';
+import { AppModule } from './app.module';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { useContainer } from 'class-validator';
+import cookieParser from 'cookie-parser';
 
 let app: INestApplication;
 
-export const runTestApp = async () => {
+export const mainT = async () => {
 	const module: TestingModule = await Test.createTestingModule({
 		imports: [rootMongooseTestModule(), AppModule],
 	}).compile();
@@ -38,6 +39,7 @@ export const runTestApp = async () => {
 	);
 	app.useGlobalFilters(new HttpExceptionFilter());
 	useContainer(app.select(AppModule), { fallbackOnErrors: true });
+	app.use(cookieParser());
 
 	await app.init();
 
