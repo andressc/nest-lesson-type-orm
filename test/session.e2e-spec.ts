@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 import { Connection } from 'mongoose';
 import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
 
-describe('PostController (e2e)', () => {
+describe('PostController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 
 	let connection: Connection;
