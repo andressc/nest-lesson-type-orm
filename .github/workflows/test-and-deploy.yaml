@@ -19,6 +19,9 @@ jobs:
       - name: Test
         run: yarn run test:e2e
 
+      - name: Lint
+        run: yarn run lint
+
   deploy:
     name: Deploy
     needs: tests

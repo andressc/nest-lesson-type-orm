@@ -12,12 +12,18 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PasswordRecoveryTokenStrategy } from './strategies/passwordRecoveryToken.strategy';
 import { AuthConfig } from '../configuration/auth.config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
 	imports: [
-		ThrottlerModule.forRoot({
-			ttl: 10,
-			limit: 5,
+		ThrottlerModule.forRootAsync({
+			useFactory: async (configService: ConfigService) => {
+				return {
+					ttl: Number(configService.get<string>('THROTTLER_TTL')),
+					limit: Number(configService.get<string>('THROTTLER_LIMIT')),
+				};
+			},
+			inject: [ConfigService],
 		}),
 		UsersModule,
 		PassportModule,
