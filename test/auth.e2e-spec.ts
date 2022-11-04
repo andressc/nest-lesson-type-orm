@@ -5,7 +5,7 @@ import { mainTest } from '../src/main-test';
 import { Connection } from 'mongoose';
 import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
 
-describe('BlogController (e2e)', () => {
+describe('BlogController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 	let connection: Connection;
 	let app: INestApplication;
