@@ -15,13 +15,13 @@ import { emailManager } from '../../common/mailer/email-manager';
 import { RegistrationDto } from '../dto/registration.dto';
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { jwtConstants } from '../constants';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 import { SessionModel } from '../../entity/session.schema';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
 import { NewPasswordDto } from '../dto/newPassword.dto';
 import { PayloadTokenDto } from '../dto/payloadToken.dto';
 import { ResponseTokensDto } from '../dto/responseTokens.dto';
+import { AuthConfig } from '../../configuration/auth.config';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +31,7 @@ export class AuthService {
 		private readonly usersRepository: UsersRepository,
 		private readonly sessionsRepository: SessionsRepository,
 		private readonly validationService: ValidationService,
+		private readonly authConfig: AuthConfig,
 	) {}
 
 	async validateUser(login: string, password: string): Promise<UserModel | null> {
@@ -157,15 +158,15 @@ export class AuthService {
 			accessToken: this.jwtService.sign(
 				{ sub: userId },
 				{
-					secret: jwtConstants.secretAccessToken,
-					expiresIn: '10m',
+					secret: this.authConfig.getAccessTokenSecret(),
+					expiresIn: this.authConfig.getAccessTokenExpiresIn(),
 				},
 			),
 			refreshToken: this.jwtService.sign(
 				{ sub: userId, deviceId },
 				{
-					secret: jwtConstants.secretRefreshToken,
-					expiresIn: '20m',
+					secret: this.authConfig.getRefreshTokenSecret(),
+					expiresIn: this.authConfig.getRefreshTokenExpiresIn(),
 				},
 			),
 		};
@@ -175,8 +176,8 @@ export class AuthService {
 		return this.jwtService.sign(
 			{ sub: email },
 			{
-				secret: jwtConstants.passwordRecoveryToken,
-				expiresIn: '10m',
+				secret: this.authConfig.getRecoveryTokenSecret(),
+				expiresIn: this.authConfig.getRecoveryTokenExpiresIn(),
 			},
 		);
 	}

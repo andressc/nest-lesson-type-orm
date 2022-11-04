@@ -11,6 +11,7 @@ import { FeaturesModule } from '../features/features.module';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PasswordRecoveryTokenStrategy } from './strategies/passwordRecoveryToken.strategy';
+import { AuthConfig } from '../configuration/auth.config';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { PasswordRecoveryTokenStrategy } from './strategies/passwordRecoveryToke
 		RefreshTokenStrategy,
 		BasicStrategy,
 		PasswordRecoveryTokenStrategy,
+		AuthConfig,
 	],
 	exports: [AuthService],
 })

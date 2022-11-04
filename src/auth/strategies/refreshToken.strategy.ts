@@ -1,21 +1,22 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { jwtConstants } from '../constants';
 import { Request } from 'express';
 import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 import { UserModel } from '../../entity/user.schema';
 import { SessionModel } from '../../entity/session.schema';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
-import { payloadDateCreator } from '../../common/helpers/payloadDateCreatior.helper';
+import { payloadDateCreator } from '../../common/helpers';
 import { PayloadTokenDto } from '../dto/payloadToken.dto';
+import { AuthConfig } from '../../configuration/auth.config';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
 	constructor(
 		private readonly usersRepository: UsersRepository,
 		private readonly sessionsRepository: SessionsRepository,
+		private readonly authConfig: AuthConfig,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromExtractors([
@@ -25,7 +26,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
 			]),
 
 			ignoreExpiration: false,
-			secretOrKey: jwtConstants.secretRefreshToken,
+			secretOrKey: authConfig.getRefreshTokenSecret(),
 			passReqToCallback: true,
 		});
 	}

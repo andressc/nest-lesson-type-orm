@@ -10,7 +10,6 @@ import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
 
 import { SessionsService } from '../../features/application/sessions.service';
 
-import { optionsCookie } from '../constants';
 import {
 	CurrentUserAgent,
 	CurrentUserId,
@@ -26,6 +25,7 @@ import {
 import { PasswordRecoveryTokenGuard } from '../../common/guards/password-recovery-token.guard';
 import { NewPasswordDto } from '../dto/newPassword.dto';
 import { ResponseTokensDto } from '../dto/responseTokens.dto';
+import { AuthConfig } from '../../configuration/auth.config';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +33,7 @@ export class AuthController {
 		private readonly authService: AuthService,
 		private readonly sessionsService: SessionsService,
 		private readonly queryUsersRepository: QueryUsersRepository,
+		private readonly authConfig: AuthConfig,
 	) {}
 
 	@HttpCode(200)
@@ -46,7 +47,11 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		const tokens: ResponseTokensDto = await this.authService.login(currentUserId, ip, userAgent);
-		res.cookie('refreshToken', tokens.refreshToken, optionsCookie);
+		res.cookie(
+			this.authConfig.getCookieNameJwt(),
+			tokens.refreshToken,
+			this.authConfig.getCookieSettings(),
+		);
 		return { accessToken: tokens.accessToken };
 	}
 
@@ -64,7 +69,11 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 	) {
 		const tokens = await this.authService.refreshToken(refreshTokenData);
-		res.cookie('refreshToken', tokens.refreshToken, optionsCookie);
+		res.cookie(
+			this.authConfig.getCookieNameJwt(),
+			tokens.refreshToken,
+			this.authConfig.getCookieSettings(),
+		);
 		return { accessToken: tokens.accessToken };
 	}
 

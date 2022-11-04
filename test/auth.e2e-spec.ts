@@ -1,12 +1,13 @@
 import { TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { closeInMongodConnection } from '../src/common/utils/mongo/mongooseTestModule';
-import { mainT } from '../src/mainT';
+import { mainTest } from '../src/main-test';
+import { Connection } from 'mongoose';
+import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
 
 describe('BlogController (e2e)', () => {
-	let dataApp: { app: INestApplication; module: TestingModule; connection: any };
-	let connection: any;
+	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
+	let connection: Connection;
 	let app: INestApplication;
 
 	const userDataLogin = {
@@ -41,14 +42,14 @@ describe('BlogController (e2e)', () => {
 	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
 
 	beforeAll(async () => {
-		dataApp = await mainT();
+		dataApp = await mainTest();
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();
 	});
 
 	afterAll(async () => {
-		await closeInMongodConnection();
+		await stopMongoMemoryServer();
 		await dataApp.app.close();
 	});
 

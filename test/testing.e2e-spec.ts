@@ -1,30 +1,30 @@
 import { TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { closeInMongodConnection } from '../src/common/utils/mongo/mongooseTestModule';
-import { Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { Blog } from '../src/entity/blog.schema';
-import { mainT } from '../src/mainT';
+import { mainTest } from '../src/main-test';
 import { Post } from '../src/entity/post.schema';
 import { Comment } from '../src/entity/comment.schema';
 import { Session } from '../src/entity/session.schema';
 import { User } from '../src/entity/user.schema';
 import request from 'supertest';
-import { blogCreator } from '../src/common/utils/mongo/dbSeeding/blogCreator';
-import { commentCreator } from '../src/common/utils/mongo/dbSeeding/commentCreator';
-import { postCreator } from '../src/common/utils/mongo/dbSeeding/postCreator';
-import { userCreator } from '../src/common/utils/mongo/dbSeeding/userCreator';
-import { sessionCreator } from '../src/common/utils/mongo/dbSeeding/sessionCreator';
+import { blogCreator } from './dbSeeding/blogCreator';
+import { commentCreator } from './dbSeeding/commentCreator';
+import { postCreator } from './dbSeeding/postCreator';
+import { userCreator } from './dbSeeding/userCreator';
+import { sessionCreator } from './dbSeeding/sessionCreator';
+import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
 
 describe('PostController (e2e)', () => {
-	let dataApp: { app: INestApplication; module: TestingModule; connection: any };
+	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 	let BlogModel: Model<Blog>;
 	let PostModel: Model<Post>;
 	let CommentModel: Model<Comment>;
 	let SessionModel: Model<Session>;
 	let UserModel: Model<User>;
 
-	let connection: any;
+	let connection: Connection;
 	let app: INestApplication;
 	let module: TestingModule;
 
@@ -36,7 +36,7 @@ describe('PostController (e2e)', () => {
 	};
 
 	beforeAll(async () => {
-		dataApp = await mainT();
+		dataApp = await mainTest();
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();
@@ -50,7 +50,7 @@ describe('PostController (e2e)', () => {
 	});
 
 	afterAll(async () => {
-		await closeInMongodConnection();
+		await stopMongoMemoryServer();
 		await dataApp.app.close();
 	});
 
