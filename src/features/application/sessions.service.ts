@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { SessionModel } from '../../entity/session.schema';
 import { SessionsRepository } from '../infrastructure/repository/sessions.repository';
-import { DeviceIdNotFoundException } from '../../common/exceptions/deviceIdNotFoundException';
+import { DeviceIdNotFoundException } from '../../common/exceptions';
 
 @Injectable()
 export class SessionsService {

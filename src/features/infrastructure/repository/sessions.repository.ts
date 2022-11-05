@@ -7,11 +7,8 @@ import { Session, SessionModel } from '../../../entity/session.schema';
 export class SessionsRepository {
 	constructor(@InjectModel(Session.name) private readonly sessionModel: Model<SessionModel>) {}
 
-	async createNewSession(session: any): Promise<string> {
-		const newSession: SessionModel = new this.sessionModel(session);
-
-		const result = await newSession.save();
-		return result.id.toString();
+	async createNewSessionModel(session: any): Promise<SessionModel> {
+		return new this.sessionModel(session);
 	}
 
 	async findSessionModel(userId, deviceId, lastActiveDate): Promise<SessionModel | null> {
@@ -20,10 +17,6 @@ export class SessionsRepository {
 
 	async findSessionModelOnDeviceId(deviceId): Promise<SessionModel | null> {
 		return this.sessionModel.findOne({ deviceId });
-	}
-
-	async updateSession(session, lastActiveDate, expirationDate, ip, userAgent): Promise<void> {
-		await session.updateSession(lastActiveDate, expirationDate, ip, userAgent).save();
 	}
 
 	async removeAllUserSessions(userId: string, deviceId: string): Promise<void> {

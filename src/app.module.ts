@@ -4,6 +4,7 @@ import { FeaturesModule } from './features/features.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
 		AuthModule,
 		UsersModule,
 		DatabaseModule,
+		MailerModule,
 	],
 	controllers: [],
 	providers: [],

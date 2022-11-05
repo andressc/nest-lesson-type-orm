@@ -13,6 +13,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { PasswordRecoveryTokenStrategy } from './strategies/passwordRecoveryToken.strategy';
 import { AuthConfig } from '../configuration/auth.config';
 import { ConfigService } from '@nestjs/config';
+import { MailerModule } from '../mailer/mailer.module';
 
 @Module({
 	imports: [
@@ -25,10 +26,11 @@ import { ConfigService } from '@nestjs/config';
 			},
 			inject: [ConfigService],
 		}),
+		JwtModule.register({}),
 		UsersModule,
 		PassportModule,
 		FeaturesModule,
-		JwtModule.register({}),
+		MailerModule,
 	],
 	controllers: [AuthController],
 	providers: [

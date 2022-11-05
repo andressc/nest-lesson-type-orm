@@ -8,27 +8,12 @@ import { CreateUserExtendsDto } from '../../dto/create-user-extends.dto';
 export class UsersRepository {
 	constructor(@InjectModel(User.name) private readonly userModel: Model<UserModel>) {}
 
-	async createUser(data: CreateUserExtendsDto): Promise<string> {
-		const newUser: UserModel = new this.userModel(data);
-
-		const result = await newUser.save();
-		return result.id.toString();
-	}
-
-	async removeUser(user: UserModel): Promise<void> {
-		await user.delete();
-	}
-
-	async deleteAll(): Promise<void> {
-		await this.userModel.deleteMany();
+	async createUserModel(data: CreateUserExtendsDto): Promise<UserModel> {
+		return new this.userModel(data);
 	}
 
 	async findUserModel(id: string): Promise<UserModel | null> {
 		return this.userModel.findById(id);
-	}
-
-	async findUserModelByEmailOrLogin(login: string, email: string): Promise<UserModel | null> {
-		return this.userModel.findOne({ $or: [{ login }, { email }] });
 	}
 
 	async findUserModelByLogin(login: string): Promise<UserModel | null> {
@@ -43,16 +28,7 @@ export class UsersRepository {
 		return this.userModel.findOne({ confirmationCode });
 	}
 
-	async updateIsConfirmed(user: UserModel): Promise<void> {
-		await user.updateIsConfirmed(true).save();
-	}
-
-	async updateConfirmationCode(user, ConfirmationCode: string): Promise<void> {
-		await user.updateConfirmationCode(ConfirmationCode).save();
-	}
-
-	async updatePassword(user, password: string): Promise<void> {
-		const userUpdate = await user.updatePassword(password);
-		await userUpdate.save();
+	async deleteAll(): Promise<void> {
+		await this.userModel.deleteMany();
 	}
 }

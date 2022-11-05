@@ -17,22 +17,28 @@ export class BlogsService {
 	async createBlog(data: CreateBlogDto): Promise<string> {
 		await this.validationService.validate(data, CreateBlogDto);
 
-		return this.blogsRepository.createBlog({ ...data, createdAt: createDate() });
+		const newBlog: BlogModel = await this.blogsRepository.createBlogModel({
+			...data,
+			createdAt: createDate(),
+		});
+		const result = await newBlog.save();
+		return result.id.toString();
 	}
 
 	async updateBlog(id: string, data: UpdateBlogDto): Promise<void> {
 		await this.validationService.validate(data, UpdateBlogDto);
 
-		const blog: BlogModel = await this.checkBlogExists(id);
-		await this.blogsRepository.updateBlog(blog, data);
+		const blog: BlogModel = await this.findBlogOrErrorThrow(id);
+		blog.updateData(data);
+		await blog.save();
 	}
 
 	async removeBlog(id: string): Promise<void> {
-		const blog: BlogModel = await this.checkBlogExists(id);
-		await this.blogsRepository.removeBlog(blog);
+		const blog: BlogModel = await this.findBlogOrErrorThrow(id);
+		await blog.delete();
 	}
 
-	private async checkBlogExists(id: string): Promise<BlogModel> {
+	private async findBlogOrErrorThrow(id: string): Promise<BlogModel> {
 		const blog: BlogModel | null = await this.blogsRepository.findBlogModel(id);
 		if (!blog) throw new BlogNotFoundException(id);
 		return blog;

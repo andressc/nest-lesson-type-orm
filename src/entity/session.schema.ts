@@ -28,12 +28,11 @@ export class Session {
 		expirationDate: string,
 		ip: string,
 		userAgent: string,
-	): this {
+	): void {
 		this.lastActiveDate = lastActiveDate;
 		this.expirationDate = expirationDate;
 		this.ip = ip;
 		this.title = userAgent;
-		return this;
 	}
 }
 

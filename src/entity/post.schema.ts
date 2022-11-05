@@ -29,16 +29,15 @@ export class Post {
 	@Prop({ type: [] })
 	likes: LikesDto[];
 
-	updateData(data: UpdatePostExtendsDto): this {
+	updateData(data: UpdatePostExtendsDto): void {
 		this.title = data.title;
 		this.shortDescription = data.shortDescription;
 		this.content = data.content;
 		this.blogId = data.blogId;
 		this.blogName = data.blogName;
-		return this;
 	}
 
-	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<this> {
+	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<void> {
 		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
 
 		if (!isLikeExist)
@@ -61,7 +60,6 @@ export class Post {
 					: v,
 			);
 		}
-		return this;
 	}
 }
 

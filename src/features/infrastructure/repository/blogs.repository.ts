@@ -2,26 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogModel } from '../../../entity/blog.schema';
-import { UpdateBlogDto } from '../../dto/blogs/update-blog.dto';
 import { CreateBlogExtendsDto } from '../../dto/blogs/create-blog-extends.dto';
 
 @Injectable()
 export class BlogsRepository {
 	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
 
-	async createBlog(data: CreateBlogExtendsDto): Promise<string> {
-		const newBlog: BlogModel = new this.blogModel(data);
-
-		const result = await newBlog.save();
-		return result.id.toString();
-	}
-
-	async updateBlog(blog: BlogModel, data: UpdateBlogDto): Promise<void> {
-		await blog.updateData(data).save();
-	}
-
-	async removeBlog(blog: BlogModel): Promise<void> {
-		await blog.delete();
+	async createBlogModel(data: CreateBlogExtendsDto): Promise<BlogModel> {
+		return new this.blogModel(data);
 	}
 
 	async findBlogModel(id: string): Promise<BlogModel | null> {

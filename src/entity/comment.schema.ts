@@ -26,12 +26,11 @@ export class Comment {
 	@Prop({ type: [] })
 	likes: LikesDto[];
 
-	updateData(data: UpdateCommentDto): this {
+	updateData(data: UpdateCommentDto): void {
 		this.content = data.content;
-		return this;
 	}
 
-	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<this> {
+	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<void> {
 		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
 
 		if (!isLikeExist)
@@ -54,7 +53,6 @@ export class Comment {
 					: v,
 			);
 		}
-		return this;
 	}
 }
 

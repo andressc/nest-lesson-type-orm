@@ -24,56 +24,75 @@ export class PostsService {
 	async createPost(data: CreatePostDto): Promise<string> {
 		await this.validationService.validate(data, CreatePostDto);
 
-		const blogName: string = await this.blogExists(data.blogId);
+		const blog: BlogModel = await this.findBlogOrErrorThrow(data.blogId);
 
-		return this.postsRepository.createPost({ ...data, blogName, createdAt: createDate() });
+		const newPost = await this.postsRepository.createPost({
+			...data,
+			blogName: blog.name,
+			createdAt: createDate(),
+		});
+
+		const result = await newPost.save();
+		return result.id.toString();
 	}
 
 	async createPostOfBlog(data: CreatePostOfBlogDto, blogId: string): Promise<string> {
 		await this.validationService.validate(data, CreatePostOfBlogDto);
 
-		const blogName: string = await this.blogExists(blogId);
+		const blog: BlogModel = await this.findBlogOrErrorThrow(blogId);
 
-		return this.postsRepository.createPost({ ...data, blogId, blogName, createdAt: createDate() });
+		const newPost = await this.postsRepository.createPost({
+			...data,
+			blogId,
+			blogName: blog.name,
+			createdAt: createDate(),
+		});
+
+		const result = await newPost.save();
+		return result.id.toString();
 	}
 
 	async updatePost(id: string, data: UpdatePostDto): Promise<void> {
 		await this.validationService.validate(data, UpdatePostDto);
 
-		const blogName: string = await this.blogExists(data.blogId);
+		const blog: BlogModel = await this.findBlogOrErrorThrow(data.blogId);
 
-		const post: PostModel = await this.checkPostExists(id);
-		await this.postsRepository.updatePost(post, { ...data, blogName });
+		const post: PostModel = await this.findPostOrErrorThrow(id);
+		post.updateData({ ...data, blogName: blog.name });
+		await post.save();
 	}
 
 	async removePost(id: string): Promise<void> {
-		const post: PostModel = await this.checkPostExists(id);
-		await this.postsRepository.removePost(post);
+		const post: PostModel = await this.findPostOrErrorThrow(id);
+		await post.delete();
 	}
 
 	async setLike(commentId: string, authUserId: string, data: CreateLikeDto): Promise<void> {
 		await this.validationService.validate(data, CreateLikeDto);
 
-		const userLogin = await this.checkUserExists(authUserId);
-		const post: PostModel = await this.checkPostExists(commentId);
-		await this.postsRepository.setLike(post, data, authUserId, userLogin);
+		const user = await this.findUserOrErrorThrow(authUserId);
+
+		const post: PostModel = await this.findPostOrErrorThrow(commentId);
+
+		await post.setLike(data, authUserId, user.login);
+		await post.save();
 	}
 
-	private async checkUserExists(id: string): Promise<string> {
+	private async findUserOrErrorThrow(id: string): Promise<UserModel> {
 		const user: UserModel = await this.usersRepository.findUserModel(id);
 		if (!user) throw new UserNotFoundException(id);
-		return user.login;
+		return user;
 	}
 
-	private async checkPostExists(id: string): Promise<PostModel> {
+	private async findPostOrErrorThrow(id: string): Promise<PostModel> {
 		const post: PostModel | null = await this.postsRepository.findPostModel(id);
 		if (!post) throw new PostNotFoundException(id);
 		return post;
 	}
 
-	private async blogExists(id: string): Promise<string> {
+	private async findBlogOrErrorThrow(id: string): Promise<BlogModel> {
 		const blog: BlogModel = await this.blogsRepository.findBlogModel(id);
 		if (!blog) throw new BlogNotFoundException(id);
-		return blog.name;
+		return blog;
 	}
 }

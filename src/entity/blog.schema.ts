@@ -15,10 +15,9 @@ export class Blog {
 	@Prop({ required: true })
 	createdAt: string;
 
-	updateData(data: UpdateBlogDto): this {
+	updateData(data: UpdateBlogDto): void {
 		this.name = data.name;
 		this.youtubeUrl = data.youtubeUrl;
-		return this;
 	}
 }
 

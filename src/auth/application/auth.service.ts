@@ -11,7 +11,7 @@ import {
 	ConfirmCodeBadRequestException,
 	EmailBadRequestException,
 } from '../../common/exceptions';
-import { emailManager } from '../../common/mailer/email-manager';
+import { MailerService } from '../../mailer/application/mailer.service';
 import { RegistrationDto } from '../dto/registration.dto';
 import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -32,6 +32,7 @@ export class AuthService {
 		private readonly sessionsRepository: SessionsRepository,
 		private readonly validationService: ValidationService,
 		private readonly authConfig: AuthConfig,
+		private readonly mailerService: MailerService,
 	) {}
 
 	async validateUser(login: string, password: string): Promise<UserModel | null> {
@@ -52,7 +53,7 @@ export class AuthService {
 		const tokens: ResponseTokensDto = await this.createTokens(userId, deviceId);
 		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
 
-		await this.sessionsRepository.createNewSession({
+		const newSession: SessionModel = await this.sessionsRepository.createNewSessionModel({
 			lastActiveDate: payloadDateCreator(payload.iat),
 			expirationDate: payloadDateCreator(payload.exp),
 			deviceId,
@@ -60,6 +61,8 @@ export class AuthService {
 			title: userAgent,
 			userId,
 		});
+
+		await newSession.save();
 
 		return tokens;
 	}
@@ -72,7 +75,7 @@ export class AuthService {
 		if (!user) throw new UserNotFoundException(userId);
 
 		try {
-			await emailManager.sendEmailRegistrationMessage(user.email, user.confirmationCode);
+			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}
@@ -88,7 +91,8 @@ export class AuthService {
 		if (!user) throw new ConfirmCodeBadRequestException();
 		if (user.isConfirmed) throw new ConfirmCodeBadRequestException();
 
-		await this.usersRepository.updateIsConfirmed(user);
+		user.updateIsConfirmed(true);
+		await user.save();
 	}
 
 	async registrationEmailResending(data: RegistrationEmailResendingDto): Promise<void> {
@@ -100,10 +104,11 @@ export class AuthService {
 		if (user.isConfirmed) throw new EmailBadRequestException();
 
 		const newConfirmationCode = uuidv4();
-		await this.usersRepository.updateConfirmationCode(user, newConfirmationCode);
+		user.updateConfirmationCode(newConfirmationCode);
+		await user.save();
 
 		try {
-			await emailManager.sendEmailRegistrationMessage(user.email, user.confirmationCode);
+			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}
@@ -115,7 +120,7 @@ export class AuthService {
 		const recoveryCode: string = await this.createPasswordRecoveryToken(data.email);
 
 		try {
-			await emailManager.sendEmailPasswordRecovery(data.email, recoveryCode);
+			await this.mailerService.sendEmailPasswordRecovery(data.email, recoveryCode);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}
@@ -135,13 +140,13 @@ export class AuthService {
 		);
 		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
 
-		await this.sessionsRepository.updateSession(
-			session,
+		await session.updateSession(
 			payloadDateCreator(payload.iat),
 			payloadDateCreator(payload.exp),
 			refreshTokenData.ip,
 			refreshTokenData.userAgent,
 		);
+		await session.save();
 
 		return tokens;
 	}
@@ -150,7 +155,8 @@ export class AuthService {
 		const user: UserModel | null = await this.usersRepository.findUserModel(userId);
 		if (!user) throw new UserNotFoundException(userId);
 
-		await this.usersRepository.updatePassword(user, data.newPassword);
+		await user.updatePassword(data.newPassword);
+		await user.save();
 	}
 
 	private async createTokens(userId, deviceId: string): Promise<ResponseTokensDto> {
