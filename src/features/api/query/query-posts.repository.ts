@@ -67,11 +67,11 @@ export class QueryPostsRepository {
 			blogId: post.blogId,
 			blogName: post.blogName,
 			createdAt: post.createdAt,
-			extendedLikesInfo: likesInfo,
+			//extendedLikesInfo: likesInfo,
 		};
 	}
 
-	private mapPosts(post: PostModel[], currentUserId: ObjectIdDto | null) {
+	private mapPosts(post: PostModel[], currentUserId: ObjectIdDto | null): ResponsePostDto[] {
 		let likesInfo;
 		return post.map((v: PostModel) => {
 			likesInfo = this.countLikes(v, currentUserId);
@@ -84,7 +84,7 @@ export class QueryPostsRepository {
 				blogId: v.blogId,
 				blogName: v.blogName,
 				createdAt: v.createdAt,
-				extendedLikesInfo: likesInfo,
+				//extendedLikesInfo: likesInfo,
 			};
 		});
 	}

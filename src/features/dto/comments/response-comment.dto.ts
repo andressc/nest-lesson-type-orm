@@ -6,5 +6,5 @@ export class ResponseCommentDto {
 	userId: string;
 	userLogin: string;
 	createdAt: string;
-	likesInfo: LikesInfo;
+	//likesInfo: LikesInfo;
 }

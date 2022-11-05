@@ -63,11 +63,14 @@ export class QueryCommentsRepository {
 			userId: comment.userId,
 			userLogin: comment.userLogin,
 			createdAt: comment.createdAt,
-			likesInfo,
+			//likesInfo,
 		};
 	}
 
-	private mapComments(comment: CommentModel[], currentUserId: ObjectIdDto | null) {
+	private mapComments(
+		comment: CommentModel[],
+		currentUserId: ObjectIdDto | null,
+	): ResponseCommentDto[] {
 		let likesInfo;
 		return comment.map((v: CommentModel) => {
 			likesInfo = this.countLikes(v, currentUserId);
@@ -78,7 +81,7 @@ export class QueryCommentsRepository {
 				userId: v.userId,
 				userLogin: v.userLogin,
 				createdAt: v.createdAt,
-				likesInfo,
+				//likesInfo,
 			};
 		});
 	}
