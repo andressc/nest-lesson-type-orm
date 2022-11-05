@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { SessionModel } from '../../entity/session.schema';
+import { SessionModel } from '../../database/entity/session.schema';
 import { SessionsRepository } from '../infrastructure/repository/sessions.repository';
 import { DeviceIdNotFoundException } from '../../common/exceptions';
 

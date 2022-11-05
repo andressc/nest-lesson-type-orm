@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../database/entity/comment.schema';
 import { ValidationService } from './validation.service';
 import { UpdateCommentDto, CreateCommentOfPostDto, CreateLikeDto } from '../dto/comments';
 import {
@@ -9,9 +9,9 @@ import {
 } from '../../common/exceptions';
 import { CommentsRepository } from '../infrastructure/repository/comments.repository';
 import { createDate } from '../../common/helpers';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../database/entity/user.schema';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
-import { PostModel } from '../../entity/post.schema';
+import { PostModel } from '../../database/entity/post.schema';
 import { PostsRepository } from '../infrastructure/repository/posts.repository';
 
 @Injectable()

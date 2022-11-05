@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BlogsRepository } from '../infrastructure/repository/blogs.repository';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../database/entity/blog.schema';
 import { ValidationService } from './validation.service';
 import { CreateBlogDto } from '../dto/blogs/create-blog.dto';
 import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';

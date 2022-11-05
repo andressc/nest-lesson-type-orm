@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Session, SessionModel } from '../../../entity/session.schema';
+import { Session, SessionModel } from '../../../database/entity/session.schema';
 import { ResponseSessionDto } from '../../dto/sessions/response-session.dto';
 
 @Injectable()

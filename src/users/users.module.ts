@@ -3,7 +3,7 @@ import { UsersService } from './application/users.service';
 import { UsersRepository } from './infrastructure/repository/users.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './api/users.controller';
-import { User, UserSchema } from '../entity/user.schema';
+import { User, UserSchema } from '../database/entity/user.schema';
 import { ValidationService } from '../features/application/validation.service';
 import { QueryUsersRepository } from './api/query/query-users.repository';
 import { PaginationService } from '../features/application/pagination.service';

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PostsRepository } from '../infrastructure/repository/posts.repository';
-import { PostModel } from '../../entity/post.schema';
+import { PostModel } from '../../database/entity/post.schema';
 import { ValidationService } from './validation.service';
 import { CreatePostDto, UpdatePostDto, CreatePostOfBlogDto } from '../dto/posts';
 import { BlogsRepository } from '../infrastructure/repository/blogs.repository';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../database/entity/blog.schema';
 import { BlogNotFoundException, PostNotFoundException } from '../../common/exceptions';
 import { createDate } from '../../common/helpers';
 import { CreateLikeDto } from '../dto/comments';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../database/entity/user.schema';
 import { UserNotFoundException } from '../../common/exceptions';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 

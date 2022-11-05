@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { generateHash } from '../common/helpers';
+import { generateHash } from '../../common/helpers';
 
 export type UserModel = User & Document;
 

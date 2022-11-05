@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../database/entity/user.schema';
 import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
 import { PasswordRecoveryTokenDataDto } from '../dto/passwordRecoveryTokenData.dto';
 import { EmailBadRequestException } from '../../common/exceptions';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../database/entity/user.schema';
 import { createDate, generateHash, generateConfirmationCode } from '../../common/helpers';
 import { UsersRepository } from '../infrastructure/repository/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';

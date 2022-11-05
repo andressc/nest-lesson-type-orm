@@ -1,24 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UpdateCommentDto, CreateLikeDto } from '../features/dto/comments';
-import { LikesDto } from '../common/dto/likes.dto';
-import { createDate } from '../common/helpers';
+import { UpdatePostExtendsDto } from '../../features/dto/posts';
+import { CreateLikeDto, LikesDto } from '../../features/dto/comments';
+import { createDate } from '../../common/helpers';
 
-export type CommentModel = Comment & Document;
+export type PostModel = Post & Document;
 
 @Schema()
-export class Comment {
+export class Post {
+	@Prop({ required: true })
+	title: string;
+
+	@Prop({ required: true })
+	shortDescription: string;
+
 	@Prop({ required: true })
 	content: string;
 
 	@Prop({ required: true })
-	userId: string;
+	blogId: string;
 
 	@Prop({ required: true })
-	userLogin: string;
-
-	@Prop({ required: true })
-	postId: string;
+	blogName: string;
 
 	@Prop({ required: true })
 	createdAt: string;
@@ -26,8 +29,12 @@ export class Comment {
 	@Prop({ type: [] })
 	likes: LikesDto[];
 
-	updateData(data: UpdateCommentDto): void {
+	updateData(data: UpdatePostExtendsDto): void {
+		this.title = data.title;
+		this.shortDescription = data.shortDescription;
 		this.content = data.content;
+		this.blogId = data.blogId;
+		this.blogName = data.blogName;
 	}
 
 	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<void> {
@@ -56,7 +63,7 @@ export class Comment {
 	}
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment);
+export const PostSchema = SchemaFactory.createForClass(Post);
 
-CommentSchema.methods.updateData = Comment.prototype.updateData;
-CommentSchema.methods.setLike = Comment.prototype.setLike;
+PostSchema.methods.updateData = Post.prototype.updateData;
+PostSchema.methods.setLike = Post.prototype.setLike;
