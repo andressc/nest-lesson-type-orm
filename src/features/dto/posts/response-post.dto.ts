@@ -8,5 +8,5 @@ export class ResponsePostDto {
 	blogId: string;
 	blogName: string;
 	createdAt: string;
-	//extendedLikesInfo: LikesInfoExtended;
+	extendedLikesInfo: LikesInfoExtended;
 }

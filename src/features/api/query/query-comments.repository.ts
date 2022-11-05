@@ -63,7 +63,7 @@ export class QueryCommentsRepository {
 			userId: comment.userId,
 			userLogin: comment.userLogin,
 			createdAt: comment.createdAt,
-			//likesInfo,
+			likesInfo,
 		};
 	}
 
@@ -81,7 +81,7 @@ export class QueryCommentsRepository {
 				userId: v.userId,
 				userLogin: v.userLogin,
 				createdAt: v.createdAt,
-				//likesInfo,
+				likesInfo,
 			};
 		});
 	}

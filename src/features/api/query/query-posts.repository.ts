@@ -67,7 +67,7 @@ export class QueryPostsRepository {
 			blogId: post.blogId,
 			blogName: post.blogName,
 			createdAt: post.createdAt,
-			//extendedLikesInfo: likesInfo,
+			extendedLikesInfo: likesInfo,
 		};
 	}
 
@@ -84,7 +84,7 @@ export class QueryPostsRepository {
 				blogId: v.blogId,
 				blogName: v.blogName,
 				createdAt: v.createdAt,
-				//extendedLikesInfo: likesInfo,
+				extendedLikesInfo: likesInfo,
 			};
 		});
 	}
