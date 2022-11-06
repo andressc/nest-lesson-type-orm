@@ -32,7 +32,7 @@ export class BlogsService {
 		await this.blogsRepository.save(blog);
 	}
 
-	async removeBlog(id: string): Promise<void> {
+	async removeBlog2(id: string): Promise<void> {
 		const blog: BlogModel = await this.findBlogOrErrorThrow(id);
 		await this.blogsRepository.delete(blog);
 	}

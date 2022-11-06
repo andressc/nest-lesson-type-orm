@@ -3,9 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../../database/entity';
 import { CreateCommentExtendsDto } from '../../dto/comments';
+import { CommentsRepositoryInterface } from './interfaces';
 
 @Injectable()
-export class CommentsRepository {
+export class CommentsRepository implements CommentsRepositoryInterface {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
@@ -15,7 +16,7 @@ export class CommentsRepository {
 		return new this.commentModel(data);
 	}
 
-	async findCommentModel(id: string): Promise<CommentModel | null> {
+	async findCommentModel(id: string) {
 		return this.commentModel.findById(id);
 	}
 
