@@ -21,7 +21,7 @@ export class BaseConfig {
 		return value;
 	}
 
-	protected getBooleanOrThrow(key: string /*defaultValue?: boolean*/): boolean {
+	protected getBooleanOrThrow(key: string, defaultValue?: boolean): boolean {
 		return Boolean(this.configService.get(key));
 	}
 }
