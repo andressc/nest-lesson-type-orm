@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ResponseCommentDto, QueryCommentDto } from '../../dto/comments';
-import { PaginationService } from '../../application/pagination.service';
+import { QueryCommentDto, ResponseCommentDto } from '../../dto/comments';
+import { Comment, CommentModel, Post, PostModel } from '../../../database/entity';
+import {
+	LikesDto,
+	LikesInfo,
+	LikeStatusEnum,
+	ObjectIdDto,
+	PaginationCalc,
+	PaginationDto,
+} from '../../../common/dto';
 import { CommentNotFoundException, PostNotFoundException } from '../../../common/exceptions';
-import { Comment, CommentModel } from '../../../database/entity/comment.schema';
-import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
-import { Post, PostModel } from '../../../database/entity/post.schema';
-import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
-import { LikesDto } from '../../../common/dto/likes.dto';
-import { LikesInfo } from '../../../common/dto/likes-info.dto';
-import { ObjectIdDto } from '../../../common/dto/object-id.dto';
+import { PaginationService } from '../../application';
 
 @Injectable()
 export class QueryCommentsRepository {

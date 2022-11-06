@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UpdatePostExtendsDto } from '../../features/dto/posts';
-import { CreateLikeDto, LikesDto } from '../../features/dto/comments';
 import { createDate } from '../../common/helpers';
+import { CreateLikeDto } from '../../features/dto/comments';
+import { LikesDto } from '../../common/dto';
 
 export type PostModel = Post & Document;
 

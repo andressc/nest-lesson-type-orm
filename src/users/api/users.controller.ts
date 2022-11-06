@@ -9,12 +9,13 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { BasicAuthGuard } from '../../common/guards/basic-auth.guard';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { QueryUserDto } from '../dto/query-user.dto';
-import { ObjectIdDto } from '../../common/dto/object-id.dto';
+
+import { CreateUserDto, QueryUserDto } from '../dto';
 import { QueryUsersRepository } from './query/query-users.repository';
 import { UsersService } from '../application/users.service';
+
+import { ObjectIdDto } from '../../common/dto/';
+import { BasicAuthGuard } from '../../common/guards';
 
 @Controller('users')
 export class UsersController {

@@ -1,5 +1,5 @@
 import { IsMongoId, IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { ValidateBlogIdDecorator } from '../../../common/decorators/Validation/validate-blog-id.decorator';
+import { ValidateBlogIdDecorator } from '../../../common/decorators/Validation';
 import { trim } from '../../../common/helpers';
 import { Transform } from 'class-transformer';
 

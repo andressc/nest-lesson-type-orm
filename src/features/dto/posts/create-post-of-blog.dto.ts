@@ -1,5 +1,5 @@
 import { IsNotEmpty, MaxLength } from 'class-validator';
-import { trim } from '../../../common/helpers/transform.helper';
+import { trim } from '../../../common/helpers';
 import { Transform } from 'class-transformer';
 
 export class CreatePostOfBlogDto {

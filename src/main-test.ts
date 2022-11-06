@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters/exeption.filter';
+import { HttpExceptionFilter } from './common/filters';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
 import { getConnectionToken } from '@nestjs/mongoose';
-import { globalValidationPipe } from './common/pipes/global-validation-pipe';
+import { globalValidationPipe } from './common/pipes';
 
 let app: INestApplication;
 

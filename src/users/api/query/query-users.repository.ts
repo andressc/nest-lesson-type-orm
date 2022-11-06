@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
-import { ResponseUserDto } from '../../dto/response-user.dto';
-import { User, UserModel } from '../../../database/entity/user.schema';
+import { PaginationCalc, PaginationDto } from '../../../common/dto';
+import { ResponseUserDto, QueryUserDto, ResponseUserMeDto } from '../../dto';
+import { User, UserModel } from '../../../database/entity';
 import { UserNotFoundException } from '../../../common/exceptions';
-import { PaginationService } from '../../../features/application/pagination.service';
-import { QueryUserDto } from '../../dto/query-user.dto';
-import { ResponseUserMeDto } from '../../dto/response-user-me.dto';
+import { PaginationService } from '../../../features/application';
 
 @Injectable()
 export class QueryUsersRepository {

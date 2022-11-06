@@ -1,12 +1,10 @@
-import { Controller, Get, Body, Param, Delete, HttpCode, Put, UseGuards } from '@nestjs/common';
-import { ObjectIdDto } from '../../common/dto/object-id.dto';
-import { QueryCommentsRepository } from './query/query-comments.repository';
-import { UpdateCommentDto, CreateLikeDto } from '../dto/comments';
-import { CommentsService } from '../application/comments.service';
-import { AccessTokenGuard } from '../../common/guards';
-import { CurrentUserId } from '../../common/decorators';
-import { GuestGuard } from '../../common/guards/guest.guard';
-import { CurrentUserIdNonAuthorized } from '../../common/decorators';
+import { Body, Controller, Delete, Get, HttpCode, Param, Put, UseGuards } from '@nestjs/common';
+import { ObjectIdDto } from '../../common/dto';
+import { QueryCommentsRepository } from './query';
+import { CreateLikeDto, UpdateCommentDto } from '../dto/comments';
+import { CommentsService } from '../application';
+import { AccessTokenGuard, GuestGuard } from '../../common/guards';
+import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../common/decorators/Param';
 
 @Controller('comments')
 export class CommentsController {

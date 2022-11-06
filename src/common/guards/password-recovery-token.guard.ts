@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { RecoveryCodeBadRequestException } from '../exceptions/recoveryCodeBadRequestException';
+import { RecoveryCodeBadRequestException } from '../exceptions';
 
 @Injectable()
 export class PasswordRecoveryTokenGuard extends AuthGuard('jwt-recovery-password') {

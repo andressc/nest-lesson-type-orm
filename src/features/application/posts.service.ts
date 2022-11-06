@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PostsRepository } from '../infrastructure/repository/posts.repository';
-import { PostModel } from '../../database/entity/post.schema';
+import { PostsRepository, BlogsRepository } from '../infrastructure/repository';
+import { UsersRepository } from '../../users/infrastructure/repository';
+import { PostModel, BlogModel, UserModel } from '../../database/entity';
 import { ValidationService } from './validation.service';
-import { CreatePostDto, UpdatePostDto, CreatePostOfBlogDto } from '../dto/posts';
-import { BlogsRepository } from '../infrastructure/repository/blogs.repository';
-import { BlogModel } from '../../database/entity/blog.schema';
-import { BlogNotFoundException, PostNotFoundException } from '../../common/exceptions';
-import { createDate } from '../../common/helpers';
+import { CreatePostDto, CreatePostOfBlogDto, UpdatePostDto } from '../dto/posts';
 import { CreateLikeDto } from '../dto/comments';
-import { UserModel } from '../../database/entity/user.schema';
-import { UserNotFoundException } from '../../common/exceptions';
-import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
+import {
+	BlogNotFoundException,
+	PostNotFoundException,
+	UserNotFoundException,
+} from '../../common/exceptions';
+import { createDate } from '../../common/helpers';
 
 @Injectable()
 export class PostsService {
@@ -26,13 +26,13 @@ export class PostsService {
 
 		const blog: BlogModel = await this.findBlogOrErrorThrow(data.blogId);
 
-		const newPost = await this.postsRepository.createPost({
+		const newPost = await this.postsRepository.createPostModel({
 			...data,
 			blogName: blog.name,
 			createdAt: createDate(),
 		});
 
-		const result = await newPost.save();
+		const result = await this.postsRepository.save(newPost);
 		return result.id.toString();
 	}
 
@@ -41,14 +41,14 @@ export class PostsService {
 
 		const blog: BlogModel = await this.findBlogOrErrorThrow(blogId);
 
-		const newPost = await this.postsRepository.createPost({
+		const newPost = await this.postsRepository.createPostModel({
 			...data,
 			blogId,
 			blogName: blog.name,
 			createdAt: createDate(),
 		});
 
-		const result = await newPost.save();
+		const result = await this.postsRepository.save(newPost);
 		return result.id.toString();
 	}
 
@@ -59,7 +59,7 @@ export class PostsService {
 
 		const post: PostModel = await this.findPostOrErrorThrow(id);
 		post.updateData({ ...data, blogName: blog.name });
-		await post.save();
+		await this.postsRepository.save(post);
 	}
 
 	async removePost(id: string): Promise<void> {
@@ -75,7 +75,7 @@ export class PostsService {
 		const post: PostModel = await this.findPostOrErrorThrow(commentId);
 
 		await post.setLike(data, authUserId, user.login);
-		await post.save();
+		await this.postsRepository.save(post);
 	}
 
 	private async findUserOrErrorThrow(id: string): Promise<UserModel> {

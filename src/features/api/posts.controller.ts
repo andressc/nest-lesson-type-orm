@@ -1,25 +1,22 @@
 import {
-	Controller,
-	Get,
-	Post,
 	Body,
-	Param,
+	Controller,
 	Delete,
+	Get,
 	HttpCode,
+	Param,
+	Post,
 	Put,
-	UseGuards,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
-import { ObjectIdDto } from '../../common/dto/object-id.dto';
-import { AccessTokenGuard, BasicAuthGuard } from '../../common/guards';
-import { CreatePostDto, UpdatePostDto, QueryPostDto } from '../dto/posts';
-import { PostsService } from '../application/posts.service';
-import { QueryPostsRepository } from './query/query-posts.repository';
-import { QueryCommentsRepository } from './query/query-comments.repository';
-import { QueryCommentDto, CreateCommentOfPostDto, CreateLikeDto } from '../dto/comments';
-import { CommentsService } from '../application/comments.service';
-import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../common/decorators';
-import { GuestGuard } from '../../common/guards/guest.guard';
+import { ObjectIdDto } from '../../common/dto';
+import { AccessTokenGuard, BasicAuthGuard, GuestGuard } from '../../common/guards';
+import { CreatePostDto, QueryPostDto, UpdatePostDto } from '../dto/posts';
+import { PostsService, CommentsService } from '../application';
+import { QueryPostsRepository, QueryCommentsRepository } from './query';
+import { CreateCommentOfPostDto, CreateLikeDto, QueryCommentDto } from '../dto/comments';
+import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../common/decorators/Param';
 
 @Controller('posts')
 export class PostsController {

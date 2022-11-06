@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationCalc, QueryPaginationDto, Sort } from '../../common/dto/pagination.dto';
+import { PaginationCalc, QueryPaginationDto, Sort } from '../../common/dto';
 
 @Injectable()
 export class PaginationService {

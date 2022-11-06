@@ -2,16 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ResponsePostDto } from '../../dto/posts';
-import { Post, PostModel } from '../../../database/entity/post.schema';
-import { PostNotFoundException, BlogNotFoundException } from '../../../common/exceptions';
-import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
-import { QueryDto } from '../../../common/dto/query.dto';
-import { PaginationService } from '../../application/pagination.service';
-import { Blog, BlogModel } from '../../../database/entity/blog.schema';
-import { LikeStatusEnum } from '../../../common/dto/like-status.enum';
-import { LikesDto } from '../../../common/dto/likes.dto';
-import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
-import { ObjectIdDto } from '../../../common/dto/object-id.dto';
+import { Post, PostModel, Blog, BlogModel } from '../../../database/entity';
+import { BlogNotFoundException, PostNotFoundException } from '../../../common/exceptions';
+import {
+	PaginationCalc,
+	PaginationDto,
+	LikesInfoExtended,
+	LikesDto,
+	LikeStatusEnum,
+	ObjectIdDto,
+	QueryDto,
+} from '../../../common/dto';
+import { PaginationService } from '../../application';
 
 @Injectable()
 export class QueryPostsRepository {

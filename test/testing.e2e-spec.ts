@@ -2,19 +2,15 @@ import { TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { Blog } from '../src/database/entity/blog.schema';
+import { Blog, Post, Comment, Session, User } from '../src/database/entity';
 import { mainTest } from '../src/main-test';
-import { Post } from '../src/database/entity/post.schema';
-import { Comment } from '../src/database/entity/comment.schema';
-import { Session } from '../src/database/entity/session.schema';
-import { User } from '../src/database/entity/user.schema';
 import request from 'supertest';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { commentCreator } from './dbSeeding/commentCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { userCreator } from './dbSeeding/userCreator';
 import { sessionCreator } from './dbSeeding/sessionCreator';
-import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
+import { stopMongoMemoryServer } from '../src/common/utils';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

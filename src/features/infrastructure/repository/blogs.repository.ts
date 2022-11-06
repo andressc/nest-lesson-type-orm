@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogModel } from '../../../database/entity/blog.schema';
-import { CreateBlogExtendsDto } from '../../dto/blogs/create-blog-extends.dto';
+import { Blog, BlogModel } from '../../../database/entity';
+import { CreateBlogExtendsDto } from '../../dto/blogs';
 
 @Injectable()
 export class BlogsRepository {
@@ -14,6 +14,14 @@ export class BlogsRepository {
 
 	async findBlogModel(id: string): Promise<BlogModel | null> {
 		return this.blogModel.findById(id);
+	}
+
+	async save(blogModel: BlogModel): Promise<BlogModel> {
+		return blogModel.save();
+	}
+
+	async delete(blogModel: BlogModel): Promise<void> {
+		await blogModel.delete();
 	}
 
 	async deleteAll(): Promise<void> {

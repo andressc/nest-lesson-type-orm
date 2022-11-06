@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { mainTest } from '../src/main-test';
 import { Connection } from 'mongoose';
-import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
+import { stopMongoMemoryServer } from '../src/common/utils';
 
 describe('BlogController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

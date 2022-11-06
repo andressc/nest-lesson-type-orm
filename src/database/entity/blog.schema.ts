@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UpdateBlogDto } from '../../features/dto/blogs/update-blog.dto';
+import { UpdateBlogDto } from '../../features/dto/blogs';
 
 export type BlogModel = Blog & Document;
 

@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './application/users.service';
-import { UsersRepository } from './infrastructure/repository/users.repository';
+import { UsersRepository } from './infrastructure/repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './api/users.controller';
-import { User, UserSchema } from '../database/entity/user.schema';
-import { ValidationService } from '../features/application/validation.service';
+import { User, UserSchema } from '../database/entity';
+import { ValidationService, PaginationService } from '../features/application';
 import { QueryUsersRepository } from './api/query/query-users.repository';
-import { PaginationService } from '../features/application/pagination.service';
 
 @Module({
 	imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],

@@ -5,9 +5,9 @@ import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
-import { User } from '../src/database/entity/user.schema';
+import { User } from '../src/database/entity';
 import { userCreator } from './dbSeeding/userCreator';
-import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
+import { stopMongoMemoryServer } from '../src/common/utils';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

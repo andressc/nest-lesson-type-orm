@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { startMongoMemoryServer } from '../common/utils/mongo-memory-server';
+import { startMongoMemoryServer } from '../common/utils';
 
 @Module({
 	imports: [

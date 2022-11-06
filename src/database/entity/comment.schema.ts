@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UpdateCommentDto, CreateLikeDto } from '../../features/dto/comments';
-import { LikesDto } from '../../common/dto/likes.dto';
+import { CreateLikeDto, UpdateCommentDto } from '../../features/dto/comments';
+import { LikesDto } from '../../common/dto';
 import { createDate } from '../../common/helpers';
 
 export type CommentModel = Comment & Document;

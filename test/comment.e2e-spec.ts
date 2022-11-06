@@ -3,15 +3,15 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { Blog } from '../src/database/entity/blog.schema';
+import { Blog } from '../src/database/entity';
 import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
-import { Post } from '../src/database/entity/post.schema';
-import { Comment } from '../src/database/entity/comment.schema';
+import { Post } from '../src/database/entity';
+import { Comment } from '../src/database/entity';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { commentCreator } from './dbSeeding/commentCreator';
-import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
+import { stopMongoMemoryServer } from '../src/common/utils';
 
 describe('CommentController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

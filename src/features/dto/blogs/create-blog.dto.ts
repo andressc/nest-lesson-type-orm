@@ -1,6 +1,6 @@
 import { IsNotEmpty, Matches, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { trim } from '../../../common/helpers/transform.helper';
+import { trim } from '../../../common/helpers';
 
 export class CreateBlogDto {
 	@IsNotEmpty()

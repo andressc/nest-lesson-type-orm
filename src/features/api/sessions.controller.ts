@@ -1,10 +1,10 @@
-import { Controller, Get, Delete, HttpCode, UseGuards, Param } from '@nestjs/common';
-import { QuerySessionsRepository } from './query/query-sessions.repository';
-import { SessionsService } from '../application/sessions.service';
+import { Controller, Delete, Get, HttpCode, Param, UseGuards } from '@nestjs/common';
+import { QuerySessionsRepository } from './query';
+import { SessionsService } from '../application';
 import { RefreshTokenGuard } from '../../common/guards';
-import { RefreshTokenData } from '../../common/decorators';
-import { RefreshTokenDataDto } from '../../auth/dto/refreshTokenData.dto';
-import { StringIdDto } from '../../common/dto/string-id.dto';
+import { RefreshTokenDataDto } from '../../auth/dto';
+import { StringIdDto } from '../../common/dto';
+import { RefreshTokenData } from '../../common/decorators/Param';
 
 @Controller('security')
 export class SessionsController {

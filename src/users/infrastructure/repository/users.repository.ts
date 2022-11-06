@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModel } from '../../../database/entity/user.schema';
-import { CreateUserExtendsDto } from '../../dto/create-user-extends.dto';
+import { User, UserModel } from '../../../database/entity';
+import { CreateUserExtendsDto } from '../../dto';
 
 @Injectable()
 export class UsersRepository {
@@ -26,6 +26,14 @@ export class UsersRepository {
 
 	async findUserModelByConfirmationCode(confirmationCode: string): Promise<UserModel | null> {
 		return this.userModel.findOne({ confirmationCode });
+	}
+
+	async save(userModel: UserModel): Promise<UserModel> {
+		return userModel.save();
+	}
+
+	async delete(userModel: UserModel): Promise<void> {
+		await userModel.delete();
 	}
 
 	async deleteAll(): Promise<void> {

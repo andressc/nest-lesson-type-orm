@@ -2,14 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
-import { UserModel } from '../../database/entity/user.schema';
-import { SessionModel } from '../../database/entity/session.schema';
-import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
-import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
+import { RefreshTokenDataDto, PayloadTokenDto } from '../dto';
+import { UserModel, SessionModel } from '../../database/entity';
+import { UsersRepository } from '../../users/infrastructure/repository';
+import { SessionsRepository } from '../../features/infrastructure/repository';
 import { payloadDateCreator } from '../../common/helpers';
-import { PayloadTokenDto } from '../dto/payloadToken.dto';
-import { AuthConfig } from '../../configuration/auth.config';
+import { AuthConfig } from '../../configuration';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {

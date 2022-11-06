@@ -4,14 +4,14 @@ import { mainTest } from '../src/main-test';
 import request from 'supertest';
 import { ObjectId } from 'mongodb';
 import { Connection } from 'mongoose';
-import { stopMongoMemoryServer } from '../src/common/utils/mongo-memory-server';
+import { stopMongoMemoryServer } from '../src/common/utils';
 
 describe('PostController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 
 	let connection: Connection;
 	let app: INestApplication;
-	let module: TestingModule;
+	//let module: TestingModule;
 
 	const userDataLogin = {
 		login: 'login',
@@ -41,7 +41,7 @@ describe('PostController (e2 e)', () => {
 
 		connection = dataApp.connection;
 		app = dataApp.app.getHttpServer();
-		module = dataApp.module;
+		//module = dataApp.module;
 	});
 
 	afterAll(async () => {

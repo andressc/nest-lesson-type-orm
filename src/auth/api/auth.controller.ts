@@ -1,31 +1,33 @@
 import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { QueryUsersRepository } from '../../users/api/query/query-users.repository';
-import { RegistrationConfirmationDto } from '../dto/registration-confirmation.dto';
-import { RegistrationDto } from '../dto/registration.dto';
-import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 
 import { Response } from 'express';
-import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
+import {
+	RefreshTokenDataDto,
+	RegistrationConfirmationDto,
+	RegistrationDto,
+	RegistrationEmailResendingDto,
+	NewPasswordDto,
+	ResponseTokensDto,
+} from '../dto';
 
-import { SessionsService } from '../../features/application/sessions.service';
+import { SessionsService } from '../../features/application';
 
 import {
 	CurrentUserAgent,
 	CurrentUserId,
 	CurrentUserIp,
 	RefreshTokenData,
-} from '../../common/decorators';
+} from '../../common/decorators/Param';
 import {
 	AccessTokenGuard,
 	LocalAuthGuard,
 	RateLimitGuard,
 	RefreshTokenGuard,
 } from '../../common/guards';
-import { PasswordRecoveryTokenGuard } from '../../common/guards/password-recovery-token.guard';
-import { NewPasswordDto } from '../dto/newPassword.dto';
-import { ResponseTokensDto } from '../dto/responseTokens.dto';
-import { AuthConfig } from '../../configuration/auth.config';
+import { PasswordRecoveryTokenGuard } from '../../common/guards';
+import { AuthConfig } from '../../configuration';
 
 @Controller('auth')
 export class AuthController {

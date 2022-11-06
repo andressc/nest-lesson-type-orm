@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { UserModel } from '../../database/entity/user.schema';
-import { createDate, generateHash, generateConfirmationCode } from '../../common/helpers';
-import { UsersRepository } from '../infrastructure/repository/users.repository';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { ValidationService } from '../../features/application/validation.service';
+import { UserModel } from '../../database/entity';
+import { createDate, generateConfirmationCode, generateHash } from '../../common/helpers';
+import { UsersRepository } from '../infrastructure/repository';
+import { CreateUserDto } from '../dto';
+import { ValidationService } from '../../features/application';
+import * as bcrypt from 'bcrypt';
 import {
-	UserExistsLoginException,
 	UserExistsEmailException,
+	UserExistsLoginException,
 	UserNotFoundException,
 } from '../../common/exceptions';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
 	constructor(
-		private readonly userRepository: UsersRepository,
+		private readonly usersRepository: UsersRepository,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -29,7 +29,7 @@ export class UsersService {
 
 		const emailConfirmation = generateConfirmationCode(isConfirmed);
 
-		const newUser: UserModel = await this.userRepository.createUserModel({
+		const newUser: UserModel = await this.usersRepository.createUserModel({
 			login: data.login,
 			password: passwordHash,
 			email: data.email,
@@ -38,29 +38,29 @@ export class UsersService {
 			createdAt: createDate(),
 		});
 
-		const result = await newUser.save();
+		const result = await this.usersRepository.save(newUser);
 		return result.id.toString();
 	}
 
 	async removeUser(id: string): Promise<void> {
 		const user: UserModel = await this.findUserByIdOrErrorThrow(id);
-		await user.delete();
+		await this.usersRepository.delete(user);
 	}
 
 	private async findUserByIdOrErrorThrow(id: string): Promise<UserModel> {
-		const user: UserModel | null = await this.userRepository.findUserModel(id);
+		const user: UserModel | null = await this.usersRepository.findUserModel(id);
 		if (!user) throw new UserNotFoundException(id);
 		return user;
 	}
 
 	private async findUserByLoginOrErrorThrow(login: string): Promise<UserModel> {
-		const user: UserModel | null = await this.userRepository.findUserModelByLogin(login);
+		const user: UserModel | null = await this.usersRepository.findUserModelByLogin(login);
 		if (user) throw new UserExistsLoginException(login);
 		return user;
 	}
 
 	private async findUserByEmailOrErrorThrow(email: string): Promise<UserModel> {
-		const user: UserModel | null = await this.userRepository.findUserModelByEmail(email);
+		const user: UserModel | null = await this.usersRepository.findUserModelByEmail(email);
 		if (user) throw new UserExistsEmailException(email);
 		return user;
 	}

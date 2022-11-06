@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogModel } from '../../../database/entity/blog.schema';
+import { Blog, BlogModel } from '../../../database/entity';
 import { BlogNotFoundException } from '../../../common/exceptions';
-import { PaginationCalc, PaginationDto } from '../../../common/dto/pagination.dto';
-import { PaginationService } from '../../application/pagination.service';
-import { QueryBlogDto } from '../../dto/blogs/query-blog.dto';
-import { ResponseBlogDto } from '../../dto/blogs/response-blog.dto';
+import { PaginationCalc, PaginationDto } from '../../../common/dto';
+import { PaginationService } from '../../application';
+import { QueryBlogDto, ResponseBlogDto } from '../../dto/blogs';
 
 @Injectable()
 export class QueryBlogsRepository {

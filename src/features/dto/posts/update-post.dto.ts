@@ -1,7 +1,7 @@
 import { IsMongoId, IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { ValidateBlogIdDecorator } from '../../../common/decorators/Validation/validate-blog-id.decorator';
+import { ValidateBlogIdDecorator } from '../../../common/decorators/Validation';
 import { Transform } from 'class-transformer';
-import { trim } from '../../../common/helpers/transform.helper';
+import { trim } from '../../../common/helpers';
 
 export class UpdatePostDto {
 	@IsNotEmpty()

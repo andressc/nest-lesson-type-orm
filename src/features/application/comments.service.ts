@@ -1,18 +1,15 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CommentModel } from '../../database/entity/comment.schema';
 import { ValidationService } from './validation.service';
-import { UpdateCommentDto, CreateCommentOfPostDto, CreateLikeDto } from '../dto/comments';
+import { UserModel, PostModel, CommentModel } from '../../database/entity';
+import { CreateCommentOfPostDto, CreateLikeDto, UpdateCommentDto } from '../dto/comments';
 import {
 	CommentNotFoundException,
-	UserNotFoundException,
 	PostNotFoundException,
+	UserNotFoundException,
 } from '../../common/exceptions';
-import { CommentsRepository } from '../infrastructure/repository/comments.repository';
+import { CommentsRepository, PostsRepository } from '../infrastructure/repository';
 import { createDate } from '../../common/helpers';
-import { UserModel } from '../../database/entity/user.schema';
-import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
-import { PostModel } from '../../database/entity/post.schema';
-import { PostsRepository } from '../infrastructure/repository/posts.repository';
+import { UsersRepository } from '../../users/infrastructure/repository';
 
 @Injectable()
 export class CommentsService {
@@ -41,7 +38,7 @@ export class CommentsService {
 			createdAt: createDate(),
 		});
 
-		const result = await newComment.save();
+		const result = await this.commentsRepository.save(newComment);
 		return result.id.toString();
 	}
 
@@ -49,16 +46,16 @@ export class CommentsService {
 		await this.validationService.validate(data, UpdateCommentDto);
 
 		await this.findUserOrErrorThrow(authUserId);
-		const comment: CommentModel = await this.checkCommentExists(id, authUserId);
+		const comment: CommentModel = await this.findCommentOrErrorThrow(id, authUserId);
 
 		comment.updateData(data);
-		await comment.save();
+		await this.commentsRepository.save(comment);
 	}
 
 	async removeComment(id: string, authUserId: string): Promise<void> {
 		await this.findUserOrErrorThrow(authUserId);
 
-		const comment: CommentModel = await this.checkCommentExists(id, authUserId);
+		const comment: CommentModel = await this.findCommentOrErrorThrow(id, authUserId);
 		await comment.delete();
 	}
 
@@ -67,13 +64,13 @@ export class CommentsService {
 
 		const user: UserModel = await this.findUserOrErrorThrow(authUserId);
 
-		const comment: CommentModel = await this.checkCommentExists(commentId, authUserId);
+		const comment: CommentModel = await this.findCommentOrErrorThrow(commentId, authUserId);
 
 		await comment.setLike(data, authUserId, user.login);
-		await comment.save();
+		await this.commentsRepository.save(comment);
 	}
 
-	private async checkCommentExists(id: string, authUserId: string): Promise<CommentModel> {
+	private async findCommentOrErrorThrow(id: string, authUserId: string): Promise<CommentModel> {
 		const comment: CommentModel | null = await this.commentsRepository.findCommentModel(id);
 		if (!comment) throw new CommentNotFoundException(id);
 		if (comment.userId !== authUserId) throw new ForbiddenException();

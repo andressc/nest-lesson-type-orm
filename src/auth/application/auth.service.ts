@@ -1,27 +1,28 @@
 import { Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../../users/application/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { UsersRepository } from '../../users/infrastructure/repository/users.repository';
-import { UserModel } from '../../database/entity/user.schema';
+import { UsersRepository } from '../../users/infrastructure/repository';
+import { SessionModel, UserModel } from '../../database/entity';
 import { generateHash, payloadDateCreator } from '../../common/helpers';
-import { RegistrationConfirmationDto } from '../dto/registration-confirmation.dto';
-import { ValidationService } from '../../features/application/validation.service';
 import {
-	UserNotFoundException,
+	RegistrationConfirmationDto,
+	RegistrationEmailResendingDto,
+	RegistrationDto,
+	RefreshTokenDataDto,
+	NewPasswordDto,
+	PayloadTokenDto,
+	ResponseTokensDto,
+} from '../dto';
+import { ValidationService } from '../../features/application';
+import {
 	ConfirmCodeBadRequestException,
 	EmailBadRequestException,
+	UserNotFoundException,
 } from '../../common/exceptions';
 import { MailerService } from '../../mailer/application/mailer.service';
-import { RegistrationDto } from '../dto/registration.dto';
-import { RegistrationEmailResendingDto } from '../dto/registration-email-resending.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { RefreshTokenDataDto } from '../dto/refreshTokenData.dto';
-import { SessionModel } from '../../database/entity/session.schema';
-import { SessionsRepository } from '../../features/infrastructure/repository/sessions.repository';
-import { NewPasswordDto } from '../dto/newPassword.dto';
-import { PayloadTokenDto } from '../dto/payloadToken.dto';
-import { ResponseTokensDto } from '../dto/responseTokens.dto';
-import { AuthConfig } from '../../configuration/auth.config';
+import { SessionsRepository } from '../../features/infrastructure/repository';
+import { AuthConfig } from '../../configuration';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +54,7 @@ export class AuthService {
 		const tokens: ResponseTokensDto = await this.createTokens(userId, deviceId);
 		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
 
-		const newSession: SessionModel = await this.sessionsRepository.createNewSessionModel({
+		const newSession: SessionModel = await this.sessionsRepository.createSessionModel({
 			lastActiveDate: payloadDateCreator(payload.iat),
 			expirationDate: payloadDateCreator(payload.exp),
 			deviceId,
@@ -62,7 +63,7 @@ export class AuthService {
 			userId,
 		});
 
-		await newSession.save();
+		await this.sessionsRepository.save(newSession);
 
 		return tokens;
 	}
@@ -92,7 +93,7 @@ export class AuthService {
 		if (user.isConfirmed) throw new ConfirmCodeBadRequestException();
 
 		user.updateIsConfirmed(true);
-		await user.save();
+		await this.usersRepository.save(user);
 	}
 
 	async registrationEmailResending(data: RegistrationEmailResendingDto): Promise<void> {
@@ -105,7 +106,7 @@ export class AuthService {
 
 		const newConfirmationCode = uuidv4();
 		user.updateConfirmationCode(newConfirmationCode);
-		await user.save();
+		await this.usersRepository.save(user);
 
 		try {
 			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
@@ -146,7 +147,7 @@ export class AuthService {
 			refreshTokenData.ip,
 			refreshTokenData.userAgent,
 		);
-		await session.save();
+		await this.sessionsRepository.save(session);
 
 		return tokens;
 	}
@@ -156,7 +157,7 @@ export class AuthService {
 		if (!user) throw new UserNotFoundException(userId);
 
 		await user.updatePassword(data.newPassword);
-		await user.save();
+		await this.usersRepository.save(user);
 	}
 
 	private async createTokens(userId, deviceId: string): Promise<ResponseTokensDto> {

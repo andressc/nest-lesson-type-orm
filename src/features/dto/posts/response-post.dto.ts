@@ -1,4 +1,4 @@
-import { LikesInfoExtended } from '../../../common/dto/likes-info-extended.dto';
+import { LikesInfoExtended } from '../../../common/dto';
 
 export class ResponsePostDto {
 	id: string;

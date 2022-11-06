@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { SessionModel } from '../../database/entity/session.schema';
-import { SessionsRepository } from '../infrastructure/repository/sessions.repository';
+import { SessionModel } from '../../database/entity';
+import { SessionsRepository } from '../infrastructure/repository';
 import { DeviceIdNotFoundException } from '../../common/exceptions';
 
 @Injectable()
@@ -18,6 +18,6 @@ export class SessionsService {
 		if (!session) throw new DeviceIdNotFoundException(deviceId);
 		if (session.userId !== userId) throw new ForbiddenException();
 
-		await this.sessionsRepository.removeUserSession(userId, deviceId);
+		await this.sessionsRepository.delete(session);
 	}
 }

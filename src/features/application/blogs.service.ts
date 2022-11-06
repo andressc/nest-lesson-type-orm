@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BlogsRepository } from '../infrastructure/repository/blogs.repository';
-import { BlogModel } from '../../database/entity/blog.schema';
+import { BlogsRepository } from '../infrastructure/repository';
+import { BlogModel } from '../../database/entity';
 import { ValidationService } from './validation.service';
-import { CreateBlogDto } from '../dto/blogs/create-blog.dto';
-import { UpdateBlogDto } from '../dto/blogs/update-blog.dto';
+import { CreateBlogDto, UpdateBlogDto } from '../dto/blogs';
 import { BlogNotFoundException } from '../../common/exceptions';
 import { createDate } from '../../common/helpers';
 
@@ -21,7 +20,7 @@ export class BlogsService {
 			...data,
 			createdAt: createDate(),
 		});
-		const result = await newBlog.save();
+		const result: BlogModel = await this.blogsRepository.save(newBlog);
 		return result.id.toString();
 	}
 
@@ -30,12 +29,12 @@ export class BlogsService {
 
 		const blog: BlogModel = await this.findBlogOrErrorThrow(id);
 		blog.updateData(data);
-		await blog.save();
+		await this.blogsRepository.save(blog);
 	}
 
 	async removeBlog(id: string): Promise<void> {
 		const blog: BlogModel = await this.findBlogOrErrorThrow(id);
-		await blog.delete();
+		await this.blogsRepository.delete(blog);
 	}
 
 	private async findBlogOrErrorThrow(id: string): Promise<BlogModel> {
