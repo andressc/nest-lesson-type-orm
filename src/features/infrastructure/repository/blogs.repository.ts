@@ -6,7 +6,10 @@ import { CreateBlogExtendsDto } from '../../dto/blogs';
 
 @Injectable()
 export class BlogsRepository {
-	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
+	constructor(
+		@InjectModel(Blog.name)
+		private readonly blogModel: Model<BlogModel>,
+	) {}
 
 	async createBlogModel(data: CreateBlogExtendsDto): Promise<BlogModel> {
 		return new this.blogModel(data);

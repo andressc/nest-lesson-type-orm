@@ -3,7 +3,9 @@ import { SortOrder } from 'mongoose';
 
 export type Sort =
 	| string
-	| { [key: string]: SortOrder | { $meta: 'textScore' } }
+	| {
+			[key: string]: SortOrder | { $meta: 'textScore' };
+	  }
 	| [string, SortOrder][];
 
 export class PaginationDto<T> {

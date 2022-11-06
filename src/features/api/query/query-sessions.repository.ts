@@ -6,10 +6,15 @@ import { ResponseSessionDto } from '../../dto/sessions';
 
 @Injectable()
 export class QuerySessionsRepository {
-	constructor(@InjectModel(Session.name) private readonly sessionModel: Model<SessionModel>) {}
+	constructor(
+		@InjectModel(Session.name)
+		private readonly sessionModel: Model<SessionModel>,
+	) {}
 
 	async findAllSessions(currentUserId: string): Promise<ResponseSessionDto[]> {
-		const session: SessionModel[] | null = await this.sessionModel.find({ userId: currentUserId });
+		const session: SessionModel[] | null = await this.sessionModel.find({
+			userId: currentUserId,
+		});
 
 		return this.mapSessions(session);
 	}

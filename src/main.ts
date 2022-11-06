@@ -10,7 +10,9 @@ async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 	app.set('trust proxy', 1);
 	app.useGlobalPipes(globalValidationPipe());
-	useContainer(app.select(AppModule), { fallbackOnErrors: true });
+	useContainer(app.select(AppModule), {
+		fallbackOnErrors: true,
+	});
 	app.useGlobalFilters(new HttpExceptionFilter());
 	app.enableCors();
 	app.use(cookieParser());

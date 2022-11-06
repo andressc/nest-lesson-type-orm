@@ -15,14 +15,20 @@ export class SessionsController {
 
 	@UseGuards(RefreshTokenGuard)
 	@Get('/devices')
-	findAllSessions(@RefreshTokenData() refreshTokenData: RefreshTokenDataDto) {
+	findAllSessions(
+		@RefreshTokenData()
+		refreshTokenData: RefreshTokenDataDto,
+	) {
 		return this.querySessionsRepository.findAllSessions(refreshTokenData.userId);
 	}
 
 	@HttpCode(204)
 	@UseGuards(RefreshTokenGuard)
 	@Delete('/devices')
-	async removeAllUserSessions(@RefreshTokenData() refreshTokenData: RefreshTokenDataDto) {
+	async removeAllUserSessions(
+		@RefreshTokenData()
+		refreshTokenData: RefreshTokenDataDto,
+	) {
 		await this.sessionsService.removeAllUserSessions(
 			refreshTokenData.userId,
 			refreshTokenData.deviceId,
@@ -34,7 +40,8 @@ export class SessionsController {
 	@Delete('/devices/:id')
 	async removeUserSession(
 		@Param() param: StringIdDto,
-		@RefreshTokenData() refreshTokenData: RefreshTokenDataDto,
+		@RefreshTokenData()
+		refreshTokenData: RefreshTokenDataDto,
 	) {
 		await this.sessionsService.removeUserSession(refreshTokenData.userId, param.id);
 	}

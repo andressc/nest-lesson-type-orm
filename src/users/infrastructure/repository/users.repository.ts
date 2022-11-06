@@ -6,7 +6,10 @@ import { CreateUserExtendsDto } from '../../dto';
 
 @Injectable()
 export class UsersRepository {
-	constructor(@InjectModel(User.name) private readonly userModel: Model<UserModel>) {}
+	constructor(
+		@InjectModel(User.name)
+		private readonly userModel: Model<UserModel>,
+	) {}
 
 	async createUserModel(data: CreateUserExtendsDto): Promise<UserModel> {
 		return new this.userModel(data);
@@ -25,7 +28,9 @@ export class UsersRepository {
 	}
 
 	async findUserModelByConfirmationCode(confirmationCode: string): Promise<UserModel | null> {
-		return this.userModel.findOne({ confirmationCode });
+		return this.userModel.findOne({
+			confirmationCode,
+		});
 	}
 
 	async save(userModel: UserModel): Promise<UserModel> {

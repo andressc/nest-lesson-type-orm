@@ -10,13 +10,19 @@ import { QueryBlogDto, ResponseBlogDto } from '../../dto/blogs';
 @Injectable()
 export class QueryBlogsRepository {
 	constructor(
-		@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>,
+		@InjectModel(Blog.name)
+		private readonly blogModel: Model<BlogModel>,
 		private readonly paginationService: PaginationService,
 	) {}
 
 	async findAllBlogs(query: QueryBlogDto): Promise<PaginationDto<ResponseBlogDto[]>> {
 		const searchString = query.searchNameTerm
-			? { name: { $regex: query.searchNameTerm, $options: 'i' } }
+			? {
+					name: {
+						$regex: query.searchNameTerm,
+						$options: 'i',
+					},
+			  }
 			: {};
 
 		const totalCount: number = await this.blogModel.countDocuments(searchString);

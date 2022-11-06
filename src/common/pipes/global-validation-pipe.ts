@@ -11,7 +11,10 @@ export const globalValidationPipe = () => {
 				const constrainsKeys = Object.keys(e.constraints);
 
 				constrainsKeys.forEach((ckey) => {
-					errorsForResponse.push({ message: e.constraints[ckey], field: e.property });
+					errorsForResponse.push({
+						message: e.constraints[ckey],
+						field: e.property,
+					});
 				});
 			});
 

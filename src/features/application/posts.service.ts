@@ -58,7 +58,10 @@ export class PostsService {
 		const blog: BlogModel = await this.findBlogOrErrorThrow(data.blogId);
 
 		const post: PostModel = await this.findPostOrErrorThrow(id);
-		post.updateData({ ...data, blogName: blog.name });
+		post.updateData({
+			...data,
+			blogName: blog.name,
+		});
 		await this.postsRepository.save(post);
 	}
 

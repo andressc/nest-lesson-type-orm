@@ -45,8 +45,18 @@ import { UsersModule } from '../users/users.module';
 	imports: [
 		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 		MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-		MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-		MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }]),
+		MongooseModule.forFeature([
+			{
+				name: Comment.name,
+				schema: CommentSchema,
+			},
+		]),
+		MongooseModule.forFeature([
+			{
+				name: Session.name,
+				schema: SessionSchema,
+			},
+		]),
 		UsersModule,
 	],
 	controllers: [

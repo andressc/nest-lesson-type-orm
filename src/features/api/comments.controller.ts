@@ -17,7 +17,8 @@ export class CommentsController {
 	@UseGuards(GuestGuard)
 	findOneComment(
 		@Param() param: ObjectIdDto,
-		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
+		@CurrentUserIdNonAuthorized()
+		currentUserId: ObjectIdDto | null,
 	) {
 		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
 	}

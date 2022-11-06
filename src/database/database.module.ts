@@ -8,10 +8,14 @@ import { startMongoMemoryServer } from '../common/utils';
 		MongooseModule.forRootAsync({
 			useFactory: async (configService: ConfigService) => {
 				if (configService.get<string>('NODE_ENV') === 'test') {
-					return { uri: await startMongoMemoryServer() };
+					return {
+						uri: await startMongoMemoryServer(),
+					};
 				}
 
-				return { uri: configService.get<string>('MONGO_URI') };
+				return {
+					uri: configService.get<string>('MONGO_URI'),
+				};
 			},
 			inject: [ConfigService],
 		}),

@@ -20,7 +20,9 @@ export const mainTest = async () => {
 	app.useGlobalPipes(globalValidationPipe());
 	app.useGlobalFilters(new HttpExceptionFilter());
 	app.enableCors();
-	useContainer(app.select(AppModule), { fallbackOnErrors: true });
+	useContainer(app.select(AppModule), {
+		fallbackOnErrors: true,
+	});
 	app.use(cookieParser());
 
 	await app.init();

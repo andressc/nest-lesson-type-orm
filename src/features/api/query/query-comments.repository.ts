@@ -17,8 +17,10 @@ import { PaginationService } from '../../application';
 @Injectable()
 export class QueryCommentsRepository {
 	constructor(
-		@InjectModel(Comment.name) private readonly commentModel: Model<CommentModel>,
-		@InjectModel(Post.name) private readonly postModel: Model<PostModel>,
+		@InjectModel(Comment.name)
+		private readonly commentModel: Model<CommentModel>,
+		@InjectModel(Post.name)
+		private readonly postModel: Model<PostModel>,
 		private readonly paginationService: PaginationService,
 	) {}
 

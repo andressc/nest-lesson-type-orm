@@ -6,7 +6,10 @@ import { CreateCommentExtendsDto } from '../../dto/comments';
 
 @Injectable()
 export class CommentsRepository {
-	constructor(@InjectModel(Comment.name) private readonly commentModel: Model<CommentModel>) {}
+	constructor(
+		@InjectModel(Comment.name)
+		private readonly commentModel: Model<CommentModel>,
+	) {}
 
 	async createCommentModel(data: CreateCommentExtendsDto): Promise<CommentModel> {
 		return new this.commentModel(data);

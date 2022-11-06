@@ -67,7 +67,8 @@ export class AuthController {
 	@UseGuards(RefreshTokenGuard)
 	@Post('refresh-token')
 	async refreshToken(
-		@RefreshTokenData() refreshTokenData: RefreshTokenDataDto,
+		@RefreshTokenData()
+		refreshTokenData: RefreshTokenDataDto,
 		@Res({ passthrough: true }) res: Response,
 	) {
 		const tokens = await this.authService.refreshToken(refreshTokenData);
@@ -82,7 +83,10 @@ export class AuthController {
 	@HttpCode(204)
 	@UseGuards(RefreshTokenGuard)
 	@Post('logout')
-	async destroyRefreshToken(@RefreshTokenData() refreshTokenData: RefreshTokenDataDto) {
+	async destroyRefreshToken(
+		@RefreshTokenData()
+		refreshTokenData: RefreshTokenDataDto,
+	) {
 		await this.sessionsService.removeUserSession(
 			refreshTokenData.userId,
 			refreshTokenData.deviceId,

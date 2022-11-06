@@ -10,7 +10,8 @@ import { PaginationService } from '../../../features/application';
 @Injectable()
 export class QueryUsersRepository {
 	constructor(
-		@InjectModel(User.name) private readonly userModel: Model<UserModel>,
+		@InjectModel(User.name)
+		private readonly userModel: Model<UserModel>,
 		private readonly paginationService: PaginationService,
 	) {}
 
@@ -73,14 +74,24 @@ export class QueryUsersRepository {
 	private searchTerm = (login: string | undefined, email: string | undefined): any => {
 		let searchString = {};
 
-		const searchLoginTerm = login ? { login: { $regex: login, $options: 'i' } } : null;
-		const searchEmailTerm = email ? { email: { $regex: email, $options: 'i' } } : null;
+		const searchLoginTerm = login
+			? {
+					login: { $regex: login, $options: 'i' },
+			  }
+			: null;
+		const searchEmailTerm = email
+			? {
+					email: { $regex: email, $options: 'i' },
+			  }
+			: null;
 
 		if (searchLoginTerm) searchString = searchLoginTerm;
 		if (searchEmailTerm) searchString = searchEmailTerm;
 
 		if (searchLoginTerm && searchEmailTerm)
-			searchString = { $or: [searchLoginTerm, searchEmailTerm] };
+			searchString = {
+				$or: [searchLoginTerm, searchEmailTerm],
+			};
 
 		return searchString;
 	};
