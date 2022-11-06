@@ -34,7 +34,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: tests, lint
+    needs: [tests lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
