@@ -9,6 +9,7 @@ import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -64,8 +65,6 @@ describe('PostController (e2e)', () => {
 		],
 	};
 
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
-
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -110,7 +109,7 @@ describe('PostController (e2e)', () => {
 		it('add new post', async () => {
 			const createdPost = await request(app)
 				.post('/posts')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
@@ -142,7 +141,7 @@ describe('PostController (e2e)', () => {
 		});
 
 		it('delete post by id', async () => {
-			await request(app).delete(`/posts/${postId}`).set('authorization', basicAuth).expect(204);
+			await request(app).delete(`/posts/${postId}`).set('authorization', BASIC_AUTH).expect(204);
 		});
 
 		it('find not existing post by id after delete', async () => {
@@ -150,7 +149,7 @@ describe('PostController (e2e)', () => {
 		});
 
 		it('delete a post that does not exist', async () => {
-			await request(app).delete(`/posts/${randomId}`).set('authorization', basicAuth).expect(404);
+			await request(app).delete(`/posts/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
 		});
 	});
 
@@ -171,7 +170,7 @@ describe('PostController (e2e)', () => {
 		it('add new post', async () => {
 			const createdPost = await request(app)
 				.post('/posts')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
@@ -186,7 +185,7 @@ describe('PostController (e2e)', () => {
 		it('update post after add', async () => {
 			await request(app)
 				.put(`/posts/${postId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: 'new title',
 					shortDescription: 'new Short description',
@@ -212,7 +211,7 @@ describe('PostController (e2e)', () => {
 		it('update a post that does not exist', async () => {
 			await request(app)
 				.put(`/posts/${randomId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: 'new title',
 					shortDescription: 'new Short description',
@@ -231,7 +230,7 @@ describe('PostController (e2e)', () => {
 		it('add a new post with incorrect body data', async () => {
 			const addPostError = await request(app)
 				.post('/posts')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.expect(400);
 
 			expect(addPostError.body).toEqual(postErrorsMessages);
@@ -240,7 +239,7 @@ describe('PostController (e2e)', () => {
 		it('update post with incorrect body data', async () => {
 			const updatePostError = await request(app)
 				.put(`/posts/${randomId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.expect(400);
 
 			expect(updatePostError.body).toEqual({
@@ -299,7 +298,7 @@ describe('PostController (e2e)', () => {
 		it('create new post for specific blog', async () => {
 			const createdPost = await request(app)
 				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
@@ -319,7 +318,7 @@ describe('PostController (e2e)', () => {
 		it('test Likes', async () => {
 			const createdPost = await request(app)
 				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,

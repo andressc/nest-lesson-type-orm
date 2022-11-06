@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb';
 import { User } from '../src/database/entity';
 import { userCreator } from './dbSeeding/userCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -48,8 +49,6 @@ describe('BlogController (e2e)', () => {
 		],
 	};
 
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
-
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -87,7 +86,7 @@ describe('BlogController (e2e)', () => {
 		it('add new user', async () => {
 			const user = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 
@@ -108,7 +107,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete user by id', async () => {
-			await request(app).delete(`/users/${userId}`).set('authorization', basicAuth).expect(204);
+			await request(app).delete(`/users/${userId}`).set('authorization', BASIC_AUTH).expect(204);
 		});
 
 		it('should return 200 and all user null after delete', async () => {
@@ -124,7 +123,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete a user that does not exist', async () => {
-			await request(app).delete(`/users/${randomId}`).set('authorization', basicAuth).expect(404);
+			await request(app).delete(`/users/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
 		});
 	});
 
@@ -136,7 +135,7 @@ describe('BlogController (e2e)', () => {
 		it('add new user wrong body data', async () => {
 			const addBlogError = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.expect(400);
 
 			expect(addBlogError.body).toEqual(userErrorsMessages);
@@ -145,7 +144,7 @@ describe('BlogController (e2e)', () => {
 		it('add new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -153,7 +152,7 @@ describe('BlogController (e2e)', () => {
 		it('add a user that already exists login', async () => {
 			const user = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({ ...userDataLogin, email: 'email2@mail.ru' })
 				.expect(400);
 
@@ -170,7 +169,7 @@ describe('BlogController (e2e)', () => {
 		it('add a user that already exists email', async () => {
 			const user = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({ ...userDataLogin, login: 'login2' })
 				.expect(400);
 
@@ -187,7 +186,7 @@ describe('BlogController (e2e)', () => {
 		it('add a user that already exists email and login', async () => {
 			const user = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(400);
 

@@ -8,6 +8,7 @@ import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -37,8 +38,6 @@ describe('BlogController (e2e)', () => {
 			},
 		],
 	};
-
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
 
 	beforeAll(async () => {
 		dataApp = await mainTest();
@@ -81,7 +80,7 @@ describe('BlogController (e2e)', () => {
 		it('add new blog', async () => {
 			const blog = await request(app)
 				.post('/blogs')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					name: blogData.name,
 					youtubeUrl: blogData.youtubeUrl,
@@ -111,7 +110,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete blog by id', async () => {
-			await request(app).delete(`/blogs/${blogId}`).set('authorization', basicAuth).expect(204);
+			await request(app).delete(`/blogs/${blogId}`).set('authorization', BASIC_AUTH).expect(204);
 		});
 
 		it('find not existing blog by id after delete', async () => {
@@ -119,7 +118,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete a blog that does not exist', async () => {
-			await request(app).delete(`/blogs/${randomId}`).set('authorization', basicAuth).expect(404);
+			await request(app).delete(`/blogs/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
 		});
 	});
 
@@ -133,7 +132,7 @@ describe('BlogController (e2e)', () => {
 		it('add new blog', async () => {
 			const blog = await request(app)
 				.post('/blogs')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					name: blogData.name,
 					youtubeUrl: blogData.youtubeUrl,
@@ -146,7 +145,7 @@ describe('BlogController (e2e)', () => {
 		it('update blog after add', async () => {
 			await request(app)
 				.put(`/blogs/${blogId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					name: 'newName',
 					youtubeUrl: 'https://www.youtube.com/channel/aaaaaaaaaaaaaaaaaaaa',
@@ -167,7 +166,7 @@ describe('BlogController (e2e)', () => {
 		it('update a blog that does not exist', async () => {
 			await request(app)
 				.put(`/blogs/${randomId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					name: blogData.name,
 					youtubeUrl: blogData.youtubeUrl,
@@ -184,7 +183,7 @@ describe('BlogController (e2e)', () => {
 		it('add a new blog with incorrect body data', async () => {
 			const blogError = await request(app)
 				.post('/blogs')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					youtubeUrl: 'invalid-url',
 				})
@@ -196,7 +195,7 @@ describe('BlogController (e2e)', () => {
 		it('update blog with incorrect body data', async () => {
 			const blogError = await request(app)
 				.put(`/blogs/${randomId}`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					youtubeUrl: 'invalid-url',
 				})

@@ -12,6 +12,7 @@ import { blogCreator } from './dbSeeding/blogCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { commentCreator } from './dbSeeding/commentCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('CommentController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -82,8 +83,6 @@ describe('CommentController (e2e)', () => {
 		],
 	};
 
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
-
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -116,7 +115,7 @@ describe('CommentController (e2e)', () => {
 		it('add new user', async () => {
 			const user = await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 
@@ -236,7 +235,7 @@ describe('CommentController (e2e)', () => {
 		it('add new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -285,7 +284,7 @@ describe('CommentController (e2e)', () => {
 		it('add new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -361,7 +360,7 @@ describe('CommentController (e2e)', () => {
 		it('test Likes', async () => {
 			const createdPost = await request(app)
 				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
@@ -381,7 +380,7 @@ describe('CommentController (e2e)', () => {
 		it('test email not confirmed', async () => {
 			const createdPost = await request(app)
 				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,

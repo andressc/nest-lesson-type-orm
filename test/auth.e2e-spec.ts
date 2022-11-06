@@ -4,6 +4,7 @@ import request from 'supertest';
 import { mainTest } from '../src/main-test';
 import { Connection } from 'mongoose';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('BlogController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -39,8 +40,6 @@ describe('BlogController (e2 e)', () => {
 		],
 	};
 
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
-
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -61,7 +60,7 @@ describe('BlogController (e2 e)', () => {
 		it('create new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -165,7 +164,7 @@ describe('BlogController (e2 e)', () => {
 		it('create new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -218,7 +217,7 @@ describe('BlogController (e2 e)', () => {
 		it('create new user', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -261,7 +260,7 @@ describe('BlogController (e2 e)', () => {
 		it('registration confirmation', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -284,7 +283,7 @@ describe('BlogController (e2 e)', () => {
 		it('registration email resending', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -307,7 +306,7 @@ describe('BlogController (e2 e)', () => {
 		it('registration-email-resending', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -323,7 +322,7 @@ describe('BlogController (e2 e)', () => {
 		it('new password', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -346,7 +345,7 @@ describe('BlogController (e2 e)', () => {
 		it('password recovery', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});

@@ -5,6 +5,7 @@ import request from 'supertest';
 import { ObjectId } from 'mongodb';
 import { Connection } from 'mongoose';
 import { stopMongoMemoryServer } from '../src/common/utils';
+import { BASIC_AUTH } from './constants';
 
 describe('PostController (e2 e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -34,8 +35,6 @@ describe('PostController (e2 e)', () => {
 
 	const randomId = new ObjectId().toString();
 
-	const basicAuth = 'Basic YWRtaW46cXdlcnR5';
-
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -63,7 +62,7 @@ describe('PostController (e2 e)', () => {
 		it('create new user 1', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
 		});
@@ -71,7 +70,7 @@ describe('PostController (e2 e)', () => {
 		it('create new user 2', async () => {
 			await request(app)
 				.post('/users')
-				.set('authorization', basicAuth)
+				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin2)
 				.expect(201);
 		});

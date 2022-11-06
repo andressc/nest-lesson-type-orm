@@ -43,6 +43,14 @@ export class AuthConfig extends BaseConfig {
 		return this.getStringOrThrow('COOKIE_NAME_JWT', 'refreshToken');
 	}
 
+	getSuperAdminLogin() {
+		return this.getStringOrThrow('SUPER_ADMIN_LOGIN', 'admin');
+	}
+
+	getSuperAdminPassword() {
+		return this.getStringOrThrow('SUPER_ADMIN_PASSWORD', '123456');
+	}
+
 	getThrottlerSettings() {
 		return {
 			ttl: this.getNumberOrThrow('THROTTLER_TTL', 10),
