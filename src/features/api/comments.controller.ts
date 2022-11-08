@@ -1,17 +1,17 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Put, UseGuards } from '@nestjs/common';
 import { ObjectIdDto } from '../../common/dto';
-import { QueryCommentsRepository } from './query';
 import { CreateLikeDto, UpdateCommentDto } from '../dto/comments';
-import { CommentsService } from '../application';
 import { AccessTokenGuard, GuestGuard } from '../../common/guards';
 import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../common/decorators/Param';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UpdateCommentCommand } from '../application/comments/commands/update-comment.handler';
+import { RemoveCommentCommand } from '../application/comments/commands/remove-comment.handler';
+import { SetLikeCommentCommand } from '../application/comments/commands/set-like-comment.handler';
+import { FindOneCommentCommand } from '../application/comments/queries/find-one-comment.handler';
 
 @Controller('comments')
 export class CommentsController {
-	constructor(
-		private readonly commentsService: CommentsService,
-		private readonly queryCommentsRepository: QueryCommentsRepository,
-	) {}
+	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
 	@Get(':id')
 	@UseGuards(GuestGuard)
@@ -20,7 +20,7 @@ export class CommentsController {
 		@CurrentUserIdNonAuthorized()
 		currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryCommentsRepository.findOneComment(param.id, currentUserId);
+		return this.queryBus.execute(new FindOneCommentCommand(param.id, currentUserId));
 	}
 
 	@HttpCode(204)
@@ -31,14 +31,14 @@ export class CommentsController {
 		@Body() data: UpdateCommentDto,
 		@CurrentUserId() currentUserId,
 	) {
-		await this.commentsService.updateComment(param.id, data, currentUserId);
+		await this.commandBus.execute(new UpdateCommentCommand(param.id, data, currentUserId));
 	}
 
 	@HttpCode(204)
 	@UseGuards(AccessTokenGuard)
 	@Delete(':id')
 	async removeComment(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
-		await this.commentsService.removeComment(param.id, currentUserId);
+		await this.commandBus.execute(new RemoveCommentCommand(param.id, currentUserId));
 	}
 
 	@HttpCode(204)
@@ -49,6 +49,6 @@ export class CommentsController {
 		@CurrentUserId() currentUserId,
 		@Body() data: CreateLikeDto,
 	) {
-		await this.commentsService.setLike(param.id, currentUserId, data);
+		await this.commandBus.execute(new SetLikeCommentCommand(param.id, currentUserId, data));
 	}
 }

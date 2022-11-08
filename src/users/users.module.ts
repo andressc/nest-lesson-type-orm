@@ -5,10 +5,19 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './api/users.controller';
 import { User, UserSchema } from '../database/entity';
 import { ValidationService, PaginationService } from '../features/application';
-import { QueryUsersRepository } from './api/query/query-users.repository';
+import { QueryUsersRepository } from './infrastructure/query/query-users.repository';
+import { CqrsModule } from '@nestjs/cqrs';
+import { RemoveUserHandler } from './application/commands/remove-user.handler';
+import { CreateUserHandler } from './application/commands/create-user.handler';
+import { FindOneUserHandler } from './application/queries/find-one-user.handler';
+import { FindMeUserHandler } from './application/queries/find-me-user.handler';
+import { FindAllUserHandler } from './application/queries/find-all-user.handler';
+
+export const CommandHandlers = [RemoveUserHandler, CreateUserHandler];
+export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
 
 @Module({
-	imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
+	imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), CqrsModule],
 
 	controllers: [UsersController],
 	providers: [
@@ -17,6 +26,8 @@ import { QueryUsersRepository } from './api/query/query-users.repository';
 		ValidationService,
 		QueryUsersRepository,
 		PaginationService,
+		...CommandHandlers,
+		...QueryHandlers,
 	],
 	exports: [UsersService, UsersRepository, QueryUsersRepository],
 })

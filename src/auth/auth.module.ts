@@ -16,6 +16,27 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthConfig } from '../configuration';
 import { ConfigService } from '@nestjs/config';
 import { MailerModule } from '../mailer/mailer.module';
+import { CqrsModule } from '@nestjs/cqrs';
+import { LoginAuthHandler } from './application/commands/login-auth.handler';
+import { RefreshTokenAuthHandler } from './application/commands/refresh-token-auth.handler';
+import { RegistrationAuthHandler } from './application/commands/registration-auth.handler';
+import { RegistrationConfirmationAuthHandler } from './application/commands/registration-confirmation-auth.handler';
+import { RegistrationEmailResendingAuthHandler } from './application/commands/registration-email-resending-auth.handler';
+import { PasswordRecoveryAuthHandler } from './application/commands/password-recovery-auth.handler';
+import { NewPasswordAuthHandler } from './application/commands/new-password-auth.handler';
+import { ValidateUserAuthHandler } from './application/commands/validate-user-auth.handler';
+
+export const CommandHandlers = [
+	LoginAuthHandler,
+	RefreshTokenAuthHandler,
+	RegistrationAuthHandler,
+	RegistrationConfirmationAuthHandler,
+	RegistrationEmailResendingAuthHandler,
+	PasswordRecoveryAuthHandler,
+	NewPasswordAuthHandler,
+	ValidateUserAuthHandler,
+];
+export const QueryHandlers = [];
 
 @Module({
 	imports: [
@@ -33,6 +54,7 @@ import { MailerModule } from '../mailer/mailer.module';
 		PassportModule,
 		FeaturesModule,
 		MailerModule,
+		CqrsModule,
 	],
 	controllers: [AuthController],
 	providers: [
@@ -43,6 +65,8 @@ import { MailerModule } from '../mailer/mailer.module';
 		BasicStrategy,
 		PasswordRecoveryTokenStrategy,
 		AuthConfig,
+		...CommandHandlers,
+		...QueryHandlers,
 	],
 	exports: [AuthService],
 })

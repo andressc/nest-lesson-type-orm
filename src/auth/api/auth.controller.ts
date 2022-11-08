@@ -1,6 +1,5 @@
 import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
-import { QueryUsersRepository } from '../../users/api/query/query-users.repository';
 
 import { Response } from 'express';
 import {
@@ -11,8 +10,6 @@ import {
 	NewPasswordDto,
 	ResponseTokensDto,
 } from '../dto';
-
-import { SessionsService } from '../../features/application';
 
 import {
 	CurrentUserAgent,
@@ -28,14 +25,24 @@ import {
 } from '../../common/guards';
 import { PasswordRecoveryTokenGuard } from '../../common/guards';
 import { AuthConfig } from '../../configuration';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { RemoveUserSessionCommand } from '../../features/application/sessions/commands/remove-user-session.handler';
+import { FindMeUserCommand } from '../../users/application/queries/find-me-user.handler';
+import { LoginAuthCommand } from '../application/commands/login-auth.handler';
+import { RefreshTokenAuthCommand } from '../application/commands/refresh-token-auth.handler';
+import { RegistrationAuthCommand } from '../application/commands/registration-auth.handler';
+import { RegistrationConfirmationAuthCommand } from '../application/commands/registration-confirmation-auth.handler';
+import { RegistrationEmailResendingAuthCommand } from '../application/commands/registration-email-resending-auth.handler';
+import { PasswordRecoveryAuthCommand } from '../application/commands/password-recovery-auth.handler';
+import { NewPasswordAuthCommand } from '../application/commands/new-password-auth.handler';
 
 @Controller('auth')
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
-		private readonly sessionsService: SessionsService,
-		private readonly queryUsersRepository: QueryUsersRepository,
 		private readonly authConfig: AuthConfig,
+		private readonly commandBus: CommandBus,
+		private readonly queryBus: QueryBus,
 	) {}
 
 	@HttpCode(200)
@@ -48,7 +55,10 @@ export class AuthController {
 		@CurrentUserAgent() userAgent: string,
 		@Res({ passthrough: true }) res: Response,
 	) {
-		const tokens: ResponseTokensDto = await this.authService.login(currentUserId, ip, userAgent);
+		const tokens: ResponseTokensDto = await this.commandBus.execute(
+			new LoginAuthCommand(currentUserId, ip, userAgent),
+		);
+
 		res.cookie(
 			this.authConfig.getCookieNameJwt(),
 			tokens.refreshToken,
@@ -60,7 +70,7 @@ export class AuthController {
 	@UseGuards(AccessTokenGuard)
 	@Get('me')
 	async getProfile(@CurrentUserId() currentUserId: string) {
-		return this.queryUsersRepository.findMe(currentUserId);
+		return this.queryBus.execute(new FindMeUserCommand(currentUserId));
 	}
 
 	@HttpCode(200)
@@ -71,7 +81,8 @@ export class AuthController {
 		refreshTokenData: RefreshTokenDataDto,
 		@Res({ passthrough: true }) res: Response,
 	) {
-		const tokens = await this.authService.refreshToken(refreshTokenData);
+		const tokens = await this.commandBus.execute(new RefreshTokenAuthCommand(refreshTokenData));
+
 		res.cookie(
 			this.authConfig.getCookieNameJwt(),
 			tokens.refreshToken,
@@ -87,9 +98,8 @@ export class AuthController {
 		@RefreshTokenData()
 		refreshTokenData: RefreshTokenDataDto,
 	) {
-		await this.sessionsService.removeUserSession(
-			refreshTokenData.userId,
-			refreshTokenData.deviceId,
+		await this.commandBus.execute(
+			new RemoveUserSessionCommand(refreshTokenData.userId, refreshTokenData.deviceId),
 		);
 	}
 
@@ -97,28 +107,28 @@ export class AuthController {
 	@UseGuards(RateLimitGuard)
 	@Post('registration')
 	async registration(@Body() data: RegistrationDto) {
-		await this.authService.registration(data);
+		await this.commandBus.execute(new RegistrationAuthCommand(data));
 	}
 
 	@HttpCode(204)
 	@UseGuards(RateLimitGuard)
 	@Post('registration-confirmation')
 	async registrationConfirmation(@Body() data: RegistrationConfirmationDto) {
-		await this.authService.registrationConfirmation(data);
+		await this.commandBus.execute(new RegistrationConfirmationAuthCommand(data));
 	}
 
 	@HttpCode(204)
 	@UseGuards(RateLimitGuard)
 	@Post('registration-email-resending')
 	async registrationEmailResending(@Body() data: RegistrationEmailResendingDto) {
-		await this.authService.registrationEmailResending(data);
+		await this.commandBus.execute(new RegistrationEmailResendingAuthCommand(data));
 	}
 
 	@HttpCode(204)
 	@UseGuards(RateLimitGuard)
 	@Post('password-recovery')
 	async passwordRecovery(@Body() data: RegistrationEmailResendingDto) {
-		await this.authService.passwordRecovery(data);
+		await this.commandBus.execute(new PasswordRecoveryAuthCommand(data));
 	}
 
 	@HttpCode(204)
@@ -126,6 +136,6 @@ export class AuthController {
 	@UseGuards(RateLimitGuard)
 	@Post('new-password')
 	async newPassword(@Body() data: NewPasswordDto, @CurrentUserId() currentUserId: string) {
-		await this.authService.newPassword(data, currentUserId);
+		await this.commandBus.execute(new NewPasswordAuthCommand(data, currentUserId));
 	}
 }

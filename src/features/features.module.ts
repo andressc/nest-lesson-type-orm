@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
-	QueryBlogsRepository,
 	QueryPostsRepository,
 	QueryCommentsRepository,
 	QuerySessionsRepository,
-} from './api/query';
+} from './infrastructure/query';
 import {
 	BlogsService,
 	ValidationService,
 	PostsService,
-	TestingService,
 	CommentsService,
-	SessionsService,
 	PaginationService,
 } from './application';
 import {
@@ -40,6 +37,54 @@ import {
 } from './infrastructure/repository';
 import { IsUserCommentValidatorConstraint } from '../common/decorators/Validation';
 import { UsersModule } from '../users/users.module';
+import { CreateBlogHandler } from './application/blogs/commands/create-blog.handler';
+import { CqrsModule } from '@nestjs/cqrs';
+import { RemoveBlogHandler } from './application/blogs/commands/remove-blog.handler';
+import { UpdateBlogHandler } from './application/blogs/commands/update-blog.handler';
+import { FindOneBlogHandler } from './application/blogs/queries/find-one-blog.handler';
+import { FindAllBlogHandler } from './application/blogs/queries/find-all-blog.handler';
+import { QueryBlogsRepository } from './infrastructure/query/query-blogs.repository';
+import { CreatePostHandler } from './application/posts/commands/create-post.handler';
+import { UpdatePostHandler } from './application/posts/commands/update-post.handler';
+import { RemovePostHandler } from './application/posts/commands/remove-post.handler';
+import { CreatePostOfBlogHandler } from './application/posts/commands/create-post-of-blog.handler';
+import { SetLikePostHandler } from './application/posts/commands/set-like-post.handler';
+import { UpdateCommentHandler } from './application/comments/commands/update-comment.handler';
+import { RemoveCommentHandler } from './application/comments/commands/remove-comment.handler';
+import { SetLikeCommentHandler } from './application/comments/commands/set-like-comment.handler';
+import { CreateCommentOfPostHandler } from './application/comments/commands/create-comment-of-post.handler';
+import { RemoveAllTestingHandler } from './application/testing/commands/remove-all-testing.handler';
+import { RemoveAllUserSessionHandler } from './application/sessions/commands/remove-all-user-session.handler';
+import { RemoveUserSessionHandler } from './application/sessions/commands/remove-user-session.handler';
+import { FindOnePostHandler } from './application/posts/queries/find-one-post.handler';
+import { FindAllPostHandler } from './application/posts/queries/find-all-post.handler';
+import { FindAllSessionHandler } from './application/sessions/queries/find-all-session.handler';
+import { FindOneCommentHandler } from './application/comments/queries/find-one-comment.handler';
+import { FindAllCommentOfPostHandler } from './application/comments/queries/find-all-comment-of-post.handler';
+
+export const CommandHandlers = [
+	CreateBlogHandler,
+	RemoveBlogHandler,
+	UpdateBlogHandler,
+	CreatePostHandler,
+	UpdatePostHandler,
+	RemovePostHandler,
+	CreatePostOfBlogHandler,
+	SetLikePostHandler,
+	UpdateCommentHandler,
+	RemoveCommentHandler,
+	SetLikeCommentHandler,
+	CreateCommentOfPostHandler,
+	RemoveAllTestingHandler,
+	RemoveAllUserSessionHandler,
+	RemoveUserSessionHandler,
+	FindOnePostHandler,
+	FindAllPostHandler,
+	FindAllSessionHandler,
+	FindOneCommentHandler,
+	FindAllCommentOfPostHandler,
+];
+export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
 
 @Module({
 	imports: [
@@ -58,6 +103,7 @@ import { UsersModule } from '../users/users.module';
 			},
 		]),
 		UsersModule,
+		CqrsModule,
 	],
 	controllers: [
 		BlogsController,
@@ -70,9 +116,7 @@ import { UsersModule } from '../users/users.module';
 		BlogsService,
 		ValidationService,
 		PostsService,
-		TestingService,
 		CommentsService,
-		SessionsService,
 
 		PaginationService,
 		IsUserCommentValidatorConstraint,
@@ -86,8 +130,10 @@ import { UsersModule } from '../users/users.module';
 		PostsRepository,
 		CommentsRepository,
 		SessionsRepository,
+		...QueryHandlers,
+		...CommandHandlers,
 	],
 
-	exports: [ValidationService, SessionsRepository, SessionsService],
+	exports: [ValidationService, SessionsRepository],
 })
 export class FeaturesModule {}

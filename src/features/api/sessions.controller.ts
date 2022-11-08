@@ -1,17 +1,16 @@
 import { Controller, Delete, Get, HttpCode, Param, UseGuards } from '@nestjs/common';
-import { QuerySessionsRepository } from './query';
-import { SessionsService } from '../application';
 import { RefreshTokenGuard } from '../../common/guards';
 import { RefreshTokenDataDto } from '../../auth/dto';
 import { StringIdDto } from '../../common/dto';
 import { RefreshTokenData } from '../../common/decorators/Param';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { RemoveAllUserSessionCommand } from '../application/sessions/commands/remove-all-user-session.handler';
+import { RemoveUserSessionCommand } from '../application/sessions/commands/remove-user-session.handler';
+import { FindAllSessionCommand } from '../application/sessions/queries/find-all-session.handler';
 
 @Controller('security')
 export class SessionsController {
-	constructor(
-		private readonly sessionsService: SessionsService,
-		private readonly querySessionsRepository: QuerySessionsRepository,
-	) {}
+	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
 	@UseGuards(RefreshTokenGuard)
 	@Get('/devices')
@@ -19,7 +18,7 @@ export class SessionsController {
 		@RefreshTokenData()
 		refreshTokenData: RefreshTokenDataDto,
 	) {
-		return this.querySessionsRepository.findAllSessions(refreshTokenData.userId);
+		return this.queryBus.execute(new FindAllSessionCommand(refreshTokenData.userId));
 	}
 
 	@HttpCode(204)
@@ -29,9 +28,8 @@ export class SessionsController {
 		@RefreshTokenData()
 		refreshTokenData: RefreshTokenDataDto,
 	) {
-		await this.sessionsService.removeAllUserSessions(
-			refreshTokenData.userId,
-			refreshTokenData.deviceId,
+		await this.commandBus.execute(
+			new RemoveAllUserSessionCommand(refreshTokenData.userId, refreshTokenData.deviceId),
 		);
 	}
 
@@ -43,6 +41,6 @@ export class SessionsController {
 		@RefreshTokenData()
 		refreshTokenData: RefreshTokenDataDto,
 	) {
-		await this.sessionsService.removeUserSession(refreshTokenData.userId, param.id);
+		await this.commandBus.execute(new RemoveUserSessionCommand(refreshTokenData.userId, param.id));
 	}
 }

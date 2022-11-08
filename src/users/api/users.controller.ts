@@ -11,35 +11,34 @@ import {
 } from '@nestjs/common';
 
 import { CreateUserDto, QueryUserDto } from '../dto';
-import { QueryUsersRepository } from './query/query-users.repository';
-import { UsersService } from '../application/users.service';
-
 import { ObjectIdDto } from '../../common/dto/';
 import { BasicAuthGuard } from '../../common/guards';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { RemoveUserCommand } from '../application/commands/remove-user.handler';
+import { CreateUserCommand } from '../application/commands/create-user.handler';
+import { FindOneUserCommand } from '../application/queries/find-one-user.handler';
+import { FindAllUserCommand } from '../application/queries/find-all-user.handler';
 
 @Controller('users')
 export class UsersController {
-	constructor(
-		private readonly usersService: UsersService,
-		private readonly queryUserRepository: QueryUsersRepository,
-	) {}
+	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
 	@UseGuards(BasicAuthGuard)
 	@Post()
 	async createUser(@Body() data: CreateUserDto) {
-		const userId = await this.usersService.createUser(data, true);
-		return this.queryUserRepository.findOneUser(userId);
+		const userId = await this.commandBus.execute(new CreateUserCommand(data, true));
+		return this.queryBus.execute(new FindOneUserCommand(userId));
 	}
 
 	@Get()
 	findAllUsers(@Query() query: QueryUserDto) {
-		return this.queryUserRepository.findAllUsers(query);
+		return this.queryBus.execute(new FindAllUserCommand(query));
 	}
 
 	@HttpCode(204)
 	@UseGuards(BasicAuthGuard)
 	@Delete(':id')
 	async removeUser(@Param() param: ObjectIdDto) {
-		await this.usersService.removeUser(param.id);
+		await this.commandBus.execute(new RemoveUserCommand(param.id));
 	}
 }

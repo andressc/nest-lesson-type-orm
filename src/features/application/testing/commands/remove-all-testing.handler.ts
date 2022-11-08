@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
 import {
 	BlogsRepository,
-	PostsRepository,
 	CommentsRepository,
+	PostsRepository,
 	SessionsRepository,
-} from '../infrastructure/repository';
-import { UsersRepository } from '../../users/infrastructure/repository';
+} from '../../../infrastructure/repository';
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
+import { UsersRepository } from '../../../../users/infrastructure/repository';
 
-@Injectable()
-export class TestingService {
+export class RemoveAllTestingCommand implements ICommand {}
+
+@CommandHandler(RemoveAllTestingCommand)
+export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTestingCommand> {
 	constructor(
 		private readonly blogsRepository: BlogsRepository,
 		private readonly postsRepository: PostsRepository,
@@ -17,7 +19,7 @@ export class TestingService {
 		private readonly sessionRepository: SessionsRepository,
 	) {}
 
-	async removeAll(): Promise<void> {
+	async execute(): Promise<void> {
 		await this.blogsRepository.deleteAll();
 		await this.postsRepository.deleteAll();
 		await this.usersRepository.deleteAll();
