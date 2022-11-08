@@ -30,6 +30,7 @@ export class RegistrationAuthHandler implements ICommandHandler<RegistrationAuth
 
 		try {
 			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
+			//new SendEmailRegistrationMessageMailerCommand(user.email, user.confirmationCode),
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}

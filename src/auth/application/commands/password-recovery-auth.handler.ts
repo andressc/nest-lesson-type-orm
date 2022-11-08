@@ -1,9 +1,9 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { ValidationService } from '../../../features/application';
 import { RequestTimeoutException } from '@nestjs/common';
-import { MailerService } from '../../../mailer/application/mailer.service';
 import { AuthService } from '../auth.service';
+import { SendEmailPasswordRecoveryMailerCommand } from '../../../mailer/application/commands/send-email-password-recovery-mailer.handler';
 
 export class PasswordRecoveryAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}
@@ -13,7 +13,7 @@ export class PasswordRecoveryAuthCommand {
 export class PasswordRecoveryAuthHandler implements ICommandHandler<PasswordRecoveryAuthCommand> {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly mailerService: MailerService,
+		private readonly commandBus: CommandBus,
 		private readonly authService: AuthService,
 	) {}
 
@@ -25,7 +25,9 @@ export class PasswordRecoveryAuthHandler implements ICommandHandler<PasswordReco
 		);
 
 		try {
-			await this.mailerService.sendEmailPasswordRecovery(command.data.email, recoveryCode);
+			await this.commandBus.execute(
+				new SendEmailPasswordRecoveryMailerCommand(command.data.email, recoveryCode),
+			);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}
