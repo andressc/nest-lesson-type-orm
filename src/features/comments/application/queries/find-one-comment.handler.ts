@@ -3,7 +3,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentNotFoundException } from '../../../../common/exceptions';
 import { ObjectIdDto } from '../../../../common/dto';
 import { ResponseCommentDto } from '../../dto';
-import { QueryCommentsRepository } from '../../infrastructure/query/query-comments.repository';
+import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
 
 export class FindOneCommentCommand {
 	constructor(public id: string, public currentUserId: ObjectIdDto | null) {}
@@ -11,7 +11,7 @@ export class FindOneCommentCommand {
 
 @QueryHandler(FindOneCommentCommand)
 export class FindOneCommentHandler implements IQueryHandler<FindOneCommentCommand> {
-	constructor(private readonly queryCommentsRepository: QueryCommentsRepository) {}
+	constructor(private readonly queryCommentsRepository: QueryCommentsRepositoryInterface) {}
 
 	async execute(command: FindOneCommentCommand): Promise<ResponseCommentDto> {
 		const comment: CommentModel | null = await this.queryCommentsRepository.findCommentModel(

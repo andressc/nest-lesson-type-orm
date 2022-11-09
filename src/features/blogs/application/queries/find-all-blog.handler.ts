@@ -1,9 +1,9 @@
 import { QueryBlogDto, ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
-import { QueryBlogsRepository } from '../../infrastructure/query/query-blogs.repository';
 import { BlogModel } from '../../entity/blog.schema';
 import { PaginationService } from '../../../application/pagination.service';
+import { QueryBlogsRepositoryInterface } from '../../interface/query.blogs.repository.interface';
 
 export class FindAllBlogCommand {
 	constructor(public query: QueryBlogDto) {}
@@ -12,7 +12,7 @@ export class FindAllBlogCommand {
 @QueryHandler(FindAllBlogCommand)
 export class FindAllBlogHandler implements IQueryHandler<FindAllBlogCommand> {
 	constructor(
-		private readonly queryBlogsRepository: QueryBlogsRepository,
+		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 

@@ -15,11 +15,15 @@ import { PaginationService } from '../application/pagination.service';
 import { ValidationService } from '../application/validation.service';
 import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 import { BlogsRepositoryInterface } from './interface/blogs.repository.interface';
+import { QueryBlogsRepositoryInterface } from './interface/query.blogs.repository.interface';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
 export const Repositories = [
-	QueryBlogsRepository,
+	{
+		provide: QueryBlogsRepositoryInterface,
+		useClass: QueryBlogsRepository,
+	},
 	{
 		provide: BlogsRepositoryInterface,
 		useClass: BlogsRepository,
@@ -44,10 +48,13 @@ export const Modules = [
 	exports: [
 		BlogsService,
 		{
+			provide: QueryBlogsRepositoryInterface,
+			useClass: QueryBlogsRepository,
+		},
+		{
 			provide: BlogsRepositoryInterface,
 			useClass: BlogsRepository,
 		},
-		QueryBlogsRepository,
 	],
 })
 export class BlogsModule {}

@@ -3,9 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sort } from '../../../../common/dto';
 import { User, UserModel } from '../../entity/user.schema';
+import { QueryUsersRepositoryInterface } from '../../interface/query.users.repository.interface';
 
 @Injectable()
-export class QueryUsersRepository {
+export class QueryUsersRepository implements QueryUsersRepositoryInterface {
 	constructor(
 		@InjectModel(User.name)
 		private readonly userModel: Model<UserModel>,
@@ -28,7 +29,7 @@ export class QueryUsersRepository {
 		return this.userModel.countDocuments(searchString);
 	}
 
-	public searchTerm = (login: string | undefined, email: string | undefined): any => {
+	public searchTerm(login: string | undefined, email: string | undefined): any {
 		let searchString = {};
 
 		const searchLoginTerm = login
@@ -51,5 +52,5 @@ export class QueryUsersRepository {
 			};
 
 		return searchString;
-	};
+	}
 }

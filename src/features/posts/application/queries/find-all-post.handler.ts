@@ -1,12 +1,12 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ObjectIdDto, PaginationCalc, PaginationDto, QueryDto } from '../../../../common/dto';
 import { ResponsePostDto } from '../../dto';
-import { QueryPostsRepository } from '../../infrastructure/query/query-posts.repository';
 import { PostModel } from '../../entity/post.schema';
 import { PaginationService } from '../../../application/pagination.service';
-import { QueryBlogsRepository } from '../../../blogs/infrastructure/query/query-blogs.repository';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { BlogNotFoundException } from '../../../../common/exceptions';
+import { QueryBlogsRepositoryInterface } from '../../../blogs/interface/query.blogs.repository.interface';
+import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
 
 export class FindAllPostCommand {
 	constructor(
@@ -19,8 +19,8 @@ export class FindAllPostCommand {
 @QueryHandler(FindAllPostCommand)
 export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 	constructor(
-		private readonly queryPostsRepository: QueryPostsRepository,
-		private readonly queryBlogsRepository: QueryBlogsRepository,
+		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
+		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 

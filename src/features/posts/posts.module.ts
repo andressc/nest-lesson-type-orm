@@ -16,6 +16,7 @@ import { BlogsModule } from '../blogs/blogs.module';
 import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
 import { PostsRepositoryInterface } from './interface/posts.repository.interface';
+import { QueryPostsRepositoryInterface } from './interface/query.posts.repository.interface';
 
 export const CommandHandlers = [
 	CreatePostHandler,
@@ -25,7 +26,10 @@ export const CommandHandlers = [
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
 export const Repositories = [
-	QueryPostsRepository,
+	{
+		provide: QueryPostsRepositoryInterface,
+		useClass: QueryPostsRepository,
+	},
 	{
 		provide: PostsRepositoryInterface,
 		useClass: PostsRepository,
@@ -45,11 +49,15 @@ export const Modules = [
 
 	exports: [
 		PostsService,
+		QueryPostsRepositoryInterface,
+		{
+			provide: QueryPostsRepositoryInterface,
+			useClass: QueryPostsRepository,
+		},
 		{
 			provide: PostsRepositoryInterface,
 			useClass: PostsRepository,
 		},
-		QueryPostsRepository,
 	],
 })
 export class PostsModule {}

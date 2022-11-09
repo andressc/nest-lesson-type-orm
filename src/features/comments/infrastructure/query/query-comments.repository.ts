@@ -3,9 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesDto, LikesInfo, LikeStatusEnum, ObjectIdDto, Sort } from '../../../../common/dto';
 import { Comment, CommentModel } from '../../entity/comment.schema';
+import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
 
 @Injectable()
-export class QueryCommentsRepository {
+export class QueryCommentsRepository implements QueryCommentsRepositoryInterface {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,

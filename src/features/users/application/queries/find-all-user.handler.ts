@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { QueryUsersRepository } from '../../infrastructure/query/query-users.repository';
 import { QueryUserDto, ResponseUserDto } from '../../dto';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { UserModel } from '../../entity/user.schema';
 import { PaginationService } from '../../../application/pagination.service';
+import { QueryUsersRepositoryInterface } from '../../interface/query.users.repository.interface';
 
 export class FindAllUserCommand {
 	constructor(public query: QueryUserDto) {}
@@ -12,7 +12,7 @@ export class FindAllUserCommand {
 @QueryHandler(FindAllUserCommand)
 export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 	constructor(
-		private readonly queryUsersRepository: QueryUsersRepository,
+		private readonly queryUsersRepository: QueryUsersRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 

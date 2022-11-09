@@ -2,11 +2,11 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ObjectIdDto, PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { PostNotFoundException } from '../../../../common/exceptions';
 import { QueryCommentDto, ResponseCommentDto } from '../../dto';
-import { QueryCommentsRepository } from '../../infrastructure/query/query-comments.repository';
-import { QueryPostsRepository } from '../../../posts/infrastructure/query/query-posts.repository';
 import { PostModel } from '../../../posts/entity/post.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { PaginationService } from '../../../application/pagination.service';
+import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
+import { QueryPostsRepositoryInterface } from '../../../posts/interface/query.posts.repository.interface';
 
 export class FindAllCommentOfPostCommand {
 	constructor(
@@ -19,8 +19,8 @@ export class FindAllCommentOfPostCommand {
 @QueryHandler(FindAllCommentOfPostCommand)
 export class FindAllCommentOfPostHandler implements IQueryHandler<FindAllCommentOfPostCommand> {
 	constructor(
-		private readonly queryCommentsRepository: QueryCommentsRepository,
-		private readonly queryPostsRepository: QueryPostsRepository,
+		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
+		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 

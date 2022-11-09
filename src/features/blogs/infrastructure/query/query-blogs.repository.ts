@@ -3,9 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sort } from '../../../../common/dto';
 import { Blog, BlogModel } from '../../entity/blog.schema';
+import { QueryBlogsRepositoryInterface } from '../../interface/query.blogs.repository.interface';
 
 @Injectable()
-export class QueryBlogsRepository {
+export class QueryBlogsRepository implements QueryBlogsRepositoryInterface {
 	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
 
 	async findBlogModel(id: string): Promise<BlogModel | null> {

@@ -14,11 +14,15 @@ import { ValidationService } from '../application/validation.service';
 import { PaginationService } from '../application/pagination.service';
 import { UsersRepositoryInterface } from './interface/users.repository.interface';
 import { UsersRepository } from './infrastructure/repository/users.repository';
+import { QueryUsersRepositoryInterface } from './interface/query.users.repository.interface';
 
 export const CommandHandlers = [RemoveUserHandler, CreateUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
 export const Repositories = [
-	QueryUsersRepository,
+	{
+		provide: QueryUsersRepositoryInterface,
+		useClass: QueryUsersRepository,
+	},
 	{
 		provide: UsersRepositoryInterface,
 		useClass: UsersRepository,

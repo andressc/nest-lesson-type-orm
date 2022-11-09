@@ -17,6 +17,7 @@ import { UsersModule } from '../users/users.module';
 import { PostsModule } from '../posts/posts.module';
 import { Comment, CommentSchema } from './entity/comment.schema';
 import { CommentsRepositoryInterface } from './interface/comments.repository.interface';
+import { QueryCommentsRepositoryInterface } from './interface/query.comments.repository.interface';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -26,7 +27,10 @@ export const CommandHandlers = [
 ];
 export const QueryHandlers = [FindAllCommentOfPostHandler, FindOneCommentHandler];
 export const Repositories = [
-	QueryCommentsRepository,
+	{
+		provide: QueryCommentsRepositoryInterface,
+		useClass: QueryCommentsRepository,
+	},
 	{
 		provide: CommentsRepositoryInterface,
 		useClass: CommentsRepository,

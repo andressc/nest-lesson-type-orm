@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostNotFoundException } from '../../../../common/exceptions';
 import { ResponsePostDto } from '../../dto';
 import { ObjectIdDto } from '../../../../common/dto';
-import { QueryPostsRepository } from '../../infrastructure/query/query-posts.repository';
 import { PostModel } from '../../entity/post.schema';
+import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
 
 export class FindOnePostCommand {
 	constructor(public id: string, public currentUserId: ObjectIdDto | null) {}
@@ -11,7 +11,7 @@ export class FindOnePostCommand {
 
 @QueryHandler(FindOnePostCommand)
 export class FindOnePostHandler implements IQueryHandler<FindOnePostCommand> {
-	constructor(private readonly queryPostsRepository: QueryPostsRepository) {}
+	constructor(private readonly queryPostsRepository: QueryPostsRepositoryInterface) {}
 
 	async execute(command: FindOnePostCommand): Promise<ResponsePostDto> {
 		const post: PostModel | null = await this.queryPostsRepository.findPostModel(command.id);
