@@ -5,10 +5,10 @@ import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
-import { User } from '../src/database/entity';
 import { userCreator } from './dbSeeding/userCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
+import { User } from '../src/features/users/entity/user.schema';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

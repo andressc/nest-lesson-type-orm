@@ -3,13 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { Blog, Post } from '../src/database/entity';
 import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
+import { Blog } from '../src/features/blogs/entity/blog.schema';
+import { Post } from '../src/features/posts/entity/post.schema';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
