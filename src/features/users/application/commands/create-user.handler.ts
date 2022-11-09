@@ -2,10 +2,10 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserDto } from '../../dto';
 import * as bcrypt from 'bcrypt';
 import { createDate, generateConfirmationCode, generateHash } from '../../../../common/helpers';
-import { UsersRepository } from '../../infrastructure/repository';
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { UsersRepositoryInterface } from '../../interface/users.repository.interface';
 
 export class CreateUserCommand implements ICommand {
 	constructor(public data: CreateUserDto, public isConfirmed = false) {}
@@ -15,7 +15,7 @@ export class CreateUserCommand implements ICommand {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UsersRepository,
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

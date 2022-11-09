@@ -1,5 +1,5 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { SessionsRepository } from '../../infrastructure/repository/sessions.repository';
+import { SessionsRepositoryInterface } from '../../interface/sessions.repository.interface';
 
 export class RemoveAllUserSessionCommand implements ICommand {
 	constructor(public userId: string, public deviceId: string) {}
@@ -7,7 +7,7 @@ export class RemoveAllUserSessionCommand implements ICommand {
 
 @CommandHandler(RemoveAllUserSessionCommand)
 export class RemoveAllUserSessionHandler implements ICommandHandler<RemoveAllUserSessionCommand> {
-	constructor(private readonly sessionsRepository: SessionsRepository) {}
+	constructor(private readonly sessionsRepository: SessionsRepositoryInterface) {}
 
 	async execute(command: RemoveAllUserSessionCommand): Promise<void> {
 		await this.sessionsRepository.removeAllUserSessions(command.userId, command.deviceId);

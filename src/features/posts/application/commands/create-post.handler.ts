@@ -1,10 +1,10 @@
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { createDate } from '../../../../common/helpers';
-import { PostsRepository } from '../../infrastructure/repository/posts.repository';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { ValidationService } from '../../../application/validation.service';
+import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
 
 export class CreatePostCommand implements ICommand {
 	constructor(public data: CreatePostDto) {}
@@ -14,7 +14,7 @@ export class CreatePostCommand implements ICommand {
 export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		private readonly postsRepository: PostsRepository,
+		private readonly postsRepository: PostsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

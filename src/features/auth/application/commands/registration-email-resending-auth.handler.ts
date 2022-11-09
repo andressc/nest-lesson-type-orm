@@ -1,12 +1,12 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { EmailBadRequestException } from '../../../../common/exceptions';
-import { UsersRepository } from '../../../users/infrastructure/repository';
 import { v4 as uuidv4 } from 'uuid';
 import { RequestTimeoutException } from '@nestjs/common';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
+import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 
 export class RegistrationEmailResendingAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}
@@ -18,7 +18,7 @@ export class RegistrationEmailResendingAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepository,
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly commandBus: CommandBus,
 	) {}
 

@@ -3,10 +3,10 @@ import { RegistrationDto } from '../../dto';
 import { CreateUserCommand } from '../../../users/application/commands/create-user.handler';
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { RequestTimeoutException } from '@nestjs/common';
-import { UsersRepository } from '../../../users/infrastructure/repository';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
+import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 
 export class RegistrationAuthCommand {
 	constructor(public data: RegistrationDto) {}
@@ -16,7 +16,7 @@ export class RegistrationAuthCommand {
 export class RegistrationAuthHandler implements ICommandHandler<RegistrationAuthCommand> {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepository,
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly commandBus: CommandBus,
 	) {}
 

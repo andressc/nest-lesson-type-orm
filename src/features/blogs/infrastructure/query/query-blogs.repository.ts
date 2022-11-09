@@ -6,10 +6,7 @@ import { Blog, BlogModel } from '../../entity/blog.schema';
 
 @Injectable()
 export class QueryBlogsRepository {
-	constructor(
-		@InjectModel(Blog.name)
-		private readonly blogModel: Model<BlogModel>,
-	) {}
+	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
 
 	async findBlogModel(id: string): Promise<BlogModel | null> {
 		return this.blogModel.findById(id);

@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationConfirmationDto } from '../../dto';
 import { ConfirmCodeBadRequestException } from '../../../../common/exceptions';
-import { UsersRepository } from '../../../users/infrastructure/repository';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 
 export class RegistrationConfirmationAuthCommand {
 	constructor(public data: RegistrationConfirmationDto) {}
@@ -15,7 +15,7 @@ export class RegistrationConfirmationAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepository,
+		private readonly usersRepository: UsersRepositoryInterface,
 	) {}
 
 	async execute(command: RegistrationConfirmationAuthCommand): Promise<void> {

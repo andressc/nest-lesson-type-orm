@@ -2,10 +2,10 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreateLikeDto } from '../../dto';
 import { UsersService } from '../../../users/application/users.service';
 import { CommentsService } from '../comments.service';
-import { CommentsRepository } from '../../infrastructure/repository/comments.repository';
 import { UserModel } from '../../../users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { CommentsRepositoryInterface } from '../../interface/comments.repository.interface';
 
 export class SetLikeCommentCommand implements ICommand {
 	constructor(public commentId: string, public authUserId: string, public data: CreateLikeDto) {}
@@ -16,7 +16,7 @@ export class SetLikeCommentHandler implements ICommandHandler<SetLikeCommentComm
 	constructor(
 		private readonly commentsService: CommentsService,
 		private readonly usersService: UsersService,
-		private readonly commentsRepository: CommentsRepository,
+		private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

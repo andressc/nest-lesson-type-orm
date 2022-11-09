@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../infrastructure/repository';
 import {
 	UserExistsEmailException,
 	UserExistsLoginException,
 	UserNotFoundException,
 } from '../../../common/exceptions';
 import { UserModel } from '../entity/user.schema';
+import { UsersRepositoryInterface } from '../interface/users.repository.interface';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly usersRepository: UsersRepository) {}
+	constructor(private readonly usersRepository: UsersRepositoryInterface) {}
 
 	public async findUserByIdOrErrorThrow(id: string): Promise<UserModel> {
 		const user: UserModel | null = await this.usersRepository.findUserModel(id);

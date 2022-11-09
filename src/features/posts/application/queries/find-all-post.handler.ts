@@ -4,6 +4,9 @@ import { ResponsePostDto } from '../../dto';
 import { QueryPostsRepository } from '../../infrastructure/query/query-posts.repository';
 import { PostModel } from '../../entity/post.schema';
 import { PaginationService } from '../../../application/pagination.service';
+import { QueryBlogsRepository } from '../../../blogs/infrastructure/query/query-blogs.repository';
+import { BlogModel } from '../../../blogs/entity/blog.schema';
+import { BlogNotFoundException } from '../../../../common/exceptions';
 
 export class FindAllPostCommand {
 	constructor(
@@ -17,15 +20,15 @@ export class FindAllPostCommand {
 export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 	constructor(
 		private readonly queryPostsRepository: QueryPostsRepository,
-		//private readonly queryBlogsRepository: QueryBlogsRepository,
+		private readonly queryBlogsRepository: QueryBlogsRepository,
 		private readonly paginationService: PaginationService,
 	) {}
 
 	async execute(command: FindAllPostCommand): Promise<PaginationDto<ResponsePostDto[]>> {
 		const searchString = command.blogId ? { blogId: command.blogId } : {};
 
-		/*const blog: BlogModel | null = await this.queryBlogsRepository.findBlogModel(command.blogId);
-		if (!blog && command.blogId) throw new BlogNotFoundException(command.blogId);*/
+		const blog: BlogModel | null = await this.queryBlogsRepository.findBlogModel(command.blogId);
+		if (!blog && command.blogId) throw new BlogNotFoundException(command.blogId);
 
 		const totalCount: number = await this.queryPostsRepository.count(searchString);
 

@@ -4,8 +4,8 @@ import { PayloadTokenDto, ResponseTokensDto } from '../../dto';
 import { payloadDateCreator } from '../../../../common/helpers';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { SessionsRepository } from '../../../session/infrastructure/repository/sessions.repository';
 import { SessionModel } from '../../../session/entity/session.schema';
+import { SessionsRepositoryInterface } from '../../../session/interface/sessions.repository.interface';
 
 export class LoginAuthCommand {
 	constructor(public userId: string, public ip: string, public userAgent: string) {}
@@ -16,7 +16,7 @@ export class LoginAuthHandler implements ICommandHandler<LoginAuthCommand> {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		private readonly sessionsRepository: SessionsRepository,
+		private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: LoginAuthCommand): Promise<ResponseTokensDto> {

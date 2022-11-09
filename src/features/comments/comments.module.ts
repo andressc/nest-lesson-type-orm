@@ -16,6 +16,7 @@ import { CommentsRepository } from './infrastructure/repository/comments.reposit
 import { UsersModule } from '../users/users.module';
 import { PostsModule } from '../posts/posts.module';
 import { Comment, CommentSchema } from './entity/comment.schema';
+import { CommentsRepositoryInterface } from './interface/comments.repository.interface';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -24,7 +25,13 @@ export const CommandHandlers = [
 	UpdateCommentHandler,
 ];
 export const QueryHandlers = [FindAllCommentOfPostHandler, FindOneCommentHandler];
-export const Repositories = [QueryCommentsRepository, CommentsRepository];
+export const Repositories = [
+	QueryCommentsRepository,
+	{
+		provide: CommentsRepositoryInterface,
+		useClass: CommentsRepository,
+	},
+];
 export const Services = [CommentsService, PaginationService, ValidationService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
@@ -38,6 +45,11 @@ export const Modules = [
 	controllers: [CommentsController],
 	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
-	exports: [CommentsRepository],
+	exports: [
+		{
+			provide: CommentsRepositoryInterface,
+			useClass: CommentsRepository,
+		},
+	],
 })
 export class CommentsModule {}

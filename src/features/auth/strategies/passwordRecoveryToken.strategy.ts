@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { UsersRepository } from '../../users/infrastructure/repository';
 import { PasswordRecoveryTokenDataDto } from '../dto';
 import { EmailBadRequestException } from '../../../common/exceptions';
 import { AuthConfig } from '../../../configuration';
 import { UserModel } from '../../users/entity/user.schema';
+import { UsersRepositoryInterface } from '../../users/interface/users.repository.interface';
 
 @Injectable()
 export class PasswordRecoveryTokenStrategy extends PassportStrategy(
@@ -14,7 +14,7 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 	'jwt-recovery-password',
 ) {
 	constructor(
-		private readonly usersRepository: UsersRepository,
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({

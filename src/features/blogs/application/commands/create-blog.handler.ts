@@ -2,8 +2,8 @@ import { CreateBlogDto } from '../../dto';
 import { BlogModel } from '../../entity/blog.schema';
 import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../infrastructure/repository/blogs.repository';
 import { ValidationService } from '../../../application/validation.service';
+import { BlogsRepositoryInterface } from '../../interface/blogs.repository.interface';
 
 export class CreateBlogCommand implements ICommand {
 	constructor(public data: CreateBlogDto) {}
@@ -12,7 +12,7 @@ export class CreateBlogCommand implements ICommand {
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogHandler implements ICommandHandler<CreateBlogCommand> {
 	constructor(
-		private readonly blogsRepository: BlogsRepository,
+		private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

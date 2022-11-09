@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsService } from '../comments.service';
 import { UsersService } from '../../../users/application/users.service';
 import { CommentModel } from '../../entity/comment.schema';
-import { PostsRepository } from '../../../posts/infrastructure/repository/posts.repository';
+import { PostsRepositoryInterface } from '../../../posts/interface/posts.repository.interface';
 
 export class RemoveCommentCommand {
 	constructor(public id: string, public authUserId: string) {}
@@ -11,7 +11,7 @@ export class RemoveCommentCommand {
 @CommandHandler(RemoveCommentCommand)
 export class RemoveCommentHandler implements ICommandHandler<RemoveCommentCommand> {
 	constructor(
-		private readonly postsRepository: PostsRepository,
+		private readonly postsRepository: PostsRepositoryInterface,
 		private readonly commentsService: CommentsService,
 		private readonly usersService: UsersService,
 	) {}

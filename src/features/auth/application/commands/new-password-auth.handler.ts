@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NewPasswordDto } from '../../dto';
 import { UserNotFoundException } from '../../../../common/exceptions';
-import { UsersRepository } from '../../../users/infrastructure/repository';
 import { UserModel } from '../../../users/entity/user.schema';
+import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 
 export class NewPasswordAuthCommand {
 	constructor(public data: NewPasswordDto, public userId: string) {}
@@ -10,7 +10,7 @@ export class NewPasswordAuthCommand {
 
 @CommandHandler(NewPasswordAuthCommand)
 export class NewPasswordAuthHandler implements ICommandHandler<NewPasswordAuthCommand> {
-	constructor(private readonly usersRepository: UsersRepository) {}
+	constructor(private readonly usersRepository: UsersRepositoryInterface) {}
 
 	async execute(command: NewPasswordAuthCommand): Promise<void> {
 		const user: UserModel | null = await this.usersRepository.findUserModel(command.userId);

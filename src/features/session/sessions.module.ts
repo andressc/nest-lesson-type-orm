@@ -8,10 +8,17 @@ import { FindAllSessionHandler } from './application/queries/find-all-session.ha
 import { RemoveAllUserSessionHandler } from './application/commands/remove-all-user-session.handler';
 import { RemoveUserSessionHandler } from './application/commands/remove-user-session.handler';
 import { CqrsModule } from '@nestjs/cqrs';
+import { SessionsRepositoryInterface } from './interface/sessions.repository.interface';
 
 export const CommandHandlers = [RemoveAllUserSessionHandler, RemoveUserSessionHandler];
 export const QueryHandlers = [FindAllSessionHandler];
-export const Repositories = [QuerySessionsRepository, SessionsRepository];
+export const Repositories = [
+	QuerySessionsRepository,
+	{
+		provide: SessionsRepositoryInterface,
+		useClass: SessionsRepository,
+	},
+];
 export const Services = [];
 
 @Module({
@@ -27,6 +34,11 @@ export const Services = [];
 
 	controllers: [SessionsController],
 	providers: [...Services, ...Repositories, ...CommandHandlers, ...QueryHandlers],
-	exports: [SessionsRepository],
+	exports: [
+		{
+			provide: SessionsRepositoryInterface,
+			useClass: SessionsRepository,
+		},
+	],
 })
 export class SessionsModule {}

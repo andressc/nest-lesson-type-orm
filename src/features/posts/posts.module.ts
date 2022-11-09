@@ -15,6 +15,7 @@ import { Post, PostSchema } from './entity/post.schema';
 import { BlogsModule } from '../blogs/blogs.module';
 import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
+import { PostsRepositoryInterface } from './interface/posts.repository.interface';
 
 export const CommandHandlers = [
 	CreatePostHandler,
@@ -23,7 +24,13 @@ export const CommandHandlers = [
 	CreatePostOfBlogHandler,
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
-export const Repositories = [QueryPostsRepository, PostsRepository];
+export const Repositories = [
+	QueryPostsRepository,
+	{
+		provide: PostsRepositoryInterface,
+		useClass: PostsRepository,
+	},
+];
 export const Services = [PostsService, PaginationService, ValidationService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
@@ -36,6 +43,13 @@ export const Modules = [
 	controllers: [PostsController],
 	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
-	exports: [PostsService, PostsRepository, QueryPostsRepository],
+	exports: [
+		PostsService,
+		{
+			provide: PostsRepositoryInterface,
+			useClass: PostsRepository,
+		},
+		QueryPostsRepository,
+	],
 })
 export class PostsModule {}

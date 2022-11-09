@@ -1,20 +1,20 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../../users/infrastructure/repository';
-import { BlogsRepository } from '../../../blogs/infrastructure/repository/blogs.repository';
-import { PostsRepository } from '../../../posts/infrastructure/repository/posts.repository';
-import { CommentsRepository } from '../../../comments/infrastructure/repository/comments.repository';
-import { SessionsRepository } from '../../../session/infrastructure/repository/sessions.repository';
+import { BlogsRepositoryInterface } from '../../../blogs/interface/blogs.repository.interface';
+import { CommentsRepositoryInterface } from '../../../comments/interface/comments.repository.interface';
+import { PostsRepositoryInterface } from '../../../posts/interface/posts.repository.interface';
+import { SessionsRepositoryInterface } from '../../../session/interface/sessions.repository.interface';
+import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 
 export class RemoveAllTestingCommand implements ICommand {}
 
 @CommandHandler(RemoveAllTestingCommand)
 export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTestingCommand> {
 	constructor(
-		private readonly blogsRepository: BlogsRepository,
-		private readonly postsRepository: PostsRepository,
-		private readonly usersRepository: UsersRepository,
-		private readonly commentsRepository: CommentsRepository,
-		private readonly sessionRepository: SessionsRepository,
+		private readonly blogsRepository: BlogsRepositoryInterface,
+		private readonly postsRepository: PostsRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryInterface,
+		private readonly commentsRepository: CommentsRepositoryInterface,
+		private readonly sessionRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(): Promise<void> {

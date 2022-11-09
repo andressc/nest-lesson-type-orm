@@ -3,10 +3,10 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCommentOfPostDto } from '../../dto';
 import { UsersService } from '../../../users/application/users.service';
 import { PostsService } from '../../../posts/application/posts.service';
-import { CommentsRepository } from '../../infrastructure/repository/comments.repository';
 import { UserModel } from '../../../users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { CommentsRepositoryInterface } from '../../interface/comments.repository.interface';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(
@@ -21,7 +21,7 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly postsService: PostsService,
-		private readonly commentsRepository: CommentsRepository,
+		private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

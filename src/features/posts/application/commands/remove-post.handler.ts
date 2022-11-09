@@ -1,7 +1,7 @@
 import { PostModel } from '../../entity/post.schema';
-import { PostsRepository } from '../../infrastructure/repository/posts.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsService } from '../posts.service';
+import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
 
 export class RemovePostCommand {
 	constructor(public id: string) {}
@@ -10,7 +10,7 @@ export class RemovePostCommand {
 @CommandHandler(RemovePostCommand)
 export class RemovePostHandler implements ICommandHandler<RemovePostCommand> {
 	constructor(
-		private readonly postsRepository: PostsRepository,
+		private readonly postsRepository: PostsRepositoryInterface,
 		private readonly postsService: PostsService,
 	) {}
 

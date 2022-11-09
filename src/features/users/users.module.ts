@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './application/users.service';
-import { UsersRepository } from './infrastructure/repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './api/users.controller';
 import { QueryUsersRepository } from './infrastructure/query/query-users.repository';
@@ -13,23 +12,35 @@ import { FindAllUserHandler } from './application/queries/find-all-user.handler'
 import { User, UserSchema } from './entity/user.schema';
 import { ValidationService } from '../application/validation.service';
 import { PaginationService } from '../application/pagination.service';
+import { UsersRepositoryInterface } from './interface/users.repository.interface';
+import { UsersRepository } from './infrastructure/repository/users.repository';
 
 export const CommandHandlers = [RemoveUserHandler, CreateUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
+export const Repositories = [
+	QueryUsersRepository,
+	{
+		provide: UsersRepositoryInterface,
+		useClass: UsersRepository,
+	},
+];
+export const Services = [UsersService, ValidationService, PaginationService];
+export const Modules = [
+	MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+	CqrsModule,
+];
 
 @Module({
-	imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), CqrsModule],
+	imports: Modules,
 
 	controllers: [UsersController],
-	providers: [
+	providers: [...Services, ...Repositories, ...CommandHandlers, ...QueryHandlers],
+	exports: [
 		UsersService,
-		UsersRepository,
-		ValidationService,
-		QueryUsersRepository,
-		PaginationService,
-		...CommandHandlers,
-		...QueryHandlers,
+		{
+			provide: UsersRepositoryInterface,
+			useClass: UsersRepository,
+		},
 	],
-	exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}
