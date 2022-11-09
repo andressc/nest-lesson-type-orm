@@ -4,9 +4,9 @@ import { CreateUserCommand } from '../../../users/application/commands/create-us
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { RequestTimeoutException } from '@nestjs/common';
 import { UsersRepository } from '../../../users/infrastructure/repository';
-import { MailerService } from '../../../../services/mailer/application/mailer.service';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
 
 export class RegistrationAuthCommand {
 	constructor(public data: RegistrationDto) {}
@@ -17,7 +17,6 @@ export class RegistrationAuthHandler implements ICommandHandler<RegistrationAuth
 	constructor(
 		private readonly validationService: ValidationService,
 		private readonly usersRepository: UsersRepository,
-		private readonly mailerService: MailerService,
 		private readonly commandBus: CommandBus,
 	) {}
 
@@ -29,8 +28,9 @@ export class RegistrationAuthHandler implements ICommandHandler<RegistrationAuth
 		if (!user) throw new UserNotFoundException(userId);
 
 		try {
-			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
-			//new SendEmailRegistrationMessageMailerCommand(user.email, user.confirmationCode),
+			await this.commandBus.execute(
+				new SendEmailRegistrationMessageMailerCommand(user.email, user.confirmationCode),
+			);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}

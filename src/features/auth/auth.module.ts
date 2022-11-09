@@ -11,11 +11,9 @@ import {
 	PasswordRecoveryTokenStrategy,
 } from './strategies';
 import { AuthController } from './api/auth.controller';
-import { FeaturesModule } from '../features.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthConfig } from '../../configuration';
-import { ConfigService } from '@nestjs/config';
-import { MailerModule } from '../../services/mailer/mailer.module';
+import { MailerModule } from '../../Modules/mailer/mailer.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { LoginAuthHandler } from './application/commands/login-auth.handler';
 import { RefreshTokenAuthHandler } from './application/commands/refresh-token-auth.handler';
@@ -25,6 +23,8 @@ import { RegistrationEmailResendingAuthHandler } from './application/commands/re
 import { PasswordRecoveryAuthHandler } from './application/commands/password-recovery-auth.handler';
 import { NewPasswordAuthHandler } from './application/commands/new-password-auth.handler';
 import { ValidateUserAuthHandler } from './application/commands/validate-user-auth.handler';
+import { SessionsModule } from '../session/sessions.module';
+import { ValidationService } from '../application/validation.service';
 
 export const CommandHandlers = [
 	LoginAuthHandler,
@@ -38,36 +38,39 @@ export const CommandHandlers = [
 ];
 export const QueryHandlers = [];
 
+export const Repositories = [];
+export const Services = [AuthService, AuthConfig, ValidationService];
+
+export const Strategies = [
+	LocalStrategy,
+	AccessTokenStrategy,
+	RefreshTokenStrategy,
+	BasicStrategy,
+	PasswordRecoveryTokenStrategy,
+];
+
+export const Modules = [
+	JwtModule.register({}),
+	UsersModule,
+	PassportModule,
+	SessionsModule,
+	MailerModule,
+	CqrsModule,
+];
+
 @Module({
 	imports: [
 		ThrottlerModule.forRootAsync({
-			useFactory: async (configService: ConfigService) => {
-				return {
-					ttl: Number(configService.get<string>('THROTTLER_TTL')),
-					limit: Number(configService.get<string>('THROTTLER_LIMIT')),
-				};
+			imports: [AuthModule],
+			useFactory: async (authConfig: AuthConfig) => {
+				return authConfig.getThrottlerSettings();
 			},
-			inject: [ConfigService],
+			inject: [AuthConfig],
 		}),
-		JwtModule.register({}),
-		UsersModule,
-		PassportModule,
-		FeaturesModule,
-		MailerModule,
-		CqrsModule,
+		...Modules,
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		LocalStrategy,
-		AccessTokenStrategy,
-		RefreshTokenStrategy,
-		BasicStrategy,
-		PasswordRecoveryTokenStrategy,
-		AuthConfig,
-		...CommandHandlers,
-		...QueryHandlers,
-	],
-	exports: [AuthService],
+	providers: [...Services, ...Repositories, ...Strategies, ...CommandHandlers, ...QueryHandlers],
+	exports: [AuthConfig],
 })
 export class AuthModule {}

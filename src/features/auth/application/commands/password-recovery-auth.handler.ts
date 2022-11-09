@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { RequestTimeoutException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { SendEmailPasswordRecoveryMailerCommand } from '../../../../services/mailer/application/commands/send-email-password-recovery-mailer.handler';
+import { SendEmailPasswordRecoveryMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-password-recovery-mailer.handler';
 import { ValidationService } from '../../../application/validation.service';
 
 export class PasswordRecoveryAuthCommand {

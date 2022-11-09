@@ -7,27 +7,27 @@ export class AuthConfig extends BaseConfig {
 	constructor(configService: ConfigService) {
 		super(configService);
 	}
-	getAccessTokenExpiresIn() {
+	getAccessTokenExpiresIn(): string {
 		return this.getStringOrThrow('ACCESS_TOKEN_EXPIRES_IN', '10m');
 	}
 
-	getAccessTokenSecret() {
+	getAccessTokenSecret(): string {
 		return this.getStringOrThrow('SECRET_ACCESS_TOKEN');
 	}
 
-	getRefreshTokenExpiresIn() {
+	getRefreshTokenExpiresIn(): string {
 		return this.getStringOrThrow('REFRESH_TOKEN_EXPIRES_IN', '20m');
 	}
 
-	getRefreshTokenSecret() {
+	getRefreshTokenSecret(): string {
 		return this.getStringOrThrow('SECRET_REFRESH_TOKEN');
 	}
 
-	getRecoveryTokenExpiresIn() {
+	getRecoveryTokenExpiresIn(): string {
 		return this.getStringOrThrow('RECOVERY_TOKEN_EXPIRES_IN', '10m');
 	}
 
-	getRecoveryTokenSecret() {
+	getRecoveryTokenSecret(): string {
 		return this.getStringOrThrow('SECRET_RECOVERY_TOKEN');
 	}
 
@@ -39,15 +39,15 @@ export class AuthConfig extends BaseConfig {
 		};
 	}
 
-	getCookieNameJwt() {
+	getCookieNameJwt(): string {
 		return this.getStringOrThrow('COOKIE_NAME_JWT', 'refreshToken');
 	}
 
-	getSuperAdminLogin() {
+	getSuperAdminLogin(): string {
 		return this.getStringOrThrow('SUPER_ADMIN_LOGIN', 'admin');
 	}
 
-	getSuperAdminPassword() {
+	getSuperAdminPassword(): string {
 		return this.getStringOrThrow('SUPER_ADMIN_PASSWORD', '123456');
 	}
 

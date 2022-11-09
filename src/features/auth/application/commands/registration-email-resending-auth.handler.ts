@@ -1,12 +1,12 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { EmailBadRequestException } from '../../../../common/exceptions';
 import { UsersRepository } from '../../../users/infrastructure/repository';
 import { v4 as uuidv4 } from 'uuid';
 import { RequestTimeoutException } from '@nestjs/common';
-import { MailerService } from '../../../../services/mailer/application/mailer.service';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
+import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
 
 export class RegistrationEmailResendingAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}
@@ -19,7 +19,7 @@ export class RegistrationEmailResendingAuthHandler
 	constructor(
 		private readonly validationService: ValidationService,
 		private readonly usersRepository: UsersRepository,
-		private readonly mailerService: MailerService,
+		private readonly commandBus: CommandBus,
 	) {}
 
 	async execute(command: RegistrationEmailResendingAuthCommand): Promise<void> {
@@ -37,11 +37,9 @@ export class RegistrationEmailResendingAuthHandler
 		await this.usersRepository.save(user);
 
 		try {
-			await this.mailerService.sendEmailRegistrationMessage(user.email, user.confirmationCode);
-
-			/*await this.commandBus.execute(
+			await this.commandBus.execute(
 				new SendEmailRegistrationMessageMailerCommand(user.email, user.confirmationCode),
-			);*/
+			);
 		} catch (e) {
 			throw new RequestTimeoutException('Message not sent' + e);
 		}

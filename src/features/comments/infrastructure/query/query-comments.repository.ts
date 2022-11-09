@@ -3,15 +3,12 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesDto, LikesInfo, LikeStatusEnum, ObjectIdDto, Sort } from '../../../../common/dto';
 import { Comment, CommentModel } from '../../entity/comment.schema';
-import { Post, PostModel } from '../../../posts/entity/post.schema';
 
 @Injectable()
 export class QueryCommentsRepository {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
-		@InjectModel(Post.name)
-		private readonly postModel: Model<PostModel>,
 	) {}
 
 	async findCommentModel(id: string): Promise<CommentModel | null> {

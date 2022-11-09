@@ -13,7 +13,7 @@ export class MailerAdapter {
 		});
 
 		return await transporter.sendMail({
-			from: process.env.emailLogin,
+			from: this.mailerConfig.getAuth().user,
 			to: email,
 			subject,
 			html: message,

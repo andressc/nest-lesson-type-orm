@@ -9,18 +9,19 @@ import {
 	Sort,
 } from '../../../../common/dto';
 import { Post, PostModel } from '../../entity/post.schema';
-import { Blog, BlogModel } from '../../../blogs/entity/blog.schema';
 
 @Injectable()
 export class QueryPostsRepository {
 	constructor(
 		@InjectModel(Post.name)
 		private readonly postModel: Model<PostModel>,
-		@InjectModel(Blog.name)
-		private readonly blogModel: Model<BlogModel>,
 	) {}
 
 	async findPostModel(id: string): Promise<PostModel | null> {
+		return this.postModel.findById(id);
+	}
+
+	async findBlogModel(id: string): Promise<PostModel | null> {
 		return this.postModel.findById(id);
 	}
 

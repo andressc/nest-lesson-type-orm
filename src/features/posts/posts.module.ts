@@ -1,43 +1,41 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BlogsController } from '../blogs/api/blogs.controller';
-import { Blog, BlogSchema } from '../blogs/entity/blog.schema';
-import { BlogsService } from '../blogs/application/blogs.service';
-import { BlogsRepository } from '../blogs/infrastructure/repository/blogs.repository';
-import { CreateBlogHandler } from '../blogs/application/commands/create-blog.handler';
-import { FindOneBlogHandler } from '../blogs/application/queries/find-one-blog.handler';
-import { UpdateBlogHandler } from '../blogs/application/commands/update-blog.handler';
-import { FindAllBlogHandler } from '../blogs/application/queries/find-all-blog.handler';
-import { RemoveBlogHandler } from '../blogs/application/commands/remove-blog.handler';
-import { UsersModule } from '../users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
-import { QueryBlogsRepository } from '../blogs/infrastructure/query/query-blogs.repository';
 import { PaginationService } from '../application/pagination.service';
+import { ValidationService } from '../application/validation.service';
+import { CreatePostHandler } from './application/commands/create-post.handler';
+import { RemovePostHandler } from './application/commands/remove-post.handler';
+import { UpdatePostHandler } from './application/commands/update-post.handler';
+import { FindOnePostHandler } from './application/queries/find-one-post.handler';
+import { FindAllPostHandler } from './application/queries/find-all-post.handler';
+import { QueryPostsRepository } from './infrastructure/query/query-posts.repository';
+import { PostsRepository } from './infrastructure/repository/posts.repository';
+import { PostsService } from './application/posts.service';
+import { Post, PostSchema } from './entity/post.schema';
+import { BlogsModule } from '../blogs/blogs.module';
+import { PostsController } from './api/posts.controller';
+import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
 
-export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
-export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
+export const CommandHandlers = [
+	CreatePostHandler,
+	RemovePostHandler,
+	UpdatePostHandler,
+	CreatePostOfBlogHandler,
+];
+export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
+export const Repositories = [QueryPostsRepository, PostsRepository];
+export const Services = [PostsService, PaginationService, ValidationService];
+export const Modules = [
+	MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+	CqrsModule,
+	BlogsModule,
+];
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-		UsersModule,
-		CqrsModule,
-	],
-	controllers: [BlogsController],
-	providers: [
-		BlogsService,
+	imports: Modules,
+	controllers: [PostsController],
+	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
-		PaginationService,
-		IsUserCommentValidatorConstraint,
-
-		QueryBlogsRepository,
-
-		BlogsRepository,
-		...QueryHandlers,
-		...CommandHandlers,
-	],
-
-	exports: [],
+	exports: [PostsService, PostsRepository, QueryPostsRepository],
 })
-export class BlogsModule {}
+export class PostsModule {}

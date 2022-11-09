@@ -8,36 +8,32 @@ import { FindOneBlogHandler } from './application/queries/find-one-blog.handler'
 import { UpdateBlogHandler } from './application/commands/update-blog.handler';
 import { FindAllBlogHandler } from './application/queries/find-all-blog.handler';
 import { RemoveBlogHandler } from './application/commands/remove-blog.handler';
-import { UsersModule } from '../users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 import { QueryBlogsRepository } from './infrastructure/query/query-blogs.repository';
 import { Blog, BlogSchema } from './entity/blog.schema';
 import { PaginationService } from '../application/pagination.service';
+import { ValidationService } from '../application/validation.service';
+import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
+export const Repositories = [QueryBlogsRepository, BlogsRepository];
+export const Services = [
+	BlogsService,
+	PaginationService,
+	ValidationService,
+	IsUserCommentValidatorConstraint,
+];
+export const Modules = [
+	MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+	CqrsModule,
+];
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-		UsersModule,
-		CqrsModule,
-	],
+	imports: Modules,
 	controllers: [BlogsController],
-	providers: [
-		BlogsService,
+	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
-		PaginationService,
-		IsUserCommentValidatorConstraint,
-
-		QueryBlogsRepository,
-
-		BlogsRepository,
-		...QueryHandlers,
-		...CommandHandlers,
-	],
-
-	exports: [],
+	exports: [BlogsService, BlogsRepository, QueryBlogsRepository],
 })
 export class BlogsModule {}

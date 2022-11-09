@@ -30,6 +30,6 @@ export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUser
 		...CommandHandlers,
 		...QueryHandlers,
 	],
-	exports: [UsersService, UsersRepository, QueryUsersRepository],
+	exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}
