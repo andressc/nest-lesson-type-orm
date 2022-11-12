@@ -17,12 +17,15 @@ import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
 import { PostsRepositoryInterface } from './interface/posts.repository.interface';
 import { QueryPostsRepositoryInterface } from './interface/query.posts.repository.interface';
+import { SetLikePostHandler } from './application/commands/set-like-post.handler';
+import { UsersModule } from '../users/users.module';
 
 export const CommandHandlers = [
 	CreatePostHandler,
 	RemovePostHandler,
 	UpdatePostHandler,
 	CreatePostOfBlogHandler,
+	SetLikePostHandler,
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
 export const Repositories = [
@@ -40,6 +43,7 @@ export const Modules = [
 	MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
 	CqrsModule,
 	BlogsModule,
+	UsersModule,
 ];
 
 @Module({
