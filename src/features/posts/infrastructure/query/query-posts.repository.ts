@@ -46,6 +46,7 @@ export class QueryPostsRepository implements QueryPostsRepositoryInterface {
 		);
 
 		if (findMyStatus) myStatus = findMyStatus.likeStatus;
+		console.log(currentUserId.id);
 
 		const newestLikes = post.likes
 			.slice()
