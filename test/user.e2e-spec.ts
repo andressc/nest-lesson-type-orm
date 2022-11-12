@@ -9,6 +9,7 @@ import { userCreator } from './dbSeeding/userCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
 import { User } from '../src/features/users/entity/user.schema';
+import 'jest-extended';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -30,6 +31,11 @@ describe('BlogController (e2e)', () => {
 		login: 'login',
 		email: 'mail@mail.ru',
 		createdAt: expect.any(String),
+		banInfo: {
+			isBanned: expect.any(Boolean),
+			banDate: null,
+			banReason: null,
+		},
 	};
 
 	const userErrorsMessages = {
