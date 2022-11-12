@@ -7,10 +7,10 @@ import { CommentsRepositoryInterface } from '../interface/comments.repository.in
 export class CommentsService {
 	constructor(private readonly commentsRepository: CommentsRepositoryInterface) {}
 
-	public async findCommentOrErrorThrow(id: string, authUserId: string): Promise<CommentModel> {
+	public async findCommentOrErrorThrow(id: string, authUserId?: string): Promise<CommentModel> {
 		const comment: CommentModel | null = await this.commentsRepository.findCommentModel(id);
 		if (!comment) throw new CommentNotFoundException(id);
-		if (comment.userId !== authUserId) throw new ForbiddenException();
+		if (authUserId && comment.userId !== authUserId) throw new ForbiddenException();
 		return comment;
 	}
 }

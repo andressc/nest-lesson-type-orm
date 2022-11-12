@@ -27,7 +27,6 @@ export class SetLikeCommentHandler implements ICommandHandler<SetLikeCommentComm
 
 		const comment: CommentModel = await this.commentsService.findCommentOrErrorThrow(
 			command.commentId,
-			command.authUserId,
 		);
 
 		await comment.setLike(command.data, command.authUserId, user.login);
