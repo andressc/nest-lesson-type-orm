@@ -33,11 +33,15 @@ export class SessionsRepository implements SessionsRepositoryInterface {
 		});
 	}
 
-	async removeAllUserSessions(userId: string, deviceId: string): Promise<void> {
+	async removeAllUserSessionsExceptCurrent(userId: string, deviceId: string): Promise<void> {
 		await this.sessionModel.deleteMany({
 			userId: { $eq: userId },
 			deviceId: { $ne: deviceId },
 		});
+	}
+
+	async removeAllUserSessions(userId: string): Promise<void> {
+		await this.sessionModel.deleteMany({ userId });
 	}
 
 	async save(sessionModel: SessionModel): Promise<SessionModel> {

@@ -6,6 +6,7 @@ import {
 	HttpCode,
 	Param,
 	Post,
+	Put,
 	Query,
 	UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,8 @@ import { RemoveUserCommand } from '../application/commands/remove-user.handler';
 import { CreateUserCommand } from '../application/commands/create-user.handler';
 import { FindOneUserCommand } from '../application/queries/find-one-user.handler';
 import { FindAllUserCommand } from '../application/queries/find-all-user.handler';
+import { BanUnbanUserCommand } from '../application/commands/ban-unban-user.handler';
+import { BanUnbanUserDto } from '../dto/ban-unban-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -33,6 +36,12 @@ export class UsersController {
 	@Get()
 	findAllUsers(@Query() query: QueryUserDto) {
 		return this.queryBus.execute(new FindAllUserCommand(query));
+	}
+
+	@HttpCode(204)
+	@Put(':id/ban')
+	banUser(@Param() param: ObjectIdDto, @Body() data: BanUnbanUserDto) {
+		return this.commandBus.execute(new BanUnbanUserCommand(param.id, data));
 	}
 
 	@HttpCode(204)

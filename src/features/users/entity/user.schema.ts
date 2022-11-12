@@ -29,7 +29,18 @@ export class User {
 	isConfirmed: boolean;
 
 	@Prop({ required: true })
+	isBanned: boolean;
+
+	@Prop({ required: true })
+	banReason: string;
+
+	@Prop({ required: true })
 	createdAt: string;
+
+	banUnbanUser(isBanned, banReason): void {
+		this.isBanned = isBanned;
+		this.banReason = banReason;
+	}
 
 	updateIsConfirmed(isConfirmed: boolean): void {
 		this.isConfirmed = isConfirmed;
@@ -51,3 +62,4 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.methods.updateIsConfirmed = User.prototype.updateIsConfirmed;
 UserSchema.methods.updateConfirmationCode = User.prototype.updateConfirmationCode;
 UserSchema.methods.updatePassword = User.prototype.updatePassword;
+UserSchema.methods.banUnbanUser = User.prototype.banUnbanUser;

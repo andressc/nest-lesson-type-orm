@@ -10,6 +10,9 @@ export class RemoveAllUserSessionHandler implements ICommandHandler<RemoveAllUse
 	constructor(private readonly sessionsRepository: SessionsRepositoryInterface) {}
 
 	async execute(command: RemoveAllUserSessionCommand): Promise<void> {
-		await this.sessionsRepository.removeAllUserSessions(command.userId, command.deviceId);
+		await this.sessionsRepository.removeAllUserSessionsExceptCurrent(
+			command.userId,
+			command.deviceId,
+		);
 	}
 }

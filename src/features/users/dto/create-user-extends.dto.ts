@@ -5,5 +5,7 @@ export class CreateUserExtendsDto extends CreateUserDto {
 	confirmationCode: string;
 	expirationDate: Date;
 	isConfirmed: boolean;
+	isBanned: boolean;
+	banReason: string;
 	createdAt: string;
 }

@@ -15,8 +15,10 @@ import { PaginationService } from '../application/pagination.service';
 import { UsersRepositoryInterface } from './interface/users.repository.interface';
 import { UsersRepository } from './infrastructure/repository/users.repository';
 import { QueryUsersRepositoryInterface } from './interface/query.users.repository.interface';
+import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
+import { SessionsModule } from '../session/sessions.module';
 
-export const CommandHandlers = [RemoveUserHandler, CreateUserHandler];
+export const CommandHandlers = [RemoveUserHandler, CreateUserHandler, BanUnbanUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
 export const Repositories = [
 	{
@@ -31,6 +33,7 @@ export const Repositories = [
 export const Services = [UsersService, ValidationService, PaginationService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+	SessionsModule,
 	CqrsModule,
 ];
 

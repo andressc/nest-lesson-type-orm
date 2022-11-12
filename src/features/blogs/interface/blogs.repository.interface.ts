@@ -1,5 +1,5 @@
-import { CreateBlogExtendsDto } from '../dto';
 import { BlogModel } from '../entity/blog.schema';
+import { CreateBlogExtendsDto } from '../dto';
 
 export abstract class BlogsRepositoryInterface {
 	abstract createBlogModel(data: CreateBlogExtendsDto): Promise<BlogModel>;

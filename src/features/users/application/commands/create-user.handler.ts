@@ -36,6 +36,8 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 			email: command.data.email,
 			salt: passwordSalt,
 			...emailConfirmation,
+			isBanned: false,
+			banReason: 'banReason',
 			createdAt: createDate(),
 		});
 
