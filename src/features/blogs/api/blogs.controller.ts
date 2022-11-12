@@ -58,9 +58,9 @@ export class BlogsController {
 	findAllPostsOfBlog(
 		@Query() query: QueryPostDto,
 		@Param() param: ObjectIdDto,
-		@CurrentUserIdNonAuthorized() currentUserId,
+		@CurrentUserIdNonAuthorized() currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryBus.execute(new FindAllPostCommand(query, currentUserId, param.id));
+		return this.queryBus.execute(new FindAllPostCommand(query, currentUserId.id, param.id));
 	}
 
 	@Get(':id')
