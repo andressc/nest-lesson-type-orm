@@ -39,6 +39,7 @@ export class UsersController {
 	}
 
 	@HttpCode(204)
+	@UseGuards(BasicAuthGuard)
 	@Put(':id/ban')
 	banUser(@Param() param: ObjectIdDto, @Body() data: BanUnbanUserDto) {
 		return this.commandBus.execute(new BanUnbanUserCommand(param.id, data));

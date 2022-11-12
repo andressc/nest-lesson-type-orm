@@ -28,18 +28,22 @@ export class User {
 	@Prop({ required: true })
 	isConfirmed: boolean;
 
-	@Prop({ required: true })
+	@Prop({ default: false })
 	isBanned: boolean;
 
-	@Prop({ required: true })
+	@Prop({ default: null })
 	banReason: string;
+
+	@Prop({ default: null })
+	banDate: string;
 
 	@Prop({ required: true })
 	createdAt: string;
 
-	banUnbanUser(isBanned, banReason): void {
+	banUnbanUser(isBanned, banReason, banDate): void {
 		this.isBanned = isBanned;
-		this.banReason = banReason;
+		this.banReason = !isBanned ? null : banReason;
+		this.banDate = !isBanned ? null : banDate;
 	}
 
 	updateIsConfirmed(isConfirmed: boolean): void {

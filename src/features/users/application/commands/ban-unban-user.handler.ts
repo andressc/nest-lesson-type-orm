@@ -23,7 +23,7 @@ export class BanUnbanUserHandler implements ICommandHandler<BanUnbanUserCommand>
 		await this.validationService.validate(command.data, BanUnbanUserCommand);
 
 		const user: UserModel = await this.usersService.findUserByIdOrErrorThrow(command.id);
-		user.banUnbanUser(command.data.isBanned, command.data.banReason);
+		user.banUnbanUser(command.data.isBanned, command.data.banReason, new Date().toISOString());
 
 		if (command.data.isBanned) await this.sessionsRepository.removeAllUserSessions(user.id);
 

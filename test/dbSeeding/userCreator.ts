@@ -13,6 +13,7 @@ export const userCreator = (login: string, email, hours: number, id?: string, ba
 		isConfirmed: true,
 		isBanned: banned,
 		banReason: 'banReason',
+		banDate: new Date(),
 		createdAt: add(new Date(), {
 			hours: hours,
 		}),

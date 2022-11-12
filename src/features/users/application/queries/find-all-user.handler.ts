@@ -45,6 +45,11 @@ export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 				login: v.login,
 				email: v.email,
 				createdAt: v.createdAt,
+				banInfo: {
+					isBanned: v.isBanned,
+					banDate: v.banDate,
+					banReason: v.banReason,
+				},
 			})),
 		};
 	}
