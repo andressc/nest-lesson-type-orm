@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-	LikesInfoExtended,
-	LikesDto,
-	LikeStatusEnum,
-	ObjectIdDto,
-	Sort,
-} from '../../../../common/dto';
+import { LikesInfoExtended, LikesDto, LikeStatusEnum, Sort } from '../../../../common/dto';
 import { Post, PostModel } from '../../entity/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
 
@@ -35,18 +29,15 @@ export class QueryPostsRepository implements QueryPostsRepositoryInterface {
 		return this.postModel.countDocuments(searchString);
 	}
 
-	public countLikes(post: PostModel, currentUserId: ObjectIdDto | null): LikesInfoExtended {
+	public countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
 		let myStatus = LikeStatusEnum.None;
 
 		const likesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
 		const dislikesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Dislike).length;
 
-		const findMyStatus: undefined | LikesDto = post.likes.find(
-			(v) => v.userId === currentUserId.id,
-		);
+		const findMyStatus: undefined | LikesDto = post.likes.find((v) => v.userId === currentUserId);
 
 		if (findMyStatus) myStatus = findMyStatus.likeStatus;
-		console.log(currentUserId.id);
 
 		const newestLikes = post.likes
 			.slice()

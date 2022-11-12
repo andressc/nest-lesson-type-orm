@@ -20,7 +20,7 @@ export class CommentsController {
 		@CurrentUserIdNonAuthorized()
 		currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryBus.execute(new FindOneCommentCommand(param.id, currentUserId));
+		return this.queryBus.execute(new FindOneCommentCommand(param.id, currentUserId.id));
 	}
 
 	@HttpCode(204)

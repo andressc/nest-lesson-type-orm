@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ObjectIdDto, PaginationCalc, PaginationDto } from '../../../../common/dto';
+import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { PostNotFoundException } from '../../../../common/exceptions';
 import { QueryCommentDto, ResponseCommentDto } from '../../dto';
 import { PostModel } from '../../../posts/entity/post.schema';
@@ -12,7 +12,7 @@ export class FindAllCommentOfPostCommand {
 	constructor(
 		public query: QueryCommentDto,
 		public postId: string,
-		public currentUserId: ObjectIdDto | null,
+		public currentUserId: string | null,
 	) {}
 }
 

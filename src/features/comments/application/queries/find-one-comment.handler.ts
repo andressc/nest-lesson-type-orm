@@ -1,14 +1,13 @@
 import { CommentModel } from '../../entity/comment.schema';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentNotFoundException } from '../../../../common/exceptions';
-import { ObjectIdDto } from '../../../../common/dto';
 import { ResponseCommentDto } from '../../dto';
 import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
 import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
 import { UserModel } from '../../../users/entity/user.schema';
 
 export class FindOneCommentCommand {
-	constructor(public id: string, public currentUserId: ObjectIdDto | null) {}
+	constructor(public id: string, public currentUserId: string | null) {}
 }
 
 @QueryHandler(FindOneCommentCommand)

@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ObjectIdDto, PaginationCalc, PaginationDto, QueryDto } from '../../../../common/dto';
+import { PaginationCalc, PaginationDto, QueryDto } from '../../../../common/dto';
 import { ResponsePostDto } from '../../dto';
 import { PostModel } from '../../entity/post.schema';
 import { PaginationService } from '../../../application/pagination.service';
@@ -11,7 +11,7 @@ import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repos
 export class FindAllPostCommand {
 	constructor(
 		public query: QueryDto,
-		public currentUserId: ObjectIdDto | null,
+		public currentUserId: string | null,
 		public blogId?: string,
 	) {}
 }

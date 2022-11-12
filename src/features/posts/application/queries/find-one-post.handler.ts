@@ -1,12 +1,11 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostNotFoundException } from '../../../../common/exceptions';
 import { ResponsePostDto } from '../../dto';
-import { ObjectIdDto } from '../../../../common/dto';
 import { PostModel } from '../../entity/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
 
 export class FindOnePostCommand {
-	constructor(public id: string, public currentUserId: ObjectIdDto | null) {}
+	constructor(public id: string, public currentUserId: string | null) {}
 }
 
 @QueryHandler(FindOnePostCommand)

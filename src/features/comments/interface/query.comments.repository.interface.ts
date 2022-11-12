@@ -1,5 +1,5 @@
 import { CommentModel } from '../entity/comment.schema';
-import { LikesInfo, ObjectIdDto, Sort } from '../../../common/dto';
+import { LikesInfo, Sort } from '../../../common/dto';
 
 export abstract class QueryCommentsRepositoryInterface {
 	abstract findCommentModel(id: string): Promise<CommentModel | null>;
@@ -10,5 +10,5 @@ export abstract class QueryCommentsRepositoryInterface {
 		pageSize: number,
 	): Promise<CommentModel[] | null>;
 	abstract count(searchString): Promise<number>;
-	abstract countLikes(comment: CommentModel, currentUserId: ObjectIdDto | null): LikesInfo;
+	abstract countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo;
 }

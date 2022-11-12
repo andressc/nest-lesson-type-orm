@@ -38,7 +38,7 @@ export class PostsController {
 		currentUserId: ObjectIdDto | null,
 	) {
 		const postId = await this.commandBus.execute(new CreatePostCommand(data));
-		return this.queryBus.execute(new FindOnePostCommand(postId, currentUserId));
+		return this.queryBus.execute(new FindOnePostCommand(postId, currentUserId.id));
 	}
 
 	@UseGuards(AccessTokenGuard)
@@ -61,7 +61,7 @@ export class PostsController {
 		@CurrentUserIdNonAuthorized()
 		currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryBus.execute(new FindAllPostCommand(query, currentUserId));
+		return this.queryBus.execute(new FindAllPostCommand(query, currentUserId.id));
 	}
 
 	@UseGuards(GuestGuard)
@@ -72,7 +72,9 @@ export class PostsController {
 		@CurrentUserIdNonAuthorized()
 		currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryBus.execute(new FindAllCommentOfPostCommand(query, param.id, currentUserId));
+		return this.queryBus.execute(
+			new FindAllCommentOfPostCommand(query, param.id, currentUserId.id),
+		);
 	}
 
 	@Get(':id')
@@ -82,7 +84,7 @@ export class PostsController {
 		@CurrentUserIdNonAuthorized()
 		currentUserId: ObjectIdDto | null,
 	) {
-		return this.queryBus.execute(new FindOnePostCommand(param.id, currentUserId));
+		return this.queryBus.execute(new FindOnePostCommand(param.id, currentUserId.id));
 	}
 
 	@HttpCode(204)

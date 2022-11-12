@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikesDto, LikesInfo, LikeStatusEnum, ObjectIdDto, Sort } from '../../../../common/dto';
+import { LikesDto, LikesInfo, LikeStatusEnum, Sort } from '../../../../common/dto';
 import { Comment, CommentModel } from '../../entity/comment.schema';
 import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
 
@@ -29,7 +29,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryInterface
 		return this.commentModel.countDocuments(searchString);
 	}
 
-	public countLikes(comment: CommentModel, currentUserId: ObjectIdDto | null): LikesInfo {
+	public countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {
 		let myStatus = LikeStatusEnum.None;
 
 		const likesCount = comment.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
@@ -38,7 +38,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryInterface
 		).length;
 
 		const findMyStatus: undefined | LikesDto = comment.likes.find(
-			(v) => v.userId === currentUserId.id,
+			(v) => v.userId === currentUserId,
 		);
 
 		if (findMyStatus) myStatus = findMyStatus.likeStatus;
