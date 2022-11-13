@@ -46,8 +46,7 @@ export class AuthController {
 	) {}
 
 	@HttpCode(200)
-	@UseGuards(LocalAuthGuard)
-	@UseGuards(RateLimitGuard)
+	@UseGuards(RateLimitGuard, LocalAuthGuard)
 	@Post('login')
 	async login(
 		@CurrentUserId() currentUserId: string,
@@ -132,8 +131,7 @@ export class AuthController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(PasswordRecoveryTokenGuard)
-	@UseGuards(RateLimitGuard)
+	@UseGuards(RateLimitGuard, PasswordRecoveryTokenGuard)
 	@Post('new-password')
 	async newPassword(@Body() data: NewPasswordDto, @CurrentUserId() currentUserId: string) {
 		await this.commandBus.execute(new NewPasswordAuthCommand(data, currentUserId));

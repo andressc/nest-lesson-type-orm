@@ -95,6 +95,10 @@ describe('PostController (e2e)', () => {
 			await request(app).get(`/posts/${randomId}`).expect(404);
 		});
 
+		it('should return 404 for not existing post', async () => {
+			await request(app).get(`/posts/${randomId}/comments`).expect(404);
+		});
+
 		it('should return 200 and all posts null', async () => {
 			const response = await request(app).get('/posts').expect(200);
 
