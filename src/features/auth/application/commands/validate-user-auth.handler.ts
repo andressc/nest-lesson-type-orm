@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
 import { generateHash } from '../../../../common/helpers';
 import { UserModel } from '../../../users/entity/user.schema';
-import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 
 export class ValidateUserAuthCommand {
 	constructor(public login: string, public password: string) {}
@@ -10,7 +10,7 @@ export class ValidateUserAuthCommand {
 
 @CommandHandler(ValidateUserAuthCommand)
 export class ValidateUserAuthHandler implements ICommandHandler<ValidateUserAuthCommand> {
-	constructor(private readonly usersRepository: UsersRepositoryInterface) {}
+	constructor(private readonly usersRepository: UsersRepositoryAdapter) {}
 
 	async execute(command: ValidateUserAuthCommand): Promise<UserModel | null> {
 		const user: UserModel | null = await this.usersRepository.findUserModelByLogin(command.login);

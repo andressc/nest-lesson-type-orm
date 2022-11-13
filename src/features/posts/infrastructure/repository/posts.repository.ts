@@ -3,10 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostModel } from '../../entity/post.schema';
 import { CreatePostExtendsDto } from '../../dto';
-import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
+import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 @Injectable()
-export class PostsRepository implements PostsRepositoryInterface {
+export class PostsRepository implements PostsRepositoryAdapter {
 	constructor(
 		@InjectModel(Post.name)
 		private readonly postModel: Model<PostModel>,

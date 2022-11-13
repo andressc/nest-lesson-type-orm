@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { SessionModel } from '../../../session/entity/session.schema';
-import { SessionsRepositoryInterface } from '../../../session/interface/sessions.repository.interface';
+import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
 
 export class RefreshTokenAuthCommand {
 	constructor(public refreshTokenData: RefreshTokenDataDto) {}
@@ -16,7 +16,7 @@ export class RefreshTokenAuthHandler implements ICommandHandler<RefreshTokenAuth
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		private readonly sessionsRepository: SessionsRepositoryAdapter,
 	) {}
 
 	async execute(command: RefreshTokenAuthCommand): Promise<ResponseTokensDto> {

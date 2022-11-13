@@ -6,12 +6,12 @@ import {
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 import { BlogModel } from '../../../features/blogs/entity/blog.schema';
-import { BlogsRepositoryInterface } from '../../../features/blogs/interface/blogs.repository.interface';
+import { BlogsRepositoryAdapter } from '../../../features/blogs/adapters/blogs.repository.adapter';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsUserCommentValidatorConstraint implements ValidatorConstraintInterface {
-	constructor(private readonly blogRepository: BlogsRepositoryInterface) {}
+	constructor(private readonly blogRepository: BlogsRepositoryAdapter) {}
 
 	async validate(blogId: string): Promise<boolean> {
 		const blog: BlogModel | null = await this.blogRepository.findBlogModel(blogId);

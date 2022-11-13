@@ -4,7 +4,7 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { ValidationService } from '../../../application/validation.service';
-import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
+import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class CreatePostCommand implements ICommand {
 	constructor(public data: CreatePostDto) {}
@@ -14,7 +14,7 @@ export class CreatePostCommand implements ICommand {
 export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		private readonly postsRepository: PostsRepositoryInterface,
+		private readonly postsRepository: PostsRepositoryAdapter,
 		private readonly validationService: ValidationService,
 	) {}
 

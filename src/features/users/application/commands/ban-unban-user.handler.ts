@@ -2,9 +2,9 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { UsersRepositoryInterface } from '../../interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
 import { BanUnbanUserDto } from '../../dto/ban-unban-user.dto';
-import { SessionsRepositoryInterface } from '../../../session/interface/sessions.repository.interface';
+import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
 
 export class BanUnbanUserCommand implements ICommand {
 	constructor(public id: string, public data: BanUnbanUserDto) {}
@@ -14,8 +14,8 @@ export class BanUnbanUserCommand implements ICommand {
 export class BanUnbanUserHandler implements ICommandHandler<BanUnbanUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UsersRepositoryInterface,
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
+		private readonly sessionsRepository: SessionsRepositoryAdapter,
 		private readonly validationService: ValidationService,
 	) {}
 

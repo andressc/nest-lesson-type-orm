@@ -6,7 +6,7 @@ import { RequestTimeoutException } from '@nestjs/common';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
-import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 
 export class RegistrationEmailResendingAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}
@@ -18,7 +18,7 @@ export class RegistrationEmailResendingAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
 		private readonly commandBus: CommandBus,
 	) {}
 

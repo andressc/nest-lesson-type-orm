@@ -2,9 +2,8 @@ import { CommentModel } from '../../entity/comment.schema';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentNotFoundException } from '../../../../common/exceptions';
 import { ResponseCommentDto } from '../../dto';
-import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
-import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
-import { UserModel } from '../../../users/entity/user.schema';
+import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
+import { ObjectId } from 'mongodb';
 
 export class FindOneCommentCommand {
 	constructor(public id: string, public currentUserId: string | null) {}
@@ -12,28 +11,24 @@ export class FindOneCommentCommand {
 
 @QueryHandler(FindOneCommentCommand)
 export class FindOneCommentHandler implements IQueryHandler<FindOneCommentCommand> {
-	constructor(
-		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
-		private readonly usersRepository: UsersRepositoryInterface,
-	) {}
+	constructor(private readonly queryCommentsRepository: QueryCommentsRepositoryAdapter) {}
 
 	async execute(command: FindOneCommentCommand): Promise<ResponseCommentDto> {
-		const comment: CommentModel | null = await this.queryCommentsRepository.findCommentModel(
-			command.id,
+		const comment: CommentModel[] | null = await this.queryCommentsRepository.findCommentModel(
+			new ObjectId(command.id),
 		);
-		if (!comment) throw new CommentNotFoundException(command.id);
+		if (!comment[0]) throw new CommentNotFoundException(command.id);
 
-		const user: UserModel = await this.usersRepository.findUserModel(comment.userId);
-		if (user.isBanned) throw new CommentNotFoundException(command.id);
+		const commentModel = comment[0];
 
-		const likesInfo = this.queryCommentsRepository.countLikes(comment, command.currentUserId);
+		const likesInfo = this.queryCommentsRepository.countLikes(commentModel, command.currentUserId);
 
 		return {
-			id: comment.id.toString(),
-			content: comment.content,
-			userId: comment.userId,
-			userLogin: comment.userLogin,
-			createdAt: comment.createdAt,
+			id: commentModel._id.toString(),
+			content: commentModel.content,
+			userId: commentModel.userId,
+			userLogin: commentModel.userLogin,
+			createdAt: commentModel.createdAt,
 			likesInfo,
 		};
 	}

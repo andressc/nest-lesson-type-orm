@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Put, UseGuards } from '@nestjs/common';
 import { ObjectIdDto } from '../../../common/dto';
-import { CreateLikeDto, UpdateCommentDto } from '../dto';
+import { CreateRequestLikeDto, UpdateCommentDto } from '../dto';
 import { AccessTokenGuard, GuestGuard } from '../../../common/guards';
 import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../../common/decorators/Param';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateCommentCommand } from '../application/commands/update-comment.handler';
 import { RemoveCommentCommand } from '../application/commands/remove-comment.handler';
-import { SetLikeCommentCommand } from '../application/commands/set-like-comment.handler';
 import { FindOneCommentCommand } from '../application/queries/find-one-comment.handler';
+import { CreateLikeCommand } from '../../likes/application/command/create-like.handler';
 
 @Controller('comments')
 export class CommentsController {
@@ -47,8 +47,8 @@ export class CommentsController {
 	async setLike(
 		@Param() param: ObjectIdDto,
 		@CurrentUserId() currentUserId,
-		@Body() data: CreateLikeDto,
+		@Body() data: CreateRequestLikeDto,
 	) {
-		await this.commandBus.execute(new SetLikeCommentCommand(param.id, currentUserId, data));
+		await this.commandBus.execute(new CreateLikeCommand(param.id, currentUserId, data));
 	}
 }

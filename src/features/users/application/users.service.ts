@@ -5,11 +5,11 @@ import {
 	UserNotFoundException,
 } from '../../../common/exceptions';
 import { UserModel } from '../entity/user.schema';
-import { UsersRepositoryInterface } from '../interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../adapters/users.repository.adapter';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly usersRepository: UsersRepositoryInterface) {}
+	constructor(private readonly usersRepository: UsersRepositoryAdapter) {}
 
 	public async findUserByIdOrErrorThrow(id: string): Promise<UserModel> {
 		const user: UserModel | null = await this.usersRepository.findUserModel(id);

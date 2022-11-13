@@ -13,18 +13,18 @@ import {
 import { ObjectIdDto } from '../../../common/dto';
 import { AccessTokenGuard, BasicAuthGuard, GuestGuard } from '../../../common/guards';
 import { CreatePostDto, QueryPostDto, UpdatePostDto } from '../dto';
-import { CreateCommentOfPostDto, CreateLikeDto, QueryCommentDto } from '../../comments/dto';
+import { CreateCommentOfPostDto, CreateRequestLikeDto, QueryCommentDto } from '../../comments/dto';
 import { CurrentUserId, CurrentUserIdNonAuthorized } from '../../../common/decorators/Param';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/commands/create-post.handler';
 import { UpdatePostCommand } from '../application/commands/update-post.handler';
 import { RemovePostCommand } from '../application/commands/remove-post.handler';
-import { SetLikePostCommand } from '../application/commands/set-like-post.handler';
 import { CreateCommentOfPostCommand } from '../../comments/application/commands/create-comment-of-post.handler';
 import { FindOnePostCommand } from '../application/queries/find-one-post.handler';
 import { FindAllPostCommand } from '../application/queries/find-all-post.handler';
 import { FindOneCommentCommand } from '../../comments/application/queries/find-one-comment.handler';
 import { FindAllCommentOfPostCommand } from '../../comments/application/queries/find-all-comment-of-post.handler';
+import { CreateLikeCommand } from '../../likes/application/command/create-like.handler';
 
 @Controller('posts')
 export class PostsController {
@@ -107,8 +107,8 @@ export class PostsController {
 	async setLike(
 		@Param() param: ObjectIdDto,
 		@CurrentUserId() currentUserId,
-		@Body() data: CreateLikeDto,
+		@Body() data: CreateRequestLikeDto,
 	) {
-		await this.commandBus.execute(new SetLikePostCommand(param.id, currentUserId, data));
+		await this.commandBus.execute(new CreateLikeCommand(param.id, currentUserId, data));
 	}
 }

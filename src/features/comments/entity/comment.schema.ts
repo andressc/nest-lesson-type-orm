@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { CreateLikeDto, UpdateCommentDto } from '../dto';
+import { CreateRequestLikeDto, UpdateCommentDto } from '../dto';
 import { LikesDto } from '../../../common/dto';
 import { createDate } from '../../../common/helpers';
 
@@ -30,7 +30,7 @@ export class Comment {
 		this.content = data.content;
 	}
 
-	async setLike(data: CreateLikeDto, authUserId: string, userLogin: string): Promise<void> {
+	async setLike(data: CreateRequestLikeDto, authUserId: string, userLogin: string): Promise<void> {
 		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
 
 		if (!isLikeExist)

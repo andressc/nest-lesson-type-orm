@@ -1,8 +1,9 @@
 import { PostModel } from '../entity/post.schema';
 import { LikesInfoExtended, Sort } from '../../../common/dto';
+import { ObjectId } from 'mongodb';
 
-export abstract class QueryPostsRepositoryInterface {
-	abstract findPostModel(id: string): Promise<PostModel | null>;
+export abstract class QueryPostsRepositoryAdapter {
+	abstract findPostModel(id: ObjectId): Promise<PostModel[] | null>;
 	abstract findPostQueryModel(
 		searchString: any,
 		sortBy: Sort,

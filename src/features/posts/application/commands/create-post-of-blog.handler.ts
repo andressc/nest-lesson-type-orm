@@ -4,7 +4,7 @@ import { CreatePostOfBlogDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
+import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class CreatePostOfBlogCommand implements ICommand {
 	constructor(public data: CreatePostOfBlogDto, public blogId: string) {}
@@ -14,7 +14,7 @@ export class CreatePostOfBlogCommand implements ICommand {
 export class CreatePostOfBlogHandler implements ICommandHandler<CreatePostOfBlogCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		private readonly postsRepository: PostsRepositoryInterface,
+		private readonly postsRepository: PostsRepositoryAdapter,
 		private readonly validationService: ValidationService,
 	) {}
 

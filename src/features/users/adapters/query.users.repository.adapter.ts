@@ -1,7 +1,7 @@
 import { UserModel } from '../entity/user.schema';
 import { Sort } from '../../../common/dto';
 
-export abstract class QueryUsersRepositoryInterface {
+export abstract class QueryUsersRepositoryAdapter {
 	abstract findUserModel(id: string): Promise<UserModel | null>;
 	abstract findUserQueryModel(
 		searchString: any,

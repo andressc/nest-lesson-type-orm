@@ -3,7 +3,7 @@ import { QueryUserDto, ResponseUserDto } from '../../dto';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { UserModel } from '../../entity/user.schema';
 import { PaginationService } from '../../../application/pagination.service';
-import { QueryUsersRepositoryInterface } from '../../interface/query.users.repository.interface';
+import { QueryUsersRepositoryAdapter } from '../../adapters/query.users.repository.adapter';
 
 export class FindAllUserCommand {
 	constructor(public query: QueryUserDto) {}
@@ -12,7 +12,7 @@ export class FindAllUserCommand {
 @QueryHandler(FindAllUserCommand)
 export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 	constructor(
-		private readonly queryUsersRepository: QueryUsersRepositoryInterface,
+		private readonly queryUsersRepository: QueryUsersRepositoryAdapter,
 		private readonly paginationService: PaginationService,
 	) {}
 

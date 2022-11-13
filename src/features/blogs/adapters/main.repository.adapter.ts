@@ -1,4 +1,4 @@
-export abstract class MainRepositoryInterface<MODEL, TYPE> {
+export abstract class MainRepositoryAdapter<MODEL, TYPE> {
 	abstract create(data: TYPE): Promise<MODEL>;
 	abstract find(id: TYPE): Promise<MODEL | null>;
 	abstract save(blogModel: MODEL): Promise<MODEL>;

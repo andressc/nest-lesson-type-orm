@@ -5,7 +5,7 @@ import { CommentsService } from '../comments.service';
 import { PostsService } from '../../../posts/application/posts.service';
 import { UsersService } from '../../../users/application/users.service';
 import { ValidationService } from '../../../application/validation.service';
-import { CommentsRepositoryInterface } from '../../interface/comments.repository.interface';
+import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
 
 export class UpdateCommentCommand {
 	constructor(public id: string, public data: UpdateCommentDto, public authUserId: string) {}
@@ -14,7 +14,7 @@ export class UpdateCommentCommand {
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentHandler implements ICommandHandler<UpdateCommentCommand> {
 	constructor(
-		private readonly commentsRepository: CommentsRepositoryInterface,
+		private readonly commentsRepository: CommentsRepositoryAdapter,
 		private readonly postsService: PostsService,
 		private readonly usersService: UsersService,
 		private readonly commentsService: CommentsService,

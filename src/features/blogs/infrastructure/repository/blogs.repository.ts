@@ -3,10 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogModel } from '../../entity/blog.schema';
 import { CreateBlogExtendsDto } from '../../dto';
-import { BlogsRepositoryInterface } from '../../interface/blogs.repository.interface';
+import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
 
 @Injectable()
-export class BlogsRepository implements BlogsRepositoryInterface {
+export class BlogsRepository implements BlogsRepositoryAdapter {
 	constructor(
 		@InjectModel(Blog.name)
 		private readonly blogModel: Model<BlogModel>,

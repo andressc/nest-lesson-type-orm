@@ -5,8 +5,8 @@ import { PostModel } from '../../entity/post.schema';
 import { PaginationService } from '../../../application/pagination.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { BlogNotFoundException } from '../../../../common/exceptions';
-import { QueryBlogsRepositoryInterface } from '../../../blogs/interface/query.blogs.repository.interface';
-import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
+import { QueryBlogsRepositoryAdapter } from '../../../blogs/adapters/query.blogs.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../adapters/query.posts.repository.adapter';
 
 export class FindAllPostCommand {
 	constructor(
@@ -19,8 +19,8 @@ export class FindAllPostCommand {
 @QueryHandler(FindAllPostCommand)
 export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 	constructor(
-		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
-		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
+		private readonly queryPostsRepository: QueryPostsRepositoryAdapter,
+		private readonly queryBlogsRepository: QueryBlogsRepositoryAdapter,
 		private readonly paginationService: PaginationService,
 	) {}
 

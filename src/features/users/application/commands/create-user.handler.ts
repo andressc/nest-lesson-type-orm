@@ -5,7 +5,7 @@ import { createDate, generateConfirmationCode, generateHash } from '../../../../
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { UsersRepositoryInterface } from '../../interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
 
 export class CreateUserCommand implements ICommand {
 	constructor(public data: CreateUserDto, public isConfirmed = false) {}
@@ -15,7 +15,7 @@ export class CreateUserCommand implements ICommand {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UsersRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
 		private readonly validationService: ValidationService,
 	) {}
 

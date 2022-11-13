@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { ResponseUserDto } from '../../dto';
 import { UserModel } from '../../entity/user.schema';
-import { QueryUsersRepositoryInterface } from '../../interface/query.users.repository.interface';
+import { QueryUsersRepositoryAdapter } from '../../adapters/query.users.repository.adapter';
 
 export class FindOneUserCommand {
 	constructor(public id: string) {}
@@ -10,7 +10,7 @@ export class FindOneUserCommand {
 
 @QueryHandler(FindOneUserCommand)
 export class FindOneUserHandler implements IQueryHandler<FindOneUserCommand> {
-	constructor(private readonly queryUsersRepository: QueryUsersRepositoryInterface) {}
+	constructor(private readonly queryUsersRepository: QueryUsersRepositoryAdapter) {}
 
 	async execute(command: FindOneUserCommand): Promise<ResponseUserDto> {
 		const user: UserModel | null = await this.queryUsersRepository.findUserModel(command.id);

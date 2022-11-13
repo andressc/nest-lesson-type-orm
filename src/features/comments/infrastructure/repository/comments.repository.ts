@@ -3,10 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../entity/comment.schema';
 import { CreateCommentExtendsDto } from '../../dto';
-import { CommentsRepositoryInterface } from '../../interface/comments.repository.interface';
+import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
 
 @Injectable()
-export class CommentsRepository implements CommentsRepositoryInterface {
+export class CommentsRepository implements CommentsRepositoryAdapter {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,

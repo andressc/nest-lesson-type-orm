@@ -15,26 +15,25 @@ import { Post, PostSchema } from './entity/post.schema';
 import { BlogsModule } from '../blogs/blogs.module';
 import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
-import { PostsRepositoryInterface } from './interface/posts.repository.interface';
-import { QueryPostsRepositoryInterface } from './interface/query.posts.repository.interface';
-import { SetLikePostHandler } from './application/commands/set-like-post.handler';
+import { PostsRepositoryAdapter } from './adapters/posts.repository.adapter';
+import { QueryPostsRepositoryAdapter } from './adapters/query.posts.repository.adapter';
 import { UsersModule } from '../users/users.module';
+import { LikesModule } from '../likes/likes.module';
 
 export const CommandHandlers = [
 	CreatePostHandler,
 	RemovePostHandler,
 	UpdatePostHandler,
 	CreatePostOfBlogHandler,
-	SetLikePostHandler,
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
 export const Repositories = [
 	{
-		provide: QueryPostsRepositoryInterface,
+		provide: QueryPostsRepositoryAdapter,
 		useClass: QueryPostsRepository,
 	},
 	{
-		provide: PostsRepositoryInterface,
+		provide: PostsRepositoryAdapter,
 		useClass: PostsRepository,
 	},
 ];
@@ -44,6 +43,7 @@ export const Modules = [
 	CqrsModule,
 	BlogsModule,
 	UsersModule,
+	LikesModule,
 ];
 
 @Module({
@@ -53,13 +53,13 @@ export const Modules = [
 
 	exports: [
 		PostsService,
-		QueryPostsRepositoryInterface,
+		QueryPostsRepositoryAdapter,
 		{
-			provide: QueryPostsRepositoryInterface,
+			provide: QueryPostsRepositoryAdapter,
 			useClass: QueryPostsRepository,
 		},
 		{
-			provide: PostsRepositoryInterface,
+			provide: PostsRepositoryAdapter,
 			useClass: PostsRepository,
 		},
 	],

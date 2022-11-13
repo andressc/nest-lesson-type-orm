@@ -5,8 +5,9 @@ import { QueryCommentDto, ResponseCommentDto } from '../../dto';
 import { PostModel } from '../../../posts/entity/post.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { PaginationService } from '../../../application/pagination.service';
-import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
-import { QueryPostsRepositoryInterface } from '../../../posts/interface/query.posts.repository.interface';
+import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../../posts/adapters/query.posts.repository.adapter';
+import { ObjectId } from 'mongodb';
 
 export class FindAllCommentOfPostCommand {
 	constructor(
@@ -19,8 +20,8 @@ export class FindAllCommentOfPostCommand {
 @QueryHandler(FindAllCommentOfPostCommand)
 export class FindAllCommentOfPostHandler implements IQueryHandler<FindAllCommentOfPostCommand> {
 	constructor(
-		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
-		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
+		private readonly queryCommentsRepository: QueryCommentsRepositoryAdapter,
+		private readonly queryPostsRepository: QueryPostsRepositoryAdapter,
 		private readonly paginationService: PaginationService,
 	) {}
 
@@ -29,7 +30,9 @@ export class FindAllCommentOfPostHandler implements IQueryHandler<FindAllComment
 	): Promise<PaginationDto<ResponseCommentDto[]>> {
 		const searchString = { postId: command.postId };
 
-		const post: PostModel | null = await this.queryPostsRepository.findPostModel(command.postId);
+		const post: PostModel[] | null = await this.queryPostsRepository.findPostModel(
+			new ObjectId(command.postId),
+		);
 		if (!post) throw new PostNotFoundException(command.postId);
 
 		const totalCount: number = await this.queryCommentsRepository.count(searchString);

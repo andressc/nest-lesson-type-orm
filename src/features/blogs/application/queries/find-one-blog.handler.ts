@@ -2,7 +2,7 @@ import { ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogNotFoundException } from '../../../../common/exceptions';
 import { BlogModel } from '../../entity/blog.schema';
-import { QueryBlogsRepositoryInterface } from '../../interface/query.blogs.repository.interface';
+import { QueryBlogsRepositoryAdapter } from '../../adapters/query.blogs.repository.adapter';
 
 export class FindOneBlogCommand {
 	constructor(public id: string) {}
@@ -10,7 +10,7 @@ export class FindOneBlogCommand {
 
 @QueryHandler(FindOneBlogCommand)
 export class FindOneBlogHandler implements IQueryHandler<FindOneBlogCommand> {
-	constructor(private readonly queryBlogsRepository: QueryBlogsRepositoryInterface) {}
+	constructor(private readonly queryBlogsRepository: QueryBlogsRepositoryAdapter) {}
 
 	async execute(command: FindOneBlogCommand): Promise<ResponseBlogDto> {
 		const blog: BlogModel | null = await this.queryBlogsRepository.findBlogModel(command.id);

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PostModel } from '../entity/post.schema';
 import { PostNotFoundException } from '../../../common/exceptions';
-import { PostsRepositoryInterface } from '../interface/posts.repository.interface';
+import { PostsRepositoryAdapter } from '../adapters/posts.repository.adapter';
 
 @Injectable()
 export class PostsService {
-	constructor(private readonly postsRepository: PostsRepositoryInterface) {}
+	constructor(private readonly postsRepository: PostsRepositoryAdapter) {}
 
 	public async findPostOrErrorThrow(id: string): Promise<PostModel> {
 		const post: PostModel | null = await this.postsRepository.findPostModel(id);

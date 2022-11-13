@@ -5,7 +5,7 @@ import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { PostModel } from '../../entity/post.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { PostsRepositoryInterface } from '../../interface/posts.repository.interface';
+import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class UpdatePostCommand {
 	constructor(public id: string, public data: UpdatePostDto) {}
@@ -14,7 +14,7 @@ export class UpdatePostCommand {
 @CommandHandler(UpdatePostCommand)
 export class UpdatePostHandler implements ICommandHandler<UpdatePostCommand> {
 	constructor(
-		private readonly postsRepository: PostsRepositoryInterface,
+		private readonly postsRepository: PostsRepositoryAdapter,
 		private readonly blogsService: BlogsService,
 		private readonly postsService: PostsService,
 		private readonly validationService: ValidationService,

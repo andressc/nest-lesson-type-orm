@@ -1,28 +1,57 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikesInfoExtended, LikesDto, LikeStatusEnum, Sort } from '../../../../common/dto';
+import { LikesInfoExtended, LikeStatusEnum } from '../../../../common/dto';
 import { Post, PostModel } from '../../entity/post.schema';
-import { QueryPostsRepositoryInterface } from '../../interface/query.posts.repository.interface';
+import { QueryPostsRepositoryAdapter } from '../../adapters/query.posts.repository.adapter';
+import { ObjectId } from 'mongodb';
+import { LikeDbDto } from '../../../likes/dto/like-db.dto';
 
 @Injectable()
-export class QueryPostsRepository implements QueryPostsRepositoryInterface {
+export class QueryPostsRepository implements QueryPostsRepositoryAdapter {
 	constructor(
 		@InjectModel(Post.name)
 		private readonly postModel: Model<PostModel>,
 	) {}
 
-	async findPostModel(id: string): Promise<PostModel | null> {
-		return this.postModel.findById(id);
+	async findPostModel(id: ObjectId): Promise<PostModel[] | null> {
+		return this.postModel.aggregate([
+			{ $match: { _id: id } },
+			{
+				$graphLookup: {
+					from: 'likes',
+					startWith: '$_id',
+					connectFromField: '_id',
+					connectToField: 'itemId',
+					as: 'likes',
+				},
+			},
+		]);
 	}
 
 	async findPostQueryModel(
 		searchString: any,
-		sortBy: Sort,
+		//sortBy: Sort,
+		sortBy: any,
 		skip: number,
 		pageSize: number,
 	): Promise<PostModel[] | null> {
-		return this.postModel.find(searchString).sort(sortBy).skip(skip).limit(pageSize);
+		return this.postModel
+			.aggregate([
+				{ $match: searchString },
+				{
+					$graphLookup: {
+						from: 'likes',
+						startWith: '$_id',
+						connectFromField: '_id',
+						connectToField: 'itemId',
+						as: 'likes',
+					},
+				},
+			])
+			.sort(sortBy)
+			.skip(skip)
+			.limit(pageSize);
 	}
 
 	async count(searchString): Promise<number> {
@@ -30,25 +59,26 @@ export class QueryPostsRepository implements QueryPostsRepositoryInterface {
 	}
 
 	public countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
+		let likesCount = 0;
+		let dislikesCount = 0;
 		let myStatus = LikeStatusEnum.None;
 
-		const likesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
-		const dislikesCount = post.likes.filter((u) => u.likeStatus === LikeStatusEnum.Dislike).length;
-
-		const findMyStatus: undefined | LikesDto = post.likes.find((v) => v.userId === currentUserId);
-
-		if (findMyStatus) myStatus = findMyStatus.likeStatus;
-
-		const newestLikes = post.likes
-			.slice()
-			.filter((v) => v.likeStatus === LikeStatusEnum.Like)
-			.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
-			.map((v) => ({
+		const newestLikes = [...post.likes]
+			.filter((v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Like)
+			.sort((a: LikeDbDto, b: LikeDbDto) => (a.addedAt > b.addedAt ? -1 : 1))
+			.slice(0, 3)
+			.map((v: LikeDbDto) => ({
 				addedAt: v.addedAt,
-				userId: v.userId,
+				userId: v.userId.toString(),
 				login: v.login,
-			}))
-			.slice(0, 3);
+			}));
+
+		post.likes.forEach((it: LikeDbDto) => {
+			it.likeStatus === LikeStatusEnum.Like && likesCount++;
+			it.likeStatus === LikeStatusEnum.Dislike && dislikesCount++;
+
+			if (currentUserId && new ObjectId(it.userId).equals(currentUserId)) myStatus = it.likeStatus;
+		});
 
 		return {
 			likesCount,

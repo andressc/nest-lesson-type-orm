@@ -5,7 +5,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { Module } from '@nestjs/common';
 import { CreateCommentOfPostHandler } from './application/commands/create-comment-of-post.handler';
 import { RemoveCommentHandler } from './application/commands/remove-comment.handler';
-import { SetLikeCommentHandler } from './application/commands/set-like-comment.handler';
 import { UpdateCommentHandler } from './application/commands/update-comment.handler';
 import { FindAllCommentOfPostHandler } from './application/queries/find-all-comment-of-post.handler';
 import { FindOneCommentHandler } from './application/queries/find-one-comment.handler';
@@ -16,23 +15,23 @@ import { CommentsRepository } from './infrastructure/repository/comments.reposit
 import { UsersModule } from '../users/users.module';
 import { PostsModule } from '../posts/posts.module';
 import { Comment, CommentSchema } from './entity/comment.schema';
-import { CommentsRepositoryInterface } from './interface/comments.repository.interface';
-import { QueryCommentsRepositoryInterface } from './interface/query.comments.repository.interface';
+import { CommentsRepositoryAdapter } from './adapters/comments.repository.adapter';
+import { QueryCommentsRepositoryAdapter } from './adapters/query.comments.repository.adapter';
+import { LikesModule } from '../likes/likes.module';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
 	RemoveCommentHandler,
-	SetLikeCommentHandler,
 	UpdateCommentHandler,
 ];
 export const QueryHandlers = [FindAllCommentOfPostHandler, FindOneCommentHandler];
 export const Repositories = [
 	{
-		provide: QueryCommentsRepositoryInterface,
+		provide: QueryCommentsRepositoryAdapter,
 		useClass: QueryCommentsRepository,
 	},
 	{
-		provide: CommentsRepositoryInterface,
+		provide: CommentsRepositoryAdapter,
 		useClass: CommentsRepository,
 	},
 ];
@@ -42,6 +41,7 @@ export const Modules = [
 	CqrsModule,
 	UsersModule,
 	PostsModule,
+	LikesModule,
 ];
 
 @Module({
@@ -51,7 +51,7 @@ export const Modules = [
 
 	exports: [
 		{
-			provide: CommentsRepositoryInterface,
+			provide: CommentsRepositoryAdapter,
 			useClass: CommentsRepository,
 		},
 	],

@@ -3,7 +3,7 @@ import { RegistrationConfirmationDto } from '../../dto';
 import { ConfirmCodeBadRequestException } from '../../../../common/exceptions';
 import { UserModel } from '../../../users/entity/user.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { UsersRepositoryInterface } from '../../../users/interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 
 export class RegistrationConfirmationAuthCommand {
 	constructor(public data: RegistrationConfirmationDto) {}
@@ -15,7 +15,7 @@ export class RegistrationConfirmationAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
 	) {}
 
 	async execute(command: RegistrationConfirmationAuthCommand): Promise<void> {

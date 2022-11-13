@@ -6,7 +6,7 @@ import { PasswordRecoveryTokenDataDto } from '../dto';
 import { EmailBadRequestException } from '../../../common/exceptions';
 import { AuthConfig } from '../../../configuration';
 import { UserModel } from '../../users/entity/user.schema';
-import { UsersRepositoryInterface } from '../../users/interface/users.repository.interface';
+import { UsersRepositoryAdapter } from '../../users/adapters/users.repository.adapter';
 
 @Injectable()
 export class PasswordRecoveryTokenStrategy extends PassportStrategy(
@@ -14,7 +14,7 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 	'jwt-recovery-password',
 ) {
 	constructor(
-		private readonly usersRepository: UsersRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({

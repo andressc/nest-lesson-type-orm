@@ -1,28 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikesDto, LikesInfo, LikeStatusEnum, Sort } from '../../../../common/dto';
+import { LikesInfo, LikeStatusEnum } from '../../../../common/dto';
 import { Comment, CommentModel } from '../../entity/comment.schema';
-import { QueryCommentsRepositoryInterface } from '../../interface/query.comments.repository.interface';
+import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
+import { ObjectId } from 'mongodb';
+import { LikeDbDto } from '../../../likes/dto/like-db.dto';
 
 @Injectable()
-export class QueryCommentsRepository implements QueryCommentsRepositoryInterface {
+export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
 	) {}
 
-	async findCommentModel(id: string): Promise<CommentModel | null> {
-		return this.commentModel.findById(id);
+	async findCommentModel(id: ObjectId): Promise<CommentModel[] | null> {
+		return this.commentModel.aggregate([
+			{ $match: { _id: id } },
+			{
+				$graphLookup: {
+					from: 'likes',
+					startWith: '$_id',
+					connectFromField: '_id',
+					connectToField: 'itemId',
+					as: 'likes',
+				},
+			},
+		]);
 	}
 
 	async findCommentQueryModel(
 		searchString: any,
-		sortBy: Sort,
+		sortBy: any,
 		skip: number,
 		pageSize: number,
 	): Promise<CommentModel[] | null> {
-		return this.commentModel.find(searchString).sort(sortBy).skip(skip).limit(pageSize);
+		return this.commentModel
+			.aggregate([
+				{ $match: searchString },
+				{
+					$graphLookup: {
+						from: 'likes',
+						startWith: '$_id',
+						connectFromField: '_id',
+						connectToField: 'itemId',
+						as: 'likes',
+					},
+				},
+			])
+			.sort(sortBy)
+			.skip(skip)
+			.limit(pageSize);
 	}
 
 	async count(searchString): Promise<number> {
@@ -30,18 +58,16 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryInterface
 	}
 
 	public countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {
+		let likesCount = 0;
+		let dislikesCount = 0;
 		let myStatus = LikeStatusEnum.None;
 
-		const likesCount = comment.likes.filter((u) => u.likeStatus === LikeStatusEnum.Like).length;
-		const dislikesCount = comment.likes.filter(
-			(u) => u.likeStatus === LikeStatusEnum.Dislike,
-		).length;
+		comment.likes.forEach((it: LikeDbDto) => {
+			it.likeStatus === LikeStatusEnum.Like && likesCount++;
+			it.likeStatus === LikeStatusEnum.Dislike && dislikesCount++;
 
-		const findMyStatus: undefined | LikesDto = comment.likes.find(
-			(v) => v.userId === currentUserId,
-		);
-
-		if (findMyStatus) myStatus = findMyStatus.likeStatus;
+			if (currentUserId && new ObjectId(it.userId).equals(currentUserId)) myStatus = it.likeStatus;
+		});
 
 		return {
 			likesCount,

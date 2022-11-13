@@ -2,7 +2,7 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { DeviceIdNotFoundException } from '../../../../common/exceptions';
 import { ForbiddenException } from '@nestjs/common';
 import { SessionModel } from '../../entity/session.schema';
-import { SessionsRepositoryInterface } from '../../interface/sessions.repository.interface';
+import { SessionsRepositoryAdapter } from '../../adapters/sessions.repository.adapter';
 
 export class RemoveUserSessionCommand implements ICommand {
 	constructor(public userId: string, public deviceId: string) {}
@@ -10,7 +10,7 @@ export class RemoveUserSessionCommand implements ICommand {
 
 @CommandHandler(RemoveUserSessionCommand)
 export class RemoveUserSessionHandler implements ICommandHandler<RemoveUserSessionCommand> {
-	constructor(private readonly sessionsRepository: SessionsRepositoryInterface) {}
+	constructor(private readonly sessionsRepository: SessionsRepositoryAdapter) {}
 
 	async execute(command: RemoveUserSessionCommand): Promise<void> {
 		const session: SessionModel | null = await this.sessionsRepository.findSessionModelOnDeviceId(

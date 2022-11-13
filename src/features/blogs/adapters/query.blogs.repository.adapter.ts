@@ -1,7 +1,7 @@
 import { BlogModel } from '../entity/blog.schema';
 import { Sort } from '../../../common/dto';
 
-export abstract class QueryBlogsRepositoryInterface {
+export abstract class QueryBlogsRepositoryAdapter {
 	abstract findBlogModel(id: string): Promise<BlogModel | null>;
 	abstract findBlogQueryModel(
 		searchString: any,

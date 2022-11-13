@@ -14,18 +14,18 @@ import { Blog, BlogSchema } from './entity/blog.schema';
 import { PaginationService } from '../application/pagination.service';
 import { ValidationService } from '../application/validation.service';
 import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
-import { BlogsRepositoryInterface } from './interface/blogs.repository.interface';
-import { QueryBlogsRepositoryInterface } from './interface/query.blogs.repository.interface';
+import { BlogsRepositoryAdapter } from './adapters/blogs.repository.adapter';
+import { QueryBlogsRepositoryAdapter } from './adapters/query.blogs.repository.adapter';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
 export const Repositories = [
 	{
-		provide: QueryBlogsRepositoryInterface,
+		provide: QueryBlogsRepositoryAdapter,
 		useClass: QueryBlogsRepository,
 	},
 	{
-		provide: BlogsRepositoryInterface,
+		provide: BlogsRepositoryAdapter,
 		useClass: BlogsRepository,
 	},
 ];
@@ -48,11 +48,11 @@ export const Modules = [
 	exports: [
 		BlogsService,
 		{
-			provide: QueryBlogsRepositoryInterface,
+			provide: QueryBlogsRepositoryAdapter,
 			useClass: QueryBlogsRepository,
 		},
 		{
-			provide: BlogsRepositoryInterface,
+			provide: BlogsRepositoryAdapter,
 			useClass: BlogsRepository,
 		},
 	],

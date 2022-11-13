@@ -1,8 +1,9 @@
 import { CommentModel } from '../entity/comment.schema';
 import { LikesInfo, Sort } from '../../../common/dto';
+import { ObjectId } from 'mongodb';
 
-export abstract class QueryCommentsRepositoryInterface {
-	abstract findCommentModel(id: string): Promise<CommentModel | null>;
+export abstract class QueryCommentsRepositoryAdapter {
+	abstract findCommentModel(id: ObjectId): Promise<CommentModel[] | null>;
 	abstract findCommentQueryModel(
 		searchString: any,
 		sortBy: Sort,

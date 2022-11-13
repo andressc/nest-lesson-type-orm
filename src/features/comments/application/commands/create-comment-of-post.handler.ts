@@ -6,7 +6,7 @@ import { PostsService } from '../../../posts/application/posts.service';
 import { UserModel } from '../../../users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from '../../../application/validation.service';
-import { CommentsRepositoryInterface } from '../../interface/comments.repository.interface';
+import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(
@@ -21,7 +21,7 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly postsService: PostsService,
-		private readonly commentsRepository: CommentsRepositoryInterface,
+		private readonly commentsRepository: CommentsRepositoryAdapter,
 		private readonly validationService: ValidationService,
 	) {}
 

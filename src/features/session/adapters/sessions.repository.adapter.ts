@@ -1,6 +1,6 @@
 import { SessionModel } from '../entity/session.schema';
 
-export abstract class SessionsRepositoryInterface {
+export abstract class SessionsRepositoryAdapter {
 	abstract createSessionModel(data: any): Promise<SessionModel>;
 	abstract findSessionModel(
 		userId: string,

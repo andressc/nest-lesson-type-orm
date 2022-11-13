@@ -7,14 +7,14 @@ import { payloadDateCreator } from '../../../common/helpers';
 import { AuthConfig } from '../../../configuration';
 import { UserModel } from '../../users/entity/user.schema';
 import { SessionModel } from '../../session/entity/session.schema';
-import { SessionsRepositoryInterface } from '../../session/interface/sessions.repository.interface';
-import { UsersRepositoryInterface } from '../../users/interface/users.repository.interface';
+import { SessionsRepositoryAdapter } from '../../session/adapters/sessions.repository.adapter';
+import { UsersRepositoryAdapter } from '../../users/adapters/users.repository.adapter';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
 	constructor(
-		private readonly usersRepository: UsersRepositoryInterface,
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		private readonly usersRepository: UsersRepositoryAdapter,
+		private readonly sessionsRepository: SessionsRepositoryAdapter,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({

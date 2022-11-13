@@ -1,7 +1,7 @@
 import { BlogModel } from '../../entity/blog.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
-import { BlogsRepositoryInterface } from '../../interface/blogs.repository.interface';
+import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
 
 export class RemoveBlogCommand {
 	constructor(public id: string) {}
@@ -10,7 +10,7 @@ export class RemoveBlogCommand {
 @CommandHandler(RemoveBlogCommand)
 export class RemoveBlogHandler implements ICommandHandler<RemoveBlogCommand> {
 	constructor(
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		private readonly blogsRepository: BlogsRepositoryAdapter,
 		private readonly blogsService: BlogsService,
 	) {}
 
