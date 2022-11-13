@@ -55,7 +55,7 @@ export class QueryPostsRepository implements QueryPostsRepositoryAdapter {
 	}
 
 	async count(searchString): Promise<number> {
-		return this.postModel.countDocuments(searchString);
+		return this.postModel.countDocuments({ ...searchString, isBanned: false });
 	}
 
 	public countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {

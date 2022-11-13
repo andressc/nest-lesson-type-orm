@@ -54,7 +54,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 	}
 
 	async count(searchString): Promise<number> {
-		return this.commentModel.countDocuments(searchString);
+		return this.commentModel.countDocuments({ ...searchString, isBanned: false });
 	}
 
 	public countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {

@@ -29,6 +29,59 @@ describe('PostController (e2e)', () => {
 		createdAt: expect.any(String),
 	};
 
+	const userDataLogin = {
+		login: 'login',
+		email: 'email@email.ru',
+		password: '123456',
+	};
+
+	const likeNotAuthorizedData = {
+		likesCount: 1,
+		dislikesCount: 0,
+		myStatus: 'None',
+		newestLikes: [
+			{
+				addedAt: expect.any(String),
+				userId: expect.any(String),
+				login: userDataLogin.login,
+			},
+		],
+	};
+
+	const likeAuthorizedData = {
+		likesCount: 1,
+		dislikesCount: 0,
+		myStatus: 'Like',
+		newestLikes: [
+			{
+				addedAt: expect.any(String),
+				userId: expect.any(String),
+				login: userDataLogin.login,
+			},
+		],
+	};
+
+	const dislikeNotAuthorizedData = {
+		likesCount: 0,
+		dislikesCount: 1,
+		myStatus: 'None',
+		newestLikes: [],
+	};
+
+	const dislikeAuthorizedData = {
+		likesCount: 0,
+		dislikesCount: 1,
+		myStatus: 'Dislike',
+		newestLikes: [],
+	};
+
+	const emptyLikesDislikesData = {
+		likesCount: 0,
+		dislikesCount: 0,
+		myStatus: 'None',
+		newestLikes: [],
+	};
+
 	const postData = {
 		id: expect.any(String),
 		title: 'title',
@@ -61,6 +114,28 @@ describe('PostController (e2e)', () => {
 			},
 			{
 				field: 'blogId',
+				message: expect.any(String),
+			},
+		],
+	};
+
+	const likeErrorsMessages = {
+		errorsMessages: [
+			{
+				field: 'likeStatus',
+				message: expect.any(String),
+			},
+		],
+	};
+
+	const userErrorsBan = {
+		errorsMessages: [
+			{
+				field: 'isBanned',
+				message: expect.any(String),
+			},
+			{
+				field: 'banReason',
 				message: expect.any(String),
 			},
 		],
@@ -315,25 +390,230 @@ describe('PostController (e2e)', () => {
 		});
 	});
 
-	/*describe('test Likes', () => {
+	describe('test Likes', () => {
+		const postId = new ObjectId().toString();
+
 		beforeAll(async () => {
 			await connection.dropDatabase();
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await PostModel.create(postCreator('aTitle', postData, 1, postId));
 		});
 
-		it('test Likes', async () => {
-			const createdPost = await request(app)
-				.post(`/blogs/${blogData.id}/posts`)
+		let token;
+		let userId;
+
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/users')
 				.set('authorization', BASIC_AUTH)
-				.send({
-					title: postData.title,
-					shortDescription: postData.shortDescription,
-					content: postData.content,
-				})
+				.send(userDataLogin)
 				.expect(201);
 
-			expect(createdPost.body).toEqual(postData);
+			userId = user.body.id;
 		});
-	});*/
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('should return 404 for not existing post', async () => {
+			await request(app)
+				.put(`/posts/${randomId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Like' })
+				.expect(404);
+		});
+
+		it('should return 400 with incorrect likes body data 1', async () => {
+			const like = await request(app)
+				.put(`/posts/${postId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Wrong' })
+				.expect(400);
+
+			expect(like.body).toEqual(likeErrorsMessages);
+		});
+
+		it('should return 400 with incorrect likes body data 2', async () => {
+			const like = await request(app)
+				.put(`/posts/${postId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(400);
+
+			expect(like.body).toEqual(likeErrorsMessages);
+		});
+
+		it('should return 204 set Like with correct body data and user auth', async () => {
+			await request(app)
+				.put(`/posts/${postId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Like' })
+				.expect(204);
+		});
+
+		it('get all posts after Like with non authorized user', async () => {
+			const allPosts = await request(app).get(`/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(likeNotAuthorizedData);
+		});
+
+		it('get all posts after Like with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(likeAuthorizedData);
+		});
+
+		it('get post by id after Like with non authorized user', async () => {
+			const allPosts = await request(app).get(`/posts/${postId}`).expect(200);
+
+			expect(allPosts.body.extendedLikesInfo).toEqual(likeNotAuthorizedData);
+		});
+
+		it('get post by id after Like with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/posts/${postId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.extendedLikesInfo).toEqual(likeAuthorizedData);
+		});
+
+		it('get all posts of blog after Like with non authorized user', async () => {
+			const allPosts = await request(app).get(`/blogs/${blogData.id}/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(likeNotAuthorizedData);
+		});
+
+		it('get all posts of blog after Like with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(likeAuthorizedData);
+		});
+
+		it('should return 204 set Dislike with correct body data and user auth', async () => {
+			await request(app)
+				.put(`/posts/${postId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Dislike' })
+				.expect(204);
+		});
+
+		it('get all posts after Dislike with non authorized user', async () => {
+			const allPosts = await request(app).get(`/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(dislikeNotAuthorizedData);
+		});
+
+		it('get all posts after Dislike with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(dislikeAuthorizedData);
+		});
+
+		it('get all posts of blog after Dislike with non authorized user', async () => {
+			const allPosts = await request(app).get(`/blogs/${blogData.id}/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(dislikeNotAuthorizedData);
+		});
+
+		it('get all posts of blog after Dislike with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(dislikeAuthorizedData);
+		});
+
+		it('get post by id after Dislike with non authorized user', async () => {
+			const allPosts = await request(app).get(`/posts/${postId}`).expect(200);
+
+			expect(allPosts.body.extendedLikesInfo).toEqual(dislikeNotAuthorizedData);
+		});
+
+		it('get post by id after Dislike with authorized user', async () => {
+			const allPosts = await request(app)
+				.get(`/posts/${postId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allPosts.body.extendedLikesInfo).toEqual(dislikeAuthorizedData);
+		});
+
+		it('should return 401 with not authorized at users ban', async () => {
+			await request(app).put(`/users/${userId}/ban`).expect(401);
+		});
+
+		it('should return 400 with incorrect body data from ban user', async () => {
+			const usersBan = await request(app)
+				.put(`/users/${userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.expect(400);
+
+			expect(usersBan.body).toEqual(userErrorsBan);
+		});
+
+		it('should return 404 with user not found', async () => {
+			const usersBan = await request(app)
+				.put(`/users/${randomId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: false, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(404);
+
+			expect(usersBan.body).toEqual({
+				errorsMessages: [
+					{
+						message: expect.any(String),
+						field: 'userId',
+					},
+				],
+			});
+		});
+
+		it('should return 204 with user banned', async () => {
+			await request(app)
+				.put(`/users/${userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(204);
+		});
+
+		it('get all posts after Ban user', async () => {
+			const allPosts = await request(app).get(`/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(emptyLikesDislikesData);
+		});
+
+		it('get all posts of blog after Ban user', async () => {
+			const allPosts = await request(app).get(`/blogs/${blogData.id}/posts`).expect(200);
+
+			expect(allPosts.body.items[0].extendedLikesInfo).toEqual(emptyLikesDislikesData);
+		});
+
+		it('get post by id after Ban user', async () => {
+			const allPosts = await request(app).get(`/posts/${postId}`).expect(200);
+
+			expect(allPosts.body.extendedLikesInfo).toEqual(emptyLikesDislikesData);
+		});
+	});
 
 	describe('get all posts and sorting', () => {
 		beforeAll(async () => {

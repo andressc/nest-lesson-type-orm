@@ -13,11 +13,14 @@ import { BASIC_AUTH } from './constants';
 import { Blog } from '../src/features/blogs/entity/blog.schema';
 import { Post } from '../src/features/posts/entity/post.schema';
 import { Comment } from '../src/features/comments/entity/comment.schema';
+import { userCreator } from './dbSeeding/userCreator';
+import { User } from '../src/features/users/entity/user.schema';
 
 describe('CommentController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 	let BlogModel: Model<Blog>;
 	let PostModel: Model<Post>;
+	let UserModel: Model<User>;
 	let CommentModel: Model<Comment>;
 	let connection: Connection;
 	let app: INestApplication;
@@ -58,6 +61,38 @@ describe('CommentController (e2e)', () => {
 		},
 	};
 
+	const likeNotAuthorizedData = {
+		likesCount: 1,
+		dislikesCount: 0,
+		myStatus: 'None',
+	};
+
+	const likeAuthorizedData = {
+		likesCount: 1,
+		dislikesCount: 0,
+		myStatus: 'Like',
+	};
+
+	const dislikeNotAuthorizedData = {
+		likesCount: 0,
+		dislikesCount: 1,
+		myStatus: 'None',
+	};
+
+	const dislikeAuthorizedData = {
+		likesCount: 0,
+		dislikesCount: 1,
+		myStatus: 'Dislike',
+	};
+
+	/*const emptyLikesDislikesData = {
+		likesCount: 0,
+		dislikesCount: 0,
+		myStatus: 'None',
+	};*/
+
+	const emptyData = { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] };
+
 	const postData = {
 		id: new ObjectId().toString(),
 		title: 'title',
@@ -83,6 +118,28 @@ describe('CommentController (e2e)', () => {
 		],
 	};
 
+	const likeErrorsMessages = {
+		errorsMessages: [
+			{
+				field: 'likeStatus',
+				message: expect.any(String),
+			},
+		],
+	};
+
+	/*const userErrorsBan = {
+		errorsMessages: [
+			{
+				field: 'isBanned',
+				message: expect.any(String),
+			},
+			{
+				field: 'banReason',
+				message: expect.any(String),
+			},
+		],
+	};*/
+
 	beforeAll(async () => {
 		dataApp = await mainTest();
 
@@ -93,6 +150,7 @@ describe('CommentController (e2e)', () => {
 		BlogModel = module.get<Model<Blog>>(getModelToken(Blog.name));
 		PostModel = module.get<Model<Post>>(getModelToken(Post.name));
 		CommentModel = module.get<Model<Comment>>(getModelToken(Comment.name));
+		UserModel = module.get<Model<User>>(getModelToken(User.name));
 	});
 
 	afterAll(async () => {
@@ -142,13 +200,7 @@ describe('CommentController (e2e)', () => {
 		it('should return 200 and all comment null', async () => {
 			const response = await request(app).get(`/posts/${postData.id}/comments`).expect(200);
 
-			expect(response.body).toEqual({
-				pagesCount: 0,
-				page: 1,
-				pageSize: 10,
-				totalCount: 0,
-				items: [],
-			});
+			expect(response.body).toEqual(emptyData);
 		});
 
 		it('add new comment', async () => {
@@ -189,6 +241,26 @@ describe('CommentController (e2e)', () => {
 				content: 'new content new content new content new content new content',
 			});
 		});
+
+		it('should return 204 with user banned', async () => {
+			await request(app)
+				.put(`/users/${userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(204);
+		});
+
+		it('get comment after banned should return 404', async () => {
+			await request(app).get(`/comments/${commentId}`).expect(404);
+		});
+
+		/*it('should return 204 with user un banned', async () => {
+			await request(app)
+				.put(`/users/${userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: false, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(204);
+		});*/
 
 		it('delete comment by id', async () => {
 			await request(app)
@@ -352,25 +424,187 @@ describe('CommentController (e2e)', () => {
 		});
 	});
 
-	/*describe('test Likes', () => {
+	describe('test Likes', () => {
+		//const commentId = new ObjectId().toString();
+
 		beforeAll(async () => {
 			await connection.dropDatabase();
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
+
+			/*await CommentModel.create(
+				commentCreator(
+					'aContent',
+					commentData.userId,
+					commentData.userLogin,
+					postData.id,
+					1,
+					commentId,
+				),
+			);*/
 		});
 
-		it('test Likes', async () => {
-			const createdPost = await request(app)
-				.post(`/blogs/${blogData.id}/posts`)
+		let token;
+		let userId;
+		let commentId;
+
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/users')
 				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+
+			userId = user.body.id;
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
 				.send({
-					title: postData.title,
-					shortDescription: postData.shortDescription,
-					content: postData.content,
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('should return 404 for not existing comment', async () => {
+			await request(app)
+				.put(`/comments/${randomId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Like' })
+				.expect(404);
+		});
+
+		it('should return 400 with incorrect likes body data 1', async () => {
+			const like = await request(app)
+				.put(`/comments/${commentId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Wrong' })
+				.expect(400);
+
+			expect(like.body).toEqual(likeErrorsMessages);
+		});
+
+		it('should return 400 with incorrect likes body data 2', async () => {
+			const like = await request(app)
+				.put(`/comments/${commentId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(400);
+
+			expect(like.body).toEqual(likeErrorsMessages);
+		});
+
+		it('add new comment', async () => {
+			const createdComment = await request(app)
+				.post(`/posts/${postData.id}/comments`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					content: commentData.content,
 				})
 				.expect(201);
 
-			expect(createdPost.body).toEqual(postData);
+			expect(createdComment.body).toEqual({ ...commentData, userId });
+
+			commentId = createdComment.body.id;
 		});
-	});*/
+
+		it('should return 204 set Like with correct body data and user auth', async () => {
+			await request(app)
+				.put(`/comments/${commentId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Like' })
+				.expect(204);
+		});
+
+		it('get all comments of post after Like with non authorized user', async () => {
+			const allComments = await request(app).get(`/posts/${postData.id}/comments`).expect(200);
+
+			expect(allComments.body.items[0].likesInfo).toEqual(likeNotAuthorizedData);
+		});
+
+		it('get all comments after Like with authorized user', async () => {
+			const allComments = await request(app)
+				.get(`/posts/${postData.id}/comments`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allComments.body.items[0].likesInfo).toEqual(likeAuthorizedData);
+		});
+
+		it('get comment by id after Like with non authorized user', async () => {
+			const allComments = await request(app).get(`/comments/${commentId}`).expect(200);
+
+			expect(allComments.body.likesInfo).toEqual(likeNotAuthorizedData);
+		});
+
+		it('get comment by id after Like with authorized user', async () => {
+			const allComments = await request(app)
+				.get(`/comments/${commentId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allComments.body.likesInfo).toEqual(likeAuthorizedData);
+		});
+
+		it('should return 204 set Dislike with correct body data and user auth', async () => {
+			await request(app)
+				.put(`/comments/${commentId}/like-status`)
+				.set('authorization', `Bearer ${token}`)
+				.send({ likeStatus: 'Dislike' })
+				.expect(204);
+		});
+
+		it('get all comments of post after Dislike with non authorized user', async () => {
+			const allComments = await request(app).get(`/posts/${postData.id}/comments`).expect(200);
+
+			expect(allComments.body.items[0].likesInfo).toEqual(dislikeNotAuthorizedData);
+		});
+
+		it('get all comments of post after Dislike with authorized user', async () => {
+			const allComments = await request(app)
+				.get(`/posts/${postData.id}/comments`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allComments.body.items[0].likesInfo).toEqual(dislikeAuthorizedData);
+		});
+
+		it('get comment by id after Dislike with non authorized user', async () => {
+			const allComments = await request(app).get(`/comments/${commentId}`).expect(200);
+
+			expect(allComments.body.likesInfo).toEqual(dislikeNotAuthorizedData);
+		});
+
+		it('get comment by id after Dislike with authorized user', async () => {
+			const allComments = await request(app)
+				.get(`/comments/${commentId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allComments.body.likesInfo).toEqual(dislikeAuthorizedData);
+		});
+
+		it('should return 204 with user banned', async () => {
+			await request(app)
+				.put(`/users/${userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(204);
+		});
+
+		it('get all comments of post after Ban user', async () => {
+			const allComments = await request(app).get(`/posts/${postData.id}/comments`).expect(200);
+			expect(allComments.body).toEqual(emptyData);
+		});
+
+		it('should return 404 get comment by id after Ban user', async () => {
+			await request(app).get(`/comments/${commentId}`).expect(404);
+		});
+	});
 
 	/*describe('test email not confirmed', () => {
 		beforeAll(async () => {
@@ -396,6 +630,7 @@ describe('CommentController (e2e)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
+			await UserModel.create(userCreator(userData.login, userData.email, 1, commentData.userId));
 			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
 			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
 
@@ -437,6 +672,22 @@ describe('CommentController (e2e)', () => {
 					{ ...commentData, content: 'bContent' },
 				],
 			});
+		});
+
+		it('should return 204 with user banned', async () => {
+			await request(app)
+				.put(`/users/${commentData.userId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
+				.expect(204);
+		});
+
+		it('get all comments after banned should return 404', async () => {
+			const response = await request(app).get(`/posts/${postData.id}/comments`).expect(200);
+
+			console.log(response.body);
+
+			expect(response.body).toEqual(emptyData);
 		});
 	});
 });

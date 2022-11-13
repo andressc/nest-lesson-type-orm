@@ -57,13 +57,13 @@ export const Modules = [
 	MailerModule,
 	CqrsModule,
 ];
-
+//CacheModule.register()
 @Module({
 	imports: [
 		ThrottlerModule.forRootAsync({
 			imports: [AuthModule],
 			useFactory: async (authConfig: AuthConfig) => {
-				return authConfig.getThrottlerSettings();
+				return { ...authConfig.getThrottlerSettings() };
 			},
 			inject: [AuthConfig],
 		}),
