@@ -4,6 +4,7 @@ import { CommentsRepositoryAdapter } from '../../../comments/adapters/comments.r
 import { PostsRepositoryAdapter } from '../../../posts/adapters/posts.repository.adapter';
 import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
 import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
+import { LikesRepositoryAdapter } from '../../../likes/adapters/likes.repository.adapter';
 
 export class RemoveAllTestingCommand implements ICommand {}
 
@@ -15,6 +16,7 @@ export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTesting
 		private readonly usersRepository: UsersRepositoryAdapter,
 		private readonly commentsRepository: CommentsRepositoryAdapter,
 		private readonly sessionRepository: SessionsRepositoryAdapter,
+		private readonly likesRepository: LikesRepositoryAdapter,
 	) {}
 
 	async execute(): Promise<void> {
@@ -23,5 +25,6 @@ export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTesting
 		await this.usersRepository.deleteAll();
 		await this.commentsRepository.deleteAll();
 		await this.sessionRepository.deleteAll();
+		await this.likesRepository.deleteAll();
 	}
 }

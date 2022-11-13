@@ -17,6 +17,7 @@ import { UsersRepository } from './infrastructure/repository/users.repository';
 import { QueryUsersRepositoryAdapter } from './adapters/query.users.repository.adapter';
 import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
 import { SessionsModule } from '../session/sessions.module';
+import { LikesModule } from '../likes/likes.module';
 
 export const CommandHandlers = [RemoveUserHandler, CreateUserHandler, BanUnbanUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
@@ -35,6 +36,7 @@ export const Modules = [
 	MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 	SessionsModule,
 	CqrsModule,
+	LikesModule,
 ];
 
 @Module({

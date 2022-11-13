@@ -21,6 +21,10 @@ export class LikesRepository implements LikesRepositoryAdapter {
 		return this.likeModel.findOne({ itemId, userId });
 	}
 
+	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
+		await this.likeModel.updateMany({ userId }, { isBanned });
+	}
+
 	async save(likeModel: LikeModel): Promise<LikeModel> {
 		return likeModel.save();
 	}

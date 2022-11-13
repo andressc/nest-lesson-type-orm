@@ -5,6 +5,7 @@ export class LikeDbDto {
 	login: string;
 	userId: string;
 	itemId: string;
+	isBanned: boolean;
 	likeStatus: LikeStatusEnum;
 	addedAt: string;
 }

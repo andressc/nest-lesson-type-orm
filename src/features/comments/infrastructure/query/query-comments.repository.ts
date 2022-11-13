@@ -58,14 +58,17 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 	}
 
 	public countLikes(comment: CommentModel, currentUserId: string | null): LikesInfo {
-		let likesCount = 0;
-		let dislikesCount = 0;
+		const likesCount = comment.likes.filter(
+			(v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Like && !v.isBanned,
+		).length;
+
+		const dislikesCount = comment.likes.filter(
+			(v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Dislike && !v.isBanned,
+		).length;
+
 		let myStatus = LikeStatusEnum.None;
 
 		comment.likes.forEach((it: LikeDbDto) => {
-			it.likeStatus === LikeStatusEnum.Like && likesCount++;
-			it.likeStatus === LikeStatusEnum.Dislike && dislikesCount++;
-
 			if (currentUserId && new ObjectId(it.userId).equals(currentUserId)) myStatus = it.likeStatus;
 		});
 

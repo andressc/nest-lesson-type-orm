@@ -59,12 +59,18 @@ export class QueryPostsRepository implements QueryPostsRepositoryAdapter {
 	}
 
 	public countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended {
-		let likesCount = 0;
-		let dislikesCount = 0;
+		const likesCount = post.likes.filter(
+			(v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Like && !v.isBanned,
+		).length;
+
+		const dislikesCount = post.likes.filter(
+			(v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Dislike && !v.isBanned,
+		).length;
+
 		let myStatus = LikeStatusEnum.None;
 
 		const newestLikes = [...post.likes]
-			.filter((v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Like)
+			.filter((v: LikeDbDto) => v.likeStatus === LikeStatusEnum.Like && !v.isBanned)
 			.sort((a: LikeDbDto, b: LikeDbDto) => (a.addedAt > b.addedAt ? -1 : 1))
 			.slice(0, 3)
 			.map((v: LikeDbDto) => ({
@@ -74,9 +80,6 @@ export class QueryPostsRepository implements QueryPostsRepositoryAdapter {
 			}));
 
 		post.likes.forEach((it: LikeDbDto) => {
-			it.likeStatus === LikeStatusEnum.Like && likesCount++;
-			it.likeStatus === LikeStatusEnum.Dislike && dislikesCount++;
-
 			if (currentUserId && new ObjectId(it.userId).equals(currentUserId)) myStatus = it.likeStatus;
 		});
 

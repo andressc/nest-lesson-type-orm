@@ -6,8 +6,9 @@ import { LikesRepositoryAdapter } from './adapters/likes.repository.adapter';
 import { LikesRepository } from './infrastructure/repository/likes.repository';
 import { CreateLikeHandler } from './application/command/create-like.handler';
 import { ValidationService } from '../application/validation.service';
+import { BanUnbanLikeHandler } from './application/command/ban-unban-like.handler';
 
-export const CommandHandlers = [CreateLikeHandler];
+export const CommandHandlers = [CreateLikeHandler, BanUnbanLikeHandler];
 export const QueryHandlers = [];
 export const Repositories = [
 	{

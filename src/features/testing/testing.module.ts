@@ -7,6 +7,7 @@ import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 import { CommentsModule } from '../comments/comments.module';
 import { SessionsModule } from '../session/sessions.module';
+import { LikesModule } from '../likes/likes.module';
 
 export const CommandHandlers = [RemoveAllTestingHandler];
 export const Modules = [
@@ -15,6 +16,7 @@ export const Modules = [
 	UsersModule,
 	CommentsModule,
 	SessionsModule,
+	LikesModule,
 	CqrsModule,
 ];
 
