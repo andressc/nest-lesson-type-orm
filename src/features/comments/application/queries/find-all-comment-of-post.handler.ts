@@ -33,7 +33,7 @@ export class FindAllCommentOfPostHandler implements IQueryHandler<FindAllComment
 		const post: PostModel[] | null = await this.queryPostsRepository.findPostModel(
 			new ObjectId(command.postId),
 		);
-		if (!post) throw new PostNotFoundException(command.postId);
+		if (!post[0]) throw new PostNotFoundException(command.postId);
 
 		const totalCount: number = await this.queryCommentsRepository.count(searchString);
 		const paginationData: PaginationCalc = this.paginationService.pagination({
