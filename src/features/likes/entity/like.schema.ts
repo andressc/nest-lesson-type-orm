@@ -19,7 +19,7 @@ export class Like {
 	@Prop({ required: true })
 	likeStatus: string;
 
-	@Prop({ required: true })
+	@Prop({ default: false })
 	isBanned: boolean;
 
 	@Prop({ required: true })

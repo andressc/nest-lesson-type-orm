@@ -18,11 +18,13 @@ import { Comment, CommentSchema } from './entity/comment.schema';
 import { CommentsRepositoryAdapter } from './adapters/comments.repository.adapter';
 import { QueryCommentsRepositoryAdapter } from './adapters/query.comments.repository.adapter';
 import { LikesModule } from '../likes/likes.module';
+import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment.handler';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
 	RemoveCommentHandler,
 	UpdateCommentHandler,
+	BanUnbanCommentHandler,
 ];
 export const QueryHandlers = [FindAllCommentOfPostHandler, FindOneCommentHandler];
 export const Repositories = [

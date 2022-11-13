@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { CreateRequestLikeDto, UpdateCommentDto } from '../dto';
+import { UpdateCommentDto } from '../dto';
 import { LikesDto } from '../../../common/dto';
-import { createDate } from '../../../common/helpers';
 
 export type CommentModel = Comment & Document;
 
@@ -23,40 +22,17 @@ export class Comment {
 	@Prop({ required: true })
 	createdAt: string;
 
+	@Prop({ default: false })
+	isBanned: boolean;
+
 	@Prop({ type: [] })
 	likes: LikesDto[];
 
 	updateData(data: UpdateCommentDto): void {
 		this.content = data.content;
 	}
-
-	async setLike(data: CreateRequestLikeDto, authUserId: string, userLogin: string): Promise<void> {
-		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
-
-		if (!isLikeExist)
-			this.likes.push({
-				userId: authUserId,
-				login: userLogin,
-				likeStatus: data.likeStatus,
-				addedAt: createDate(),
-			});
-
-		if (isLikeExist) {
-			this.likes = this.likes.map((v) =>
-				v.userId === authUserId
-					? {
-							userId: v.userId,
-							login: v.login,
-							likeStatus: data.likeStatus,
-							addedAt: createDate(),
-					  }
-					: v,
-			);
-		}
-	}
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
 
 CommentSchema.methods.updateData = Comment.prototype.updateData;
-CommentSchema.methods.setLike = Comment.prototype.setLike;

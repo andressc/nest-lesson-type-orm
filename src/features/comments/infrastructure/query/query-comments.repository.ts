@@ -16,7 +16,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 
 	async findCommentModel(id: ObjectId): Promise<CommentModel[] | null> {
 		return this.commentModel.aggregate([
-			{ $match: { _id: id } },
+			{ $match: { _id: id, isBanned: false } },
 			{
 				$graphLookup: {
 					from: 'likes',
@@ -37,7 +37,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 	): Promise<CommentModel[] | null> {
 		return this.commentModel
 			.aggregate([
-				{ $match: searchString },
+				{ $match: { ...searchString, isBanned: false } },
 				{
 					$graphLookup: {
 						from: 'likes',

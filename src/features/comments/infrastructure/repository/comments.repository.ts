@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../entity/comment.schema';
 import { CreateCommentExtendsDto } from '../../dto';
 import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CommentsRepository implements CommentsRepositoryAdapter {
@@ -20,6 +21,9 @@ export class CommentsRepository implements CommentsRepositoryAdapter {
 		return this.commentModel.findById(id);
 	}
 
+	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
+		await this.commentModel.updateMany({ userId }, { isBanned });
+	}
 	async save(commentModel: CommentModel): Promise<CommentModel> {
 		return commentModel.save();
 	}

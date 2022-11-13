@@ -6,6 +6,7 @@ import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter'
 import { BanUnbanUserDto } from '../../dto/ban-unban-user.dto';
 import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
 import { BanUnbanLikeCommand } from '../../../likes/application/command/ban-unban-like.handler';
+import { BanUnbanCommentCommand } from '../../../comments/application/commands/ban-unban-comment.handler';
 
 export class BanUnbanUserCommand implements ICommand {
 	constructor(public id: string, public data: BanUnbanUserDto) {}
@@ -28,6 +29,7 @@ export class BanUnbanUserHandler implements ICommandHandler<BanUnbanUserCommand>
 		user.banUnbanUser(command.data.isBanned, command.data.banReason, new Date().toISOString());
 
 		await this.commandBus.execute(new BanUnbanLikeCommand(user.id, command.data.isBanned));
+		await this.commandBus.execute(new BanUnbanCommentCommand(user.id, command.data.isBanned));
 
 		if (command.data.isBanned) await this.sessionsRepository.removeAllUserSessions(user.id);
 

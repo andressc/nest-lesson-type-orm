@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UpdatePostExtendsDto } from '../dto';
-import { createDate } from '../../../common/helpers';
-import { CreateRequestLikeDto } from '../../comments/dto';
 import { LikesDto } from '../../../common/dto';
 
 export type PostModel = Post & Document;
@@ -37,34 +35,8 @@ export class Post {
 		this.blogId = data.blogId;
 		this.blogName = data.blogName;
 	}
-
-	async setLike(data: CreateRequestLikeDto, authUserId: string, userLogin: string): Promise<void> {
-		const isLikeExist = this.likes.some((v) => v.userId === authUserId);
-
-		if (!isLikeExist)
-			this.likes.push({
-				userId: authUserId,
-				login: userLogin,
-				likeStatus: data.likeStatus,
-				addedAt: createDate(),
-			});
-
-		if (isLikeExist) {
-			this.likes = this.likes.map((v) =>
-				v.userId === authUserId
-					? {
-							userId: v.userId,
-							login: v.login,
-							likeStatus: data.likeStatus,
-							addedAt: createDate(),
-					  }
-					: v,
-			);
-		}
-	}
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 
 PostSchema.methods.updateData = Post.prototype.updateData;
-PostSchema.methods.setLike = Post.prototype.setLike;
