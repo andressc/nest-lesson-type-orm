@@ -7,7 +7,12 @@ import { ValidationService } from '../../../application/validation.service';
 import { ObjectId } from 'mongodb';
 
 export class CreateLikeCommand implements ICommand {
-	constructor(public itemId: string, public userId: string, public data: CreateRequestLikeDto) {}
+	constructor(
+		public itemId: string,
+		public userId: string,
+		public userLogin: string,
+		public data: CreateRequestLikeDto,
+	) {}
 }
 
 @CommandHandler(CreateLikeCommand)
@@ -29,7 +34,7 @@ export class CreateLikeHandler implements ICommandHandler<CreateLikeCommand> {
 			const newLike: LikeModel = await this.likesRepository.createLikeModel({
 				itemId: new ObjectId(command.itemId),
 				userId: new ObjectId(command.userId),
-				login: 'login',
+				login: command.userLogin,
 				likeStatus: command.data.likeStatus,
 				isBanned: false,
 				addedAt: createDate(),

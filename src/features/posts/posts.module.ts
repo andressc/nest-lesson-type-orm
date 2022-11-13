@@ -19,12 +19,14 @@ import { PostsRepositoryAdapter } from './adapters/posts.repository.adapter';
 import { QueryPostsRepositoryAdapter } from './adapters/query.posts.repository.adapter';
 import { UsersModule } from '../users/users.module';
 import { LikesModule } from '../likes/likes.module';
+import { CreateLikePostHandler } from './application/commands/create-post-comment.handler';
 
 export const CommandHandlers = [
 	CreatePostHandler,
 	RemovePostHandler,
 	UpdatePostHandler,
 	CreatePostOfBlogHandler,
+	CreateLikePostHandler,
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
 export const Repositories = [

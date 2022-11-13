@@ -19,12 +19,14 @@ import { CommentsRepositoryAdapter } from './adapters/comments.repository.adapte
 import { QueryCommentsRepositoryAdapter } from './adapters/query.comments.repository.adapter';
 import { LikesModule } from '../likes/likes.module';
 import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment.handler';
+import { CreateLikeCommentHandler } from './application/commands/create-like-comment.handler';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
 	RemoveCommentHandler,
 	UpdateCommentHandler,
 	BanUnbanCommentHandler,
+	CreateLikeCommentHandler,
 ];
 export const QueryHandlers = [FindAllCommentOfPostHandler, FindOneCommentHandler];
 export const Repositories = [
