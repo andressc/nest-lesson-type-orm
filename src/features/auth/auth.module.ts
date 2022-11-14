@@ -11,7 +11,7 @@ import {
 	PasswordRecoveryTokenStrategy,
 } from './strategies';
 import { AuthController } from './api/auth.controller';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthConfig } from '../../configuration';
 import { MailerModule } from '../../Modules/mailer/mailer.module';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -25,6 +25,7 @@ import { NewPasswordAuthHandler } from './application/commands/new-password-auth
 import { ValidateUserAuthHandler } from './application/commands/validate-user-auth.handler';
 import { SessionsModule } from '../session/sessions.module';
 import { ValidationService } from '../application/validation.service';
+import { ThrottlerStorageService } from '../application/throttler.storage.service';
 
 export const CommandHandlers = [
 	LoginAuthHandler,
@@ -57,20 +58,27 @@ export const Modules = [
 	MailerModule,
 	CqrsModule,
 ];
-//CacheModule.register()
+
 @Module({
 	imports: [
 		ThrottlerModule.forRootAsync({
 			imports: [AuthModule],
 			useFactory: async (authConfig: AuthConfig) => {
-				return { ...authConfig.getThrottlerSettings() };
+				return { ...authConfig.getThrottlerSettings(), storage: new ThrottlerStorageService() };
 			},
 			inject: [AuthConfig],
 		}),
 		...Modules,
 	],
 	controllers: [AuthController],
-	providers: [...Services, ...Repositories, ...Strategies, ...CommandHandlers, ...QueryHandlers],
+	providers: [
+		...Services,
+		...Repositories,
+		...Strategies,
+		...CommandHandlers,
+		...QueryHandlers,
+		ThrottlerGuard,
+	],
 	exports: [AuthConfig],
 })
 export class AuthModule {}

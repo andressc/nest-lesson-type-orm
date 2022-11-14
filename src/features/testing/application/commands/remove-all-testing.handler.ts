@@ -5,6 +5,8 @@ import { PostsRepositoryAdapter } from '../../../posts/adapters/posts.repository
 import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
 import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 import { LikesRepositoryAdapter } from '../../../likes/adapters/likes.repository.adapter';
+import { InjectThrottlerStorage } from '@nestjs/throttler';
+import { ThrottlerStorageService } from '../../../application/throttler.storage.service';
 
 export class RemoveAllTestingCommand implements ICommand {}
 
@@ -17,9 +19,12 @@ export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTesting
 		private readonly commentsRepository: CommentsRepositoryAdapter,
 		private readonly sessionRepository: SessionsRepositoryAdapter,
 		private readonly likesRepository: LikesRepositoryAdapter,
+		@InjectThrottlerStorage() private storage: ThrottlerStorageService,
 	) {}
 
 	async execute(): Promise<void> {
+		this.storage.clearStorage();
+
 		await this.blogsRepository.deleteAll();
 		await this.postsRepository.deleteAll();
 		await this.usersRepository.deleteAll();
