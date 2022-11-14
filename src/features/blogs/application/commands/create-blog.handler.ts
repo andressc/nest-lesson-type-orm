@@ -2,7 +2,7 @@ import { CreateBlogDto } from '../../dto';
 import { BlogModel } from '../../entity/blog.schema';
 import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
 
 export class CreateBlogCommand implements ICommand {

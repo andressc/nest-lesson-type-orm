@@ -2,7 +2,7 @@ import { UpdateBlogDto } from '../../dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../entity/blog.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
 
 export class UpdateBlogCommand {

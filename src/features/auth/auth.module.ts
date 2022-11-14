@@ -11,9 +11,8 @@ import {
 	PasswordRecoveryTokenStrategy,
 } from './strategies';
 import { AuthController } from './api/auth.controller';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthConfig } from '../../configuration';
-import { MailerModule } from '../../Modules/mailer/mailer.module';
+import { MailerModule } from '../../shared/mailer/mailer.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { LoginAuthHandler } from './application/commands/login-auth.handler';
 import { RefreshTokenAuthHandler } from './application/commands/refresh-token-auth.handler';
@@ -24,8 +23,6 @@ import { PasswordRecoveryAuthHandler } from './application/commands/password-rec
 import { NewPasswordAuthHandler } from './application/commands/new-password-auth.handler';
 import { ValidateUserAuthHandler } from './application/commands/validate-user-auth.handler';
 import { SessionsModule } from '../session/sessions.module';
-import { ValidationService } from '../application/validation.service';
-import { ThrottlerStorageService } from '../application/throttler.storage.service';
 
 export const CommandHandlers = [
 	LoginAuthHandler,
@@ -40,7 +37,7 @@ export const CommandHandlers = [
 export const QueryHandlers = [];
 
 export const Repositories = [];
-export const Services = [AuthService, AuthConfig, ValidationService];
+export const Services = [AuthService, AuthConfig];
 
 export const Strategies = [
 	LocalStrategy,
@@ -60,25 +57,9 @@ export const Modules = [
 ];
 
 @Module({
-	imports: [
-		ThrottlerModule.forRootAsync({
-			imports: [AuthModule],
-			useFactory: async (authConfig: AuthConfig) => {
-				return { ...authConfig.getThrottlerSettings(), storage: new ThrottlerStorageService() };
-			},
-			inject: [AuthConfig],
-		}),
-		...Modules,
-	],
+	imports: [...Modules],
 	controllers: [AuthController],
-	providers: [
-		...Services,
-		...Repositories,
-		...Strategies,
-		...CommandHandlers,
-		...QueryHandlers,
-		ThrottlerGuard,
-	],
+	providers: [...Services, ...Repositories, ...Strategies, ...CommandHandlers, ...QueryHandlers],
 	exports: [AuthConfig],
 })
 export class AuthModule {}

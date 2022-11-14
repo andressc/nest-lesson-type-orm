@@ -4,7 +4,7 @@ import { PostNotFoundException } from '../../../../common/exceptions';
 import { QueryCommentDto, ResponseCommentDto } from '../../dto';
 import { PostModel } from '../../../posts/entity/post.schema';
 import { CommentModel } from '../../entity/comment.schema';
-import { PaginationService } from '../../../application/pagination.service';
+import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
 import { QueryPostsRepositoryAdapter } from '../../../posts/adapters/query.posts.repository.adapter';
 import { ObjectId } from 'mongodb';

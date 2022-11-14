@@ -4,7 +4,7 @@ import { UpdateCommentDto } from '../../dto';
 import { CommentsService } from '../comments.service';
 import { PostsService } from '../../../posts/application/posts.service';
 import { UsersService } from '../../../users/application/users.service';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
 
 export class UpdateCommentCommand {

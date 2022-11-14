@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationConfirmationDto } from '../../dto';
 import { ConfirmCodeBadRequestException } from '../../../../common/exceptions';
 import { UserModel } from '../../../users/entity/user.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 
 export class RegistrationConfirmationAuthCommand {

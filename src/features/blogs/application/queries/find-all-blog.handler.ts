@@ -2,7 +2,7 @@ import { QueryBlogDto, ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { BlogModel } from '../../entity/blog.schema';
-import { PaginationService } from '../../../application/pagination.service';
+import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryBlogsRepositoryAdapter } from '../../adapters/query.blogs.repository.adapter';
 
 export class FindAllBlogCommand {

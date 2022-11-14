@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PaginationService } from '../application/pagination.service';
-import { ValidationService } from '../application/validation.service';
 import { CreatePostHandler } from './application/commands/create-post.handler';
 import { RemovePostHandler } from './application/commands/remove-post.handler';
 import { UpdatePostHandler } from './application/commands/update-post.handler';
@@ -20,6 +18,7 @@ import { QueryPostsRepositoryAdapter } from './adapters/query.posts.repository.a
 import { UsersModule } from '../users/users.module';
 import { LikesModule } from '../likes/likes.module';
 import { CreateLikePostHandler } from './application/commands/create-post-comment.handler';
+import { PaginationModule } from '../../shared/pagination/pagination.module';
 
 export const CommandHandlers = [
 	CreatePostHandler,
@@ -39,13 +38,14 @@ export const Repositories = [
 		useClass: PostsRepository,
 	},
 ];
-export const Services = [PostsService, PaginationService, ValidationService];
+export const Services = [PostsService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
 	CqrsModule,
 	BlogsModule,
 	UsersModule,
 	LikesModule,
+	PaginationModule,
 ];
 
 @Module({

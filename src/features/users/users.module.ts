@@ -10,14 +10,13 @@ import { FindOneUserHandler } from './application/queries/find-one-user.handler'
 import { FindMeUserHandler } from './application/queries/find-me-user.handler';
 import { FindAllUserHandler } from './application/queries/find-all-user.handler';
 import { User, UserSchema } from './entity/user.schema';
-import { ValidationService } from '../application/validation.service';
-import { PaginationService } from '../application/pagination.service';
 import { UsersRepositoryAdapter } from './adapters/users.repository.adapter';
 import { UsersRepository } from './infrastructure/repository/users.repository';
 import { QueryUsersRepositoryAdapter } from './adapters/query.users.repository.adapter';
 import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
 import { SessionsModule } from '../session/sessions.module';
 import { LikesModule } from '../likes/likes.module';
+import { PaginationModule } from '../../shared/pagination/pagination.module';
 
 export const CommandHandlers = [RemoveUserHandler, CreateUserHandler, BanUnbanUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
@@ -31,12 +30,13 @@ export const Repositories = [
 		useClass: UsersRepository,
 	},
 ];
-export const Services = [UsersService, ValidationService, PaginationService];
+export const Services = [UsersService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 	SessionsModule,
 	CqrsModule,
 	LikesModule,
+	PaginationModule,
 ];
 
 @Module({

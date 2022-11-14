@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { createDate, generateConfirmationCode, generateHash } from '../../../../common/helpers';
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
 
 export class CreateUserCommand implements ICommand {

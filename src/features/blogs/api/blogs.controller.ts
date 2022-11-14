@@ -29,7 +29,7 @@ import { FindAllPostCommand } from '../../posts/application/queries/find-all-pos
 @Controller('blogs')
 export class BlogsController {
 	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
-	//ененнек
+
 	@UseGuards(BasicAuthGuard)
 	@Post()
 	async createBlog(@Body() data: CreateBlogDto) {

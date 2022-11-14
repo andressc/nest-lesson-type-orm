@@ -2,11 +2,11 @@ import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 
 @Injectable()
 export class ThrottlerStorageService implements OnApplicationShutdown {
-	private astorage: Record<string, number[]> = {};
+	private mainStorage: Record<string, number[]> = {};
 	private timeoutIds: NodeJS.Timeout[] = [];
 
 	get storage(): Record<string, number[]> {
-		return this.astorage;
+		return this.mainStorage;
 	}
 
 	async getRecord(key: string): Promise<number[]> {
@@ -30,7 +30,8 @@ export class ThrottlerStorageService implements OnApplicationShutdown {
 	}
 
 	clearStorage() {
-		this.astorage = {};
+		this.mainStorage = {};
+		this.timeoutIds.forEach(clearTimeout);
 	}
 
 	onApplicationShutdown() {

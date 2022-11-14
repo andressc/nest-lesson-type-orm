@@ -4,7 +4,7 @@ import { PostsService } from '../posts.service';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { PostModel } from '../../entity/post.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class UpdatePostCommand {

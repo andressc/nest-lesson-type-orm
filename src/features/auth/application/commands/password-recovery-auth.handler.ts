@@ -2,8 +2,8 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { RequestTimeoutException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { SendEmailPasswordRecoveryMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-password-recovery-mailer.handler';
-import { ValidationService } from '../../../application/validation.service';
+import { SendEmailPasswordRecoveryMailerCommand } from '../../../../shared/mailer/application/commands/send-email-password-recovery-mailer.handler';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 
 export class PasswordRecoveryAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}

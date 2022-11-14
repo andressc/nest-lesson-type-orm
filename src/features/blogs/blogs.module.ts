@@ -11,11 +11,10 @@ import { RemoveBlogHandler } from './application/commands/remove-blog.handler';
 import { CqrsModule } from '@nestjs/cqrs';
 import { QueryBlogsRepository } from './infrastructure/query/query-blogs.repository';
 import { Blog, BlogSchema } from './entity/blog.schema';
-import { PaginationService } from '../application/pagination.service';
-import { ValidationService } from '../application/validation.service';
 import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 import { BlogsRepositoryAdapter } from './adapters/blogs.repository.adapter';
 import { QueryBlogsRepositoryAdapter } from './adapters/query.blogs.repository.adapter';
+import { PaginationModule } from '../../shared/pagination/pagination.module';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
@@ -29,15 +28,11 @@ export const Repositories = [
 		useClass: BlogsRepository,
 	},
 ];
-export const Services = [
-	BlogsService,
-	PaginationService,
-	ValidationService,
-	IsUserCommentValidatorConstraint,
-];
+export const Services = [BlogsService, IsUserCommentValidatorConstraint];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 	CqrsModule,
+	PaginationModule,
 ];
 
 @Module({

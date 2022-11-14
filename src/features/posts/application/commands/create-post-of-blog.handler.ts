@@ -3,7 +3,7 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostOfBlogDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class CreatePostOfBlogCommand implements ICommand {

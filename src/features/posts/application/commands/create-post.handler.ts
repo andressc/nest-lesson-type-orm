@@ -3,7 +3,7 @@ import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
 
 export class CreatePostCommand implements ICommand {

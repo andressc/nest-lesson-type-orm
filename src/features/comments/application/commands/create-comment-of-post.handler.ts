@@ -5,7 +5,7 @@ import { UsersService } from '../../../users/application/users.service';
 import { PostsService } from '../../../posts/application/posts.service';
 import { UserModel } from '../../../users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
 
 export class CreateCommentOfPostCommand implements ICommand {

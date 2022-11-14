@@ -3,7 +3,7 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { LikeModel } from '../../entity/like.schema';
 import { LikesRepositoryAdapter } from '../../adapters/likes.repository.adapter';
 import { CreateRequestLikeDto } from '../../../comments/dto';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { ObjectId } from 'mongodb';
 
 export class CreateLikeCommand implements ICommand {

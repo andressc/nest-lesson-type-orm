@@ -4,8 +4,8 @@ import { CreateUserCommand } from '../../../users/application/commands/create-us
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { RequestTimeoutException } from '@nestjs/common';
 import { UserModel } from '../../../users/entity/user.schema';
-import { ValidationService } from '../../../application/validation.service';
-import { SendEmailRegistrationMessageMailerCommand } from '../../../../Modules/mailer/application/commands/send-email-registration-message-mailer.handler';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
+import { SendEmailRegistrationMessageMailerCommand } from '../../../../shared/mailer/application/commands/send-email-registration-message-mailer.handler';
 import { UsersRepositoryAdapter } from '../../../users/adapters/users.repository.adapter';
 
 export class RegistrationAuthCommand {

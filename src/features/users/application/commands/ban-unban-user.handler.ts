@@ -1,7 +1,7 @@
 import { CommandBus, CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
 import { BanUnbanUserDto } from '../../dto/ban-unban-user.dto';
 import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';

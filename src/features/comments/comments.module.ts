@@ -1,5 +1,3 @@
-import { PaginationService } from '../application/pagination.service';
-import { ValidationService } from '../application/validation.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Module } from '@nestjs/common';
@@ -20,6 +18,7 @@ import { QueryCommentsRepositoryAdapter } from './adapters/query.comments.reposi
 import { LikesModule } from '../likes/likes.module';
 import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment.handler';
 import { CreateLikeCommentHandler } from './application/commands/create-like-comment.handler';
+import { PaginationModule } from '../../shared/pagination/pagination.module';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -39,13 +38,14 @@ export const Repositories = [
 		useClass: CommentsRepository,
 	},
 ];
-export const Services = [CommentsService, PaginationService, ValidationService];
+export const Services = [CommentsService];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
 	CqrsModule,
 	UsersModule,
 	PostsModule,
 	LikesModule,
+	PaginationModule,
 ];
 
 @Module({

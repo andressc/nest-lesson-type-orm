@@ -1,6 +1,6 @@
 import { CommandBus, CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { PostsService } from '../posts.service';
-import { ValidationService } from '../../../application/validation.service';
+import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CreateLikeCommand } from '../../../likes/application/command/create-like.handler';
 import { CreateRequestLikeDto } from '../../../likes/dto/create-request-like.dto';
 

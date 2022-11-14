@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto, QueryDto } from '../../../../common/dto';
 import { ResponsePostDto } from '../../dto';
 import { PostModel } from '../../entity/post.schema';
-import { PaginationService } from '../../../application/pagination.service';
+import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { BlogNotFoundException } from '../../../../common/exceptions';
 import { QueryBlogsRepositoryAdapter } from '../../../blogs/adapters/query.blogs.repository.adapter';
