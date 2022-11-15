@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AuthModule } from '../../features/auth/auth.module';
+import { AuthModule } from '../../features/public/auth/auth.module';
 import { AuthConfig } from '../../configuration';
 import { ThrottlerStorageService } from './application/throttler.storage.service';
 
