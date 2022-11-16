@@ -13,7 +13,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
 	) {}
-
+	//edvssvd
 	async findCommentModel(id: ObjectId): Promise<CommentModel[] | null> {
 		return this.commentModel.aggregate([
 			{ $match: { _id: id, isBanned: false } },
