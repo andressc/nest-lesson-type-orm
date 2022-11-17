@@ -3,20 +3,20 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostModel } from '../../entity/post.schema';
 import { CreatePostExtendsDto } from '../../dto';
-import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
+import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
 
 @Injectable()
-export class PostsRepository implements PostsRepositoryAdapter {
+export class PostsRepository implements PostsRepositoryInterface {
 	constructor(
 		@InjectModel(Post.name)
 		private readonly postModel: Model<PostModel>,
 	) {}
 
-	async createPostModel(data: CreatePostExtendsDto): Promise<PostModel> {
+	async create(data: CreatePostExtendsDto): Promise<PostModel> {
 		return new this.postModel(data);
 	}
 
-	async findPostModel(id: string): Promise<PostModel | null> {
+	async find(id: string): Promise<PostModel | null> {
 		return this.postModel.findById(id);
 	}
 

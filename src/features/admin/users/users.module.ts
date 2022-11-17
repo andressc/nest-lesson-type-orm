@@ -10,13 +10,13 @@ import { FindOneUserHandler } from './application/queries/find-one-user.handler'
 import { FindMeUserHandler } from './application/queries/find-me-user.handler';
 import { FindAllUserHandler } from './application/queries/find-all-user.handler';
 import { User, UserSchema } from './entity/user.schema';
-import { UsersRepositoryAdapter } from './adapters/users.repository.adapter';
 import { UsersRepository } from './infrastructure/repository/users.repository';
-import { QueryUsersRepositoryAdapter } from './adapters/query.users.repository.adapter';
+import { QueryUsersRepositoryAdapter } from './interfaces/query.users.repository.adapter';
 import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
 import { SessionsModule } from '../../public/session/sessions.module';
 import { LikesModule } from '../../public/likes/likes.module';
 import { PaginationModule } from '../../../shared/pagination/pagination.module';
+import { UserInjectionToken } from './application/user.injection.token';
 
 export const CommandHandlers = [RemoveUserHandler, CreateUserHandler, BanUnbanUserHandler];
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
@@ -26,7 +26,7 @@ export const Repositories = [
 		useClass: QueryUsersRepository,
 	},
 	{
-		provide: UsersRepositoryAdapter,
+		provide: UserInjectionToken.USER_REPOSITORY,
 		useClass: UsersRepository,
 	},
 ];
@@ -47,7 +47,7 @@ export const Modules = [
 	exports: [
 		UsersService,
 		{
-			provide: UsersRepositoryAdapter,
+			provide: UserInjectionToken.USER_REPOSITORY,
 			useClass: UsersRepository,
 		},
 	],

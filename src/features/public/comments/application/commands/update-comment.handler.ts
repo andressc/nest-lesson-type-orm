@@ -5,7 +5,9 @@ import { CommentsService } from '../comments.service';
 import { PostsService } from '../../../posts/application/posts.service';
 import { UsersService } from '../../../../admin/users/application/users.service';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
+import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
+import { Inject } from '@nestjs/common';
+import { CommentInjectionToken } from '../comment.injection.token';
 
 export class UpdateCommentCommand {
 	constructor(public id: string, public data: UpdateCommentDto, public authUserId: string) {}
@@ -14,7 +16,8 @@ export class UpdateCommentCommand {
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentHandler implements ICommandHandler<UpdateCommentCommand> {
 	constructor(
-		private readonly commentsRepository: CommentsRepositoryAdapter,
+		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
+		private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly postsService: PostsService,
 		private readonly usersService: UsersService,
 		private readonly commentsService: CommentsService,

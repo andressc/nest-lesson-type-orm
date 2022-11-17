@@ -3,7 +3,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../entity/blog.schema';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
+import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
+import { Inject } from '@nestjs/common';
+import { BlogInjectionToken } from '../blog.injection.token';
 
 export class UpdateBlogCommand {
 	constructor(public id: string, public data: UpdateBlogDto) {}
@@ -12,7 +14,8 @@ export class UpdateBlogCommand {
 @CommandHandler(UpdateBlogCommand)
 export class UpdateBlogHandler implements ICommandHandler<UpdateBlogCommand> {
 	constructor(
-		private readonly blogsRepository: BlogsRepositoryAdapter<BlogModel>,
+		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
+		private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 		private readonly validationService: ValidationService,
 	) {}

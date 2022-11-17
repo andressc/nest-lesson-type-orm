@@ -13,12 +13,12 @@ import { CommentsRepository } from './infrastructure/repository/comments.reposit
 import { UsersModule } from '../../admin/users/users.module';
 import { PostsModule } from '../posts/posts.module';
 import { Comment, CommentSchema } from './entity/comment.schema';
-import { CommentsRepositoryAdapter } from './adapters/comments.repository.adapter';
-import { QueryCommentsRepositoryAdapter } from './adapters/query.comments.repository.adapter';
+import { QueryCommentsRepositoryAdapter } from './interfaces/query.comments.repository.adapter';
 import { LikesModule } from '../likes/likes.module';
 import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment.handler';
 import { CreateLikeCommentHandler } from './application/commands/create-like-comment.handler';
 import { PaginationModule } from '../../../shared/pagination/pagination.module';
+import { CommentInjectionToken } from './application/comment.injection.token';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -34,7 +34,7 @@ export const Repositories = [
 		useClass: QueryCommentsRepository,
 	},
 	{
-		provide: CommentsRepositoryAdapter,
+		provide: CommentInjectionToken.COMMENT_REPOSITORY,
 		useClass: CommentsRepository,
 	},
 ];
@@ -55,7 +55,7 @@ export const Modules = [
 
 	exports: [
 		{
-			provide: CommentsRepositoryAdapter,
+			provide: CommentInjectionToken.COMMENT_REPOSITORY,
 			useClass: CommentsRepository,
 		},
 	],

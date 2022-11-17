@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserNotFoundException } from '../../../../../common/exceptions';
 import { ResponseUserMeDto } from '../../dto';
 import { UserModel } from '../../entity/user.schema';
-import { QueryUsersRepositoryAdapter } from '../../adapters/query.users.repository.adapter';
+import { QueryUsersRepositoryAdapter } from '../../interfaces/query.users.repository.adapter';
 
 export class FindMeUserCommand {
 	constructor(public id: string) {}

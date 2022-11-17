@@ -3,21 +3,21 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentModel } from '../../entity/comment.schema';
 import { CreateCommentExtendsDto } from '../../dto';
-import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
+import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
-export class CommentsRepository implements CommentsRepositoryAdapter {
+export class CommentsRepository implements CommentsRepositoryInterface {
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
 	) {}
 
-	async createCommentModel(data: CreateCommentExtendsDto): Promise<CommentModel> {
+	async create(data: CreateCommentExtendsDto): Promise<CommentModel> {
 		return new this.commentModel(data);
 	}
 
-	async findCommentModel(id: string) {
+	async find(id: string) {
 		return this.commentModel.findById(id);
 	}
 

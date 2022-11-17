@@ -1,7 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
-import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
+import { Inject } from '@nestjs/common';
+import { UserInjectionToken } from '../user.injection.token';
 
 export class RemoveUserCommand {
 	constructor(public id: string) {}
@@ -10,7 +12,8 @@ export class RemoveUserCommand {
 @CommandHandler(RemoveUserCommand)
 export class RemoveUserHandler implements ICommandHandler<RemoveUserCommand> {
 	constructor(
-		private readonly usersRepository: UsersRepositoryAdapter,
+		@Inject(UserInjectionToken.USER_REPOSITORY)
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly usersService: UsersService,
 	) {}
 

@@ -13,12 +13,12 @@ import { Post, PostSchema } from './entity/post.schema';
 import { BlogsModule } from '../blogs/blogs.module';
 import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
-import { PostsRepositoryAdapter } from './adapters/posts.repository.adapter';
-import { QueryPostsRepositoryAdapter } from './adapters/query.posts.repository.adapter';
+import { QueryPostsRepositoryAdapter } from './interfaces/query.posts.repository.adapter';
 import { UsersModule } from '../../admin/users/users.module';
 import { LikesModule } from '../likes/likes.module';
 import { CreateLikePostHandler } from './application/commands/create-post-comment.handler';
 import { PaginationModule } from '../../../shared/pagination/pagination.module';
+import { PostInjectionToken } from './application/post.injection.token';
 
 export const CommandHandlers = [
 	CreatePostHandler,
@@ -34,7 +34,7 @@ export const Repositories = [
 		useClass: QueryPostsRepository,
 	},
 	{
-		provide: PostsRepositoryAdapter,
+		provide: PostInjectionToken.POST_REPOSITORY,
 		useClass: PostsRepository,
 	},
 ];
@@ -61,7 +61,7 @@ export const Modules = [
 			useClass: QueryPostsRepository,
 		},
 		{
-			provide: PostsRepositoryAdapter,
+			provide: PostInjectionToken.POST_REPOSITORY,
 			useClass: PostsRepository,
 		},
 	],

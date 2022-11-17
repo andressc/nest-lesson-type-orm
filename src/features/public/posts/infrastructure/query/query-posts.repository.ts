@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesInfoExtended, LikeStatusEnum } from '../../../../../common/dto';
 import { Post, PostModel } from '../../entity/post.schema';
-import { QueryPostsRepositoryAdapter } from '../../adapters/query.posts.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../interfaces/query.posts.repository.adapter';
 import { ObjectId } from 'mongodb';
 import { LikeDbDto } from '../../../likes/dto/like-db.dto';
 

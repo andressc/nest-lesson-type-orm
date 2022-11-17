@@ -3,9 +3,10 @@ import { PayloadTokenDto, RefreshTokenDataDto, ResponseTokensDto } from '../../d
 import { payloadDateCreator } from '../../../../../common/helpers';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { Inject, UnauthorizedException } from '@nestjs/common';
 import { SessionModel } from '../../../session/entity/session.schema';
-import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
+import { SessionsRepositoryInterface } from '../../../session/interfaces/sessions.repository.interface';
+import { SessionInjectionToken } from '../../../session/application/session.injection.token';
 
 export class RefreshTokenAuthCommand {
 	constructor(public refreshTokenData: RefreshTokenDataDto) {}
@@ -16,11 +17,12 @@ export class RefreshTokenAuthHandler implements ICommandHandler<RefreshTokenAuth
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		private readonly sessionsRepository: SessionsRepositoryAdapter,
+		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
+		private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: RefreshTokenAuthCommand): Promise<ResponseTokensDto> {
-		const session: SessionModel | null = await this.sessionsRepository.findSessionModel(
+		const session: SessionModel | null = await this.sessionsRepository.findSession(
 			command.refreshTokenData.userId,
 			command.refreshTokenData.deviceId,
 			command.refreshTokenData.lastActiveDate,

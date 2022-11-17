@@ -5,8 +5,8 @@ import { QueryCommentDto, ResponseCommentDto } from '../../dto';
 import { PostModel } from '../../../posts/entity/post.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { PaginationService } from '../../../../../shared/pagination/application/pagination.service';
-import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
-import { QueryPostsRepositoryAdapter } from '../../../posts/adapters/query.posts.repository.adapter';
+import { QueryCommentsRepositoryAdapter } from '../../interfaces/query.comments.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../../posts/interfaces/query.posts.repository.adapter';
 import { ObjectId } from 'mongodb';
 
 export class FindAllCommentOfPostCommand {

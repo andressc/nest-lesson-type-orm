@@ -2,7 +2,7 @@ import { CommentModel } from '../../entity/comment.schema';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentNotFoundException } from '../../../../../common/exceptions';
 import { ResponseCommentDto } from '../../dto';
-import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
+import { QueryCommentsRepositoryAdapter } from '../../interfaces/query.comments.repository.adapter';
 import { ObjectId } from 'mongodb';
 
 export class FindOneCommentCommand {

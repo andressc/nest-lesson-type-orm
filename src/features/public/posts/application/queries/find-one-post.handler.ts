@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostNotFoundException } from '../../../../../common/exceptions';
 import { ResponsePostDto } from '../../dto';
 import { PostModel } from '../../entity/post.schema';
-import { QueryPostsRepositoryAdapter } from '../../adapters/query.posts.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../interfaces/query.posts.repository.adapter';
 import { ObjectId } from 'mongodb';
 
 export class FindOnePostCommand {

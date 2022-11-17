@@ -5,7 +5,9 @@ import { createDate, generateConfirmationCode, generateHash } from '../../../../
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
+import { Inject } from '@nestjs/common';
+import { UserInjectionToken } from '../user.injection.token';
 
 export class CreateUserCommand implements ICommand {
 	constructor(public data: CreateUserDto, public isConfirmed = false) {}
@@ -15,7 +17,8 @@ export class CreateUserCommand implements ICommand {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UsersRepositoryAdapter,
+		@Inject(UserInjectionToken.USER_REPOSITORY)
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -30,7 +33,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
 		const emailConfirmation = generateConfirmationCode(command.isConfirmed);
 
-		const newUser: UserModel = await this.usersRepository.createUserModel({
+		const newUser: UserModel = await this.usersRepository.create({
 			login: command.data.login,
 			password: passwordHash,
 			email: command.data.email,

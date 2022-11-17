@@ -1,7 +1,16 @@
 import { CreateUserExtendsDto } from '../dto';
 import { UserModel } from '../entity/user.schema';
+import { MainRepositoryInterface } from '../../../interfaces/main.repository.interface';
 
-export abstract class UsersRepositoryAdapter {
+/* eslint-disable */
+export interface UsersRepositoryInterface
+	extends MainRepositoryInterface<UserModel, CreateUserExtendsDto> {
+	findUserByLogin(login: string): Promise<UserModel | null>;
+	findUserByEmail(email: string): Promise<UserModel | null>;
+	findUserByConfirmationCode(confirmationCode: string): Promise<UserModel | null>;
+}
+
+/*export abstract class UsersRepositoryInterface {
 	abstract createUserModel(data: CreateUserExtendsDto): Promise<UserModel>;
 	abstract findUserModel(id: string): Promise<UserModel | null>;
 	abstract findUserModelByLogin(login: string): Promise<UserModel | null>;
@@ -10,4 +19,4 @@ export abstract class UsersRepositoryAdapter {
 	abstract save(userModel: UserModel): Promise<UserModel>;
 	abstract delete(userModel: UserModel): Promise<void>;
 	abstract deleteAll(): Promise<void>;
-}
+}*/

@@ -1,23 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikesRepositoryAdapter } from '../../adapters/likes.repository.adapter';
+import { LikesRepositoryInterface } from '../../interfaces/likes.repository.interface';
 import { Like, LikeModel } from '../../entity/like.schema';
 import { CreateLikeExtendsDto } from '../../dto/create-like-extends.dto';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
-export class LikesRepository implements LikesRepositoryAdapter {
+export class LikesRepository implements LikesRepositoryInterface {
 	constructor(
 		@InjectModel(Like.name)
 		private readonly likeModel: Model<LikeModel>,
 	) {}
 
-	async createLikeModel(data: CreateLikeExtendsDto): Promise<LikeModel> {
+	async find(id: string): Promise<LikeModel | null> {
+		return this.likeModel.findById(id);
+	}
+
+	async create(data: CreateLikeExtendsDto): Promise<LikeModel> {
 		return new this.likeModel(data);
 	}
 
-	async findLikeModelByItemIdAndUserId(itemId: ObjectId, userId: ObjectId): Promise<LikeModel> {
+	async findLikeByItemIdAndUserId(itemId: ObjectId, userId: ObjectId): Promise<LikeModel> {
 		return this.likeModel.findOne({ itemId, userId });
 	}
 
@@ -27,6 +31,10 @@ export class LikesRepository implements LikesRepositoryAdapter {
 
 	async save(likeModel: LikeModel): Promise<LikeModel> {
 		return likeModel.save();
+	}
+
+	async delete(likeModel: LikeModel): Promise<void> {
+		await likeModel.delete();
 	}
 
 	async deleteAll(): Promise<void> {

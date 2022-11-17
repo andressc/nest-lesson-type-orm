@@ -1,10 +1,12 @@
 import { createDate } from '../../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { LikeModel } from '../../entity/like.schema';
-import { LikesRepositoryAdapter } from '../../adapters/likes.repository.adapter';
+import { LikesRepositoryInterface } from '../../interfaces/likes.repository.interface';
 import { CreateRequestLikeDto } from '../../../comments/dto';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
 import { ObjectId } from 'mongodb';
+import { Inject } from '@nestjs/common';
+import { LikeInjectionToken } from '../like.injection.token';
 
 export class CreateLikeCommand implements ICommand {
 	constructor(
@@ -18,20 +20,21 @@ export class CreateLikeCommand implements ICommand {
 @CommandHandler(CreateLikeCommand)
 export class CreateLikeHandler implements ICommandHandler<CreateLikeCommand> {
 	constructor(
-		private readonly likesRepository: LikesRepositoryAdapter,
+		@Inject(LikeInjectionToken.LIKE_REPOSITORY)
+		private readonly likesRepository: LikesRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 
 	async execute(command: CreateLikeCommand): Promise<void> {
 		await this.validationService.validate(command.data, CreateRequestLikeDto);
 
-		const like: LikeModel | null = await this.likesRepository.findLikeModelByItemIdAndUserId(
+		const like: LikeModel | null = await this.likesRepository.findLikeByItemIdAndUserId(
 			new ObjectId(command.itemId),
 			new ObjectId(command.userId),
 		);
 
 		if (!like) {
-			const newLike: LikeModel = await this.likesRepository.createLikeModel({
+			const newLike: LikeModel = await this.likesRepository.create({
 				itemId: new ObjectId(command.itemId),
 				userId: new ObjectId(command.userId),
 				login: command.userLogin,

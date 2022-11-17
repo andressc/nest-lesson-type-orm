@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesInfo, LikeStatusEnum } from '../../../../../common/dto';
 import { Comment, CommentModel } from '../../entity/comment.schema';
-import { QueryCommentsRepositoryAdapter } from '../../adapters/query.comments.repository.adapter';
+import { QueryCommentsRepositoryAdapter } from '../../interfaces/query.comments.repository.adapter';
 import { ObjectId } from 'mongodb';
 import { LikeDbDto } from '../../../likes/dto/like-db.dto';
 
@@ -13,7 +13,7 @@ export class QueryCommentsRepository implements QueryCommentsRepositoryAdapter {
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
 	) {}
-	//edvssvd
+
 	async findCommentModel(id: ObjectId): Promise<CommentModel[] | null> {
 		return this.commentModel.aggregate([
 			{ $match: { _id: id, isBanned: false } },

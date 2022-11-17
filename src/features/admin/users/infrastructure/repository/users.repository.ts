@@ -3,32 +3,32 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserExtendsDto } from '../../dto';
 import { User, UserModel } from '../../entity/user.schema';
-import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
 
 @Injectable()
-export class UsersRepository implements UsersRepositoryAdapter {
+export class UsersRepository implements UsersRepositoryInterface {
 	constructor(
 		@InjectModel(User.name)
 		private readonly userModel: Model<UserModel>,
 	) {}
 
-	async createUserModel(data: CreateUserExtendsDto): Promise<UserModel> {
+	async create(data: CreateUserExtendsDto): Promise<UserModel> {
 		return new this.userModel(data);
 	}
 
-	async findUserModel(id: string): Promise<UserModel | null> {
+	async find(id: string): Promise<UserModel | null> {
 		return this.userModel.findById(id);
 	}
 
-	async findUserModelByLogin(login: string): Promise<UserModel | null> {
+	async findUserByLogin(login: string): Promise<UserModel | null> {
 		return this.userModel.findOne({ login });
 	}
 
-	async findUserModelByEmail(email: string): Promise<UserModel | null> {
+	async findUserByEmail(email: string): Promise<UserModel | null> {
 		return this.userModel.findOne({ email });
 	}
 
-	async findUserModelByConfirmationCode(confirmationCode: string): Promise<UserModel | null> {
+	async findUserByConfirmationCode(confirmationCode: string): Promise<UserModel | null> {
 		return this.userModel.findOne({
 			confirmationCode,
 		});

@@ -1,14 +1,18 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { CommentModel } from '../entity/comment.schema';
 import { CommentNotFoundException } from '../../../../common/exceptions';
-import { CommentsRepositoryAdapter } from '../adapters/comments.repository.adapter';
+import { CommentsRepositoryInterface } from '../interfaces/comments.repository.interface';
+import { CommentInjectionToken } from './comment.injection.token';
 
 @Injectable()
 export class CommentsService {
-	constructor(private readonly commentsRepository: CommentsRepositoryAdapter) {}
+	constructor(
+		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
+		private readonly commentsRepository: CommentsRepositoryInterface,
+	) {}
 
 	public async findCommentOrErrorThrow(id: string, authUserId?: string): Promise<CommentModel> {
-		const comment: CommentModel | null = await this.commentsRepository.findCommentModel(id);
+		const comment: CommentModel | null = await this.commentsRepository.find(id);
 		if (!comment) throw new CommentNotFoundException(id);
 		if (authUserId && comment.userId !== authUserId) throw new ForbiddenException();
 		return comment;

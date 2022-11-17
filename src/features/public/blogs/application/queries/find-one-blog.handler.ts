@@ -2,7 +2,7 @@ import { ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogNotFoundException } from '../../../../../common/exceptions';
 import { BlogModel } from '../../entity/blog.schema';
-import { QueryBlogsRepositoryAdapter } from '../../adapters/query.blogs.repository.adapter';
+import { QueryBlogsRepositoryAdapter } from '../../interfaces/query.blogs.repository.adapter';
 
 export class FindOneBlogCommand {
 	constructor(public id: string) {}

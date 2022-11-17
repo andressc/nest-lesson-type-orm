@@ -2,11 +2,14 @@ import { CommandBus, CommandHandler, ICommand, ICommandHandler } from '@nestjs/c
 import { UsersService } from '../users.service';
 import { UserModel } from '../../entity/user.schema';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { UsersRepositoryAdapter } from '../../adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
 import { BanUnbanUserDto } from '../../dto/ban-unban-user.dto';
-import { SessionsRepositoryAdapter } from '../../../../public/session/adapters/sessions.repository.adapter';
+import { SessionsRepositoryInterface } from '../../../../public/session/interfaces/sessions.repository.interface';
 import { BanUnbanLikeCommand } from '../../../../public/likes/application/command/ban-unban-like.handler';
 import { BanUnbanCommentCommand } from '../../../../public/comments/application/commands/ban-unban-comment.handler';
+import { Inject } from '@nestjs/common';
+import { SessionInjectionToken } from '../../../../public/session/application/session.injection.token';
+import { UserInjectionToken } from '../user.injection.token';
 
 export class BanUnbanUserCommand implements ICommand {
 	constructor(public id: string, public data: BanUnbanUserDto) {}
@@ -16,8 +19,10 @@ export class BanUnbanUserCommand implements ICommand {
 export class BanUnbanUserHandler implements ICommandHandler<BanUnbanUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly usersRepository: UsersRepositoryAdapter,
-		private readonly sessionsRepository: SessionsRepositoryAdapter,
+		@Inject(UserInjectionToken.USER_REPOSITORY)
+		private readonly usersRepository: UsersRepositoryInterface,
+		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
+		private readonly sessionsRepository: SessionsRepositoryInterface,
 		private readonly validationService: ValidationService,
 		private readonly commandBus: CommandBus,
 	) {}

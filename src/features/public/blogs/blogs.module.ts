@@ -12,9 +12,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { QueryBlogsRepository } from './infrastructure/query/query-blogs.repository';
 import { Blog, BlogSchema } from './entity/blog.schema';
 import { IsUserCommentValidatorConstraint } from '../../../common/decorators/Validation';
-import { BlogsRepositoryAdapter } from './adapters/blogs.repository.adapter';
-import { QueryBlogsRepositoryAdapter } from './adapters/query.blogs.repository.adapter';
+import { QueryBlogsRepositoryAdapter } from './interfaces/query.blogs.repository.adapter';
 import { PaginationModule } from '../../../shared/pagination/pagination.module';
+import { BlogInjectionToken } from './application/blog.injection.token';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
@@ -23,8 +23,9 @@ export const Repositories = [
 		provide: QueryBlogsRepositoryAdapter,
 		useClass: QueryBlogsRepository,
 	},
+
 	{
-		provide: BlogsRepositoryAdapter,
+		provide: BlogInjectionToken.BLOG_REPOSITORY,
 		useClass: BlogsRepository,
 	},
 ];
@@ -47,7 +48,7 @@ export const Modules = [
 			useClass: QueryBlogsRepository,
 		},
 		{
-			provide: BlogsRepositoryAdapter,
+			provide: BlogInjectionToken.BLOG_REPOSITORY,
 			useClass: BlogsRepository,
 		},
 	],

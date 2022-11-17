@@ -3,7 +3,9 @@ import { RegistrationConfirmationDto } from '../../dto';
 import { ConfirmCodeBadRequestException } from '../../../../../common/exceptions';
 import { UserModel } from '../../../../admin/users/entity/user.schema';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { UsersRepositoryAdapter } from '../../../../admin/users/adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../../../admin/users/interfaces/users.repository.interface';
+import { Inject } from '@nestjs/common';
+import { UserInjectionToken } from '../../../../admin/users/application/user.injection.token';
 
 export class RegistrationConfirmationAuthCommand {
 	constructor(public data: RegistrationConfirmationDto) {}
@@ -15,13 +17,14 @@ export class RegistrationConfirmationAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		private readonly usersRepository: UsersRepositoryAdapter,
+		@Inject(UserInjectionToken.USER_REPOSITORY)
+		private readonly usersRepository: UsersRepositoryInterface,
 	) {}
 
 	async execute(command: RegistrationConfirmationAuthCommand): Promise<void> {
 		await this.validationService.validate(command.data, RegistrationConfirmationDto);
 
-		const user: UserModel | null = await this.usersRepository.findUserModelByConfirmationCode(
+		const user: UserModel | null = await this.usersRepository.findUserByConfirmationCode(
 			command.data.code,
 		);
 

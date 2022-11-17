@@ -5,8 +5,8 @@ import { PostModel } from '../../entity/post.schema';
 import { PaginationService } from '../../../../../shared/pagination/application/pagination.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { BlogNotFoundException } from '../../../../../common/exceptions';
-import { QueryBlogsRepositoryAdapter } from '../../../blogs/adapters/query.blogs.repository.adapter';
-import { QueryPostsRepositoryAdapter } from '../../adapters/query.posts.repository.adapter';
+import { QueryBlogsRepositoryAdapter } from '../../../blogs/interfaces/query.blogs.repository.adapter';
+import { QueryPostsRepositoryAdapter } from '../../interfaces/query.posts.repository.adapter';
 
 export class FindAllPostCommand {
 	constructor(

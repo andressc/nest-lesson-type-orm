@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sort } from '../../../../../common/dto';
 import { User, UserModel } from '../../entity/user.schema';
-import { QueryUsersRepositoryAdapter } from '../../adapters/query.users.repository.adapter';
+import { QueryUsersRepositoryAdapter } from '../../interfaces/query.users.repository.adapter';
 
 @Injectable()
 export class QueryUsersRepository implements QueryUsersRepositoryAdapter {

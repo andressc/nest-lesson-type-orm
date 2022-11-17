@@ -1,6 +1,8 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { LikesRepositoryAdapter } from '../../adapters/likes.repository.adapter';
+import { LikesRepositoryInterface } from '../../interfaces/likes.repository.interface';
 import { ObjectId } from 'mongodb';
+import { Inject } from '@nestjs/common';
+import { LikeInjectionToken } from '../like.injection.token';
 
 export class BanUnbanLikeCommand implements ICommand {
 	constructor(public userId: string, public isBanned: boolean) {}
@@ -8,7 +10,10 @@ export class BanUnbanLikeCommand implements ICommand {
 
 @CommandHandler(BanUnbanLikeCommand)
 export class BanUnbanLikeHandler implements ICommandHandler<BanUnbanLikeCommand> {
-	constructor(private readonly likesRepository: LikesRepositoryAdapter) {}
+	constructor(
+		@Inject(LikeInjectionToken.LIKE_REPOSITORY)
+		private readonly likesRepository: LikesRepositoryInterface,
+	) {}
 
 	async execute(command: BanUnbanLikeCommand): Promise<void> {
 		await this.likesRepository.setBan(new ObjectId(command.userId), command.isBanned);

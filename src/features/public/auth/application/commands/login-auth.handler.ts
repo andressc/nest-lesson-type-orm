@@ -5,7 +5,9 @@ import { payloadDateCreator } from '../../../../../common/helpers';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { SessionModel } from '../../../session/entity/session.schema';
-import { SessionsRepositoryAdapter } from '../../../session/adapters/sessions.repository.adapter';
+import { SessionsRepositoryInterface } from '../../../session/interfaces/sessions.repository.interface';
+import { Inject } from '@nestjs/common';
+import { SessionInjectionToken } from '../../../session/application/session.injection.token';
 
 export class LoginAuthCommand {
 	constructor(public userId: string, public ip: string, public userAgent: string) {}
@@ -16,7 +18,8 @@ export class LoginAuthHandler implements ICommandHandler<LoginAuthCommand> {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		private readonly sessionsRepository: SessionsRepositoryAdapter,
+		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
+		private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: LoginAuthCommand): Promise<ResponseTokensDto> {
@@ -24,7 +27,7 @@ export class LoginAuthHandler implements ICommandHandler<LoginAuthCommand> {
 		const tokens: ResponseTokensDto = await this.authService.createTokens(command.userId, deviceId);
 		const payload: PayloadTokenDto = this.jwtService.decode(tokens.refreshToken) as PayloadTokenDto;
 
-		const newSession: SessionModel = await this.sessionsRepository.createSessionModel({
+		const newSession: SessionModel = await this.sessionsRepository.create({
 			lastActiveDate: payloadDateCreator(payload.iat),
 			expirationDate: payloadDateCreator(payload.exp),
 			deviceId,

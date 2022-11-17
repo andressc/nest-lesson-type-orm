@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ResponseSessionDto } from '../../dto/response-session.dto';
 import { SessionModel } from '../../entity/session.schema';
-import { QuerySessionsRepositoryAdapter } from '../../adapters/query.sessions.repository.adapter';
+import { QuerySessionsRepositoryAdapter } from '../../interfaces/query.sessions.repository.adapter';
 
 export class FindAllSessionCommand {
 	constructor(public currentUserId: string) {}

@@ -3,7 +3,7 @@ import { QueryUserDto, ResponseUserDto } from '../../dto';
 import { PaginationCalc, PaginationDto } from '../../../../../common/dto';
 import { UserModel } from '../../entity/user.schema';
 import { PaginationService } from '../../../../../shared/pagination/application/pagination.service';
-import { QueryUsersRepositoryAdapter } from '../../adapters/query.users.repository.adapter';
+import { QueryUsersRepositoryAdapter } from '../../interfaces/query.users.repository.adapter';
 
 export class FindAllUserCommand {
 	constructor(public query: QueryUserDto) {}

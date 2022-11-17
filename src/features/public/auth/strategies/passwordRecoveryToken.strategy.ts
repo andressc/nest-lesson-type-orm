@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -6,7 +6,8 @@ import { PasswordRecoveryTokenDataDto } from '../dto';
 import { EmailBadRequestException } from '../../../../common/exceptions';
 import { AuthConfig } from '../../../../configuration';
 import { UserModel } from '../../../admin/users/entity/user.schema';
-import { UsersRepositoryAdapter } from '../../../admin/users/adapters/users.repository.adapter';
+import { UsersRepositoryInterface } from '../../../admin/users/interfaces/users.repository.interface';
+import { UserInjectionToken } from '../../../admin/users/application/user.injection.token';
 
 @Injectable()
 export class PasswordRecoveryTokenStrategy extends PassportStrategy(
@@ -14,7 +15,8 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 	'jwt-recovery-password',
 ) {
 	constructor(
-		private readonly usersRepository: UsersRepositoryAdapter,
+		@Inject(UserInjectionToken.USER_REPOSITORY)
+		private readonly usersRepository: UsersRepositoryInterface,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({
@@ -31,7 +33,7 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 	}
 
 	async validate(req: Request, payload: any): Promise<PasswordRecoveryTokenDataDto> {
-		const user: UserModel = await this.usersRepository.findUserModelByEmail(payload.sub);
+		const user: UserModel = await this.usersRepository.findUserByEmail(payload.sub);
 		if (!user) throw new EmailBadRequestException();
 
 		return {

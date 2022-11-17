@@ -1,21 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { SessionsRepositoryAdapter } from '../../adapters/sessions.repository.adapter';
+import { SessionsRepositoryInterface } from '../../interfaces/sessions.repository.interface';
 import { Session, SessionModel } from '../../entity/session.schema';
 
 @Injectable()
-export class SessionsRepository implements SessionsRepositoryAdapter {
+export class SessionsRepository implements SessionsRepositoryInterface {
 	constructor(
 		@InjectModel(Session.name)
 		private readonly sessionModel: Model<SessionModel>,
 	) {}
 
-	async createSessionModel(session: any): Promise<SessionModel> {
+	async find(id: string): Promise<SessionModel | null> {
+		return this.sessionModel.findById(id);
+	}
+
+	async create(session: any): Promise<SessionModel> {
 		return new this.sessionModel(session);
 	}
 
-	async findSessionModel(
+	async findSession(
 		userId: string,
 		deviceId: string,
 		lastActiveDate: string,
@@ -27,7 +31,7 @@ export class SessionsRepository implements SessionsRepositoryAdapter {
 		});
 	}
 
-	async findSessionModelOnDeviceId(deviceId: string): Promise<SessionModel | null> {
+	async findSessionOnDeviceId(deviceId: string): Promise<SessionModel | null> {
 		return this.sessionModel.findOne({
 			deviceId,
 		});

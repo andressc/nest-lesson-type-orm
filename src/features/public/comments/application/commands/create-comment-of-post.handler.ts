@@ -6,7 +6,9 @@ import { PostsService } from '../../../posts/application/posts.service';
 import { UserModel } from '../../../../admin/users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { CommentsRepositoryAdapter } from '../../adapters/comments.repository.adapter';
+import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
+import { Inject } from '@nestjs/common';
+import { CommentInjectionToken } from '../comment.injection.token';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(
@@ -21,7 +23,8 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly postsService: PostsService,
-		private readonly commentsRepository: CommentsRepositoryAdapter,
+		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
+		private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -31,7 +34,7 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 		const user: UserModel = await this.usersService.findUserByIdOrErrorThrow(command.authUserId);
 		await this.postsService.findPostOrErrorThrow(command.postId);
 
-		const newComment: CommentModel = await this.commentsRepository.createCommentModel({
+		const newComment: CommentModel = await this.commentsRepository.create({
 			...command.data,
 			userId: command.authUserId,
 			userLogin: user.login,

@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sort } from '../../../../../common/dto';
 import { Blog, BlogModel } from '../../entity/blog.schema';
-import { QueryBlogsRepositoryAdapter } from '../../adapters/query.blogs.repository.adapter';
+import { QueryBlogsRepositoryAdapter } from '../../interfaces/query.blogs.repository.adapter';
 
 @Injectable()
 export class QueryBlogsRepository implements QueryBlogsRepositoryAdapter {

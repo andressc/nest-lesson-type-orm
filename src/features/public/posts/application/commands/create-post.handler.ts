@@ -4,7 +4,9 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { ValidationService } from '../../../../../shared/validation/application/validation.service';
-import { PostsRepositoryAdapter } from '../../adapters/posts.repository.adapter';
+import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
+import { Inject } from '@nestjs/common';
+import { PostInjectionToken } from '../post.injection.token';
 
 export class CreatePostCommand implements ICommand {
 	constructor(public data: CreatePostDto) {}
@@ -14,7 +16,8 @@ export class CreatePostCommand implements ICommand {
 export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		private readonly postsRepository: PostsRepositoryAdapter,
+		@Inject(PostInjectionToken.POST_REPOSITORY)
+		private readonly postsRepository: PostsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -23,7 +26,7 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 
 		const blog: BlogModel = await this.blogsService.findBlogOrErrorThrow(command.data.blogId);
 
-		const newPost = await this.postsRepository.createPostModel({
+		const newPost = await this.postsRepository.create({
 			...command.data,
 			blogName: blog.name,
 			createdAt: createDate(),

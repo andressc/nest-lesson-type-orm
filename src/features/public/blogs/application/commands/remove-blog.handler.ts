@@ -1,7 +1,9 @@
 import { BlogModel } from '../../entity/blog.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
-import { BlogsRepositoryAdapter } from '../../adapters/blogs.repository.adapter';
+import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
+import { Inject } from '@nestjs/common';
+import { BlogInjectionToken } from '../blog.injection.token';
 
 export class RemoveBlogCommand {
 	constructor(public id: string) {}
@@ -10,7 +12,8 @@ export class RemoveBlogCommand {
 @CommandHandler(RemoveBlogCommand)
 export class RemoveBlogHandler implements ICommandHandler<RemoveBlogCommand> {
 	constructor(
-		private readonly blogsRepository: BlogsRepositoryAdapter<BlogModel>,
+		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
+		private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 	) {}
 
