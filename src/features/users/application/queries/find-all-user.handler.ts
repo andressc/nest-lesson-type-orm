@@ -3,7 +3,9 @@ import { QueryUserDto, ResponseUserDto } from '../../dto';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { UserModel } from '../../entity/user.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
-import { QueryUsersRepositoryAdapter } from '../../interfaces/query.users.repository.adapter';
+import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
+import { Inject } from '@nestjs/common';
+import { UserInjectionToken } from '../user.injection.token';
 
 export class FindAllUserCommand {
 	constructor(public query: QueryUserDto) {}
@@ -12,7 +14,8 @@ export class FindAllUserCommand {
 @QueryHandler(FindAllUserCommand)
 export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 	constructor(
-		private readonly queryUsersRepository: QueryUsersRepositoryAdapter,
+		@Inject(UserInjectionToken.QUERY_USER_REPOSITORY)
+		private readonly queryUsersRepository: QueryUsersRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 
@@ -28,7 +31,7 @@ export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 			totalCount,
 		});
 
-		const user: UserModel[] = await this.queryUsersRepository.findUserQueryModel(
+		const user: UserModel[] = await this.queryUsersRepository.findQuery(
 			searchString,
 			paginationData.sortBy,
 			paginationData.skip,

@@ -3,20 +3,21 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sort } from '../../../../common/dto';
 import { User, UserModel } from '../../entity/user.schema';
-import { QueryUsersRepositoryAdapter } from '../../interfaces/query.users.repository.adapter';
+import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
-export class QueryUsersRepository implements QueryUsersRepositoryAdapter {
+export class QueryUsersRepository implements QueryUsersRepositoryInterface {
 	constructor(
 		@InjectModel(User.name)
 		private readonly userModel: Model<UserModel>,
 	) {}
 
-	async findUserModel(id: string): Promise<UserModel | null> {
+	async find(id: ObjectId): Promise<UserModel | null> {
 		return this.userModel.findById(id);
 	}
 
-	async findUserQueryModel(
+	async findQuery(
 		searchString: any,
 		sortBy: Sort,
 		skip: number,

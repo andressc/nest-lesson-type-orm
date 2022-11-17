@@ -1,7 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ResponseSessionDto } from '../../dto/response-session.dto';
 import { SessionModel } from '../../entity/session.schema';
-import { QuerySessionsRepositoryAdapter } from '../../interfaces/query.sessions.repository.adapter';
+import { QuerySessionsRepositoryInterface } from '../../interfaces/query.sessions.repository.interface';
+import { Inject } from '@nestjs/common';
+import { SessionInjectionToken } from '../session.injection.token';
 
 export class FindAllSessionCommand {
 	constructor(public currentUserId: string) {}
@@ -9,7 +11,10 @@ export class FindAllSessionCommand {
 
 @QueryHandler(FindAllSessionCommand)
 export class FindAllSessionHandler implements IQueryHandler<FindAllSessionCommand> {
-	constructor(private readonly querySessionRepository: QuerySessionsRepositoryAdapter) {}
+	constructor(
+		@Inject(SessionInjectionToken.QUERY_SESSION_REPOSITORY)
+		private readonly querySessionRepository: QuerySessionsRepositoryInterface,
+	) {}
 
 	async execute(command: FindAllSessionCommand): Promise<ResponseSessionDto[]> {
 		const session: SessionModel[] = await this.querySessionRepository.findAllSessionsByUserId(

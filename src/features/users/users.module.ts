@@ -11,7 +11,6 @@ import { FindMeUserHandler } from './application/queries/find-me-user.handler';
 import { FindAllUserHandler } from './application/queries/find-all-user.handler';
 import { User, UserSchema } from './entity/user.schema';
 import { UsersRepository } from './infrastructure/repository/users.repository';
-import { QueryUsersRepositoryAdapter } from './interfaces/query.users.repository.adapter';
 import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
 import { SessionsModule } from '../session/sessions.module';
 import { LikesModule } from '../likes/likes.module';
@@ -22,7 +21,7 @@ export const CommandHandlers = [RemoveUserHandler, CreateUserHandler, BanUnbanUs
 export const QueryHandlers = [FindOneUserHandler, FindMeUserHandler, FindAllUserHandler];
 export const Repositories = [
 	{
-		provide: QueryUsersRepositoryAdapter,
+		provide: UserInjectionToken.QUERY_USER_REPOSITORY,
 		useClass: QueryUsersRepository,
 	},
 	{

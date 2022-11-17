@@ -8,14 +8,13 @@ import { FindAllSessionHandler } from './application/queries/find-all-session.ha
 import { RemoveAllUserSessionHandler } from './application/commands/remove-all-user-session.handler';
 import { RemoveUserSessionHandler } from './application/commands/remove-user-session.handler';
 import { CqrsModule } from '@nestjs/cqrs';
-import { QuerySessionsRepositoryAdapter } from './interfaces/query.sessions.repository.adapter';
 import { SessionInjectionToken } from './application/session.injection.token';
 
 export const CommandHandlers = [RemoveAllUserSessionHandler, RemoveUserSessionHandler];
 export const QueryHandlers = [FindAllSessionHandler];
 export const Repositories = [
 	{
-		provide: QuerySessionsRepositoryAdapter,
+		provide: SessionInjectionToken.QUERY_SESSION_REPOSITORY,
 		useClass: QuerySessionsRepository,
 	},
 	{

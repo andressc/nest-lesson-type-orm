@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Session, SessionModel } from '../../entity/session.schema';
-import { QuerySessionsRepositoryAdapter } from '../../interfaces/query.sessions.repository.adapter';
+import { QuerySessionsRepositoryInterface } from '../../interfaces/query.sessions.repository.interface';
 
 @Injectable()
-export class QuerySessionsRepository implements QuerySessionsRepositoryAdapter {
+export class QuerySessionsRepository implements QuerySessionsRepositoryInterface {
 	constructor(
 		@InjectModel(Session.name)
 		private readonly sessionModel: Model<SessionModel>,
