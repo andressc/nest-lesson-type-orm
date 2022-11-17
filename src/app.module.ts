@@ -3,8 +3,9 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from './shared/database/database.module';
 import { ThrottlerLimitModule } from './shared/throttler/throttler.module';
 import { ValidationModule } from './shared/validation/validation.module';
-import { PublicModule } from './features/public/public.module';
-import { AuthModule } from './features/public/auth/auth.module';
+import { AuthModule } from './features/auth/auth.module';
+import { CommentsModule } from './features/comments/comments.module';
+import { TestingModule } from './features/testing/testing.module';
 
 @Module({
 	imports: [
@@ -12,7 +13,8 @@ import { AuthModule } from './features/public/auth/auth.module';
 			isGlobal: true,
 			envFilePath: ['.env.local', '.env'],
 		}),
-		PublicModule,
+		CommentsModule,
+		TestingModule,
 		AuthModule,
 		ThrottlerLimitModule,
 		DatabaseModule,

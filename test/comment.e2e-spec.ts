@@ -10,11 +10,11 @@ import { postCreator } from './dbSeeding/postCreator';
 import { commentCreator } from './dbSeeding/commentCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
-import { Blog } from '../src/features/public/blogs/entity/blog.schema';
-import { Post } from '../src/features/public/posts/entity/post.schema';
-import { Comment } from '../src/features/public/comments/entity/comment.schema';
+import { Blog } from '../src/features/blogs/entity/blog.schema';
+import { Post } from '../src/features/posts/entity/post.schema';
+import { Comment } from '../src/features/comments/entity/comment.schema';
 import { userCreator } from './dbSeeding/userCreator';
-import { User } from '../src/features/admin/users/entity/user.schema';
+import { User } from '../src/features/users/entity/user.schema';
 
 describe('CommentController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

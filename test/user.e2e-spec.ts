@@ -8,7 +8,7 @@ import { ObjectId } from 'mongodb';
 import { userCreator } from './dbSeeding/userCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
-import { User } from '../src/features/admin/users/entity/user.schema';
+import { User } from '../src/features/users/entity/user.schema';
 import 'jest-extended';
 
 describe('BlogController (e2e)', () => {

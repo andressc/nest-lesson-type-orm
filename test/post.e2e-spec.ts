@@ -9,8 +9,8 @@ import { blogCreator } from './dbSeeding/blogCreator';
 import { postCreator } from './dbSeeding/postCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
-import { Blog } from '../src/features/public/blogs/entity/blog.schema';
-import { Post } from '../src/features/public/posts/entity/post.schema';
+import { Blog } from '../src/features/blogs/entity/blog.schema';
+import { Post } from '../src/features/posts/entity/post.schema';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
