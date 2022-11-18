@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Sort } from '../../../../common/dto';
 import { Blog, BlogModel } from '../../entity/blog.schema';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
-import { ObjectId } from 'mongodb';
+import { MainQueryRepository } from '../../../shared/infrastructure/query/main.query.repository';
 
 @Injectable()
-export class QueryBlogsRepository implements QueryBlogsRepositoryInterface {
-	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {}
+export class QueryBlogsRepository
+	extends MainQueryRepository<BlogModel>
+	implements QueryBlogsRepositoryInterface
+{
+	constructor(@InjectModel(Blog.name) private readonly blogModel: Model<BlogModel>) {
+		super(blogModel);
+	}
 
-	async find(id: ObjectId): Promise<BlogModel | null> {
+	/*async find(id: ObjectId): Promise<BlogModel | null> {
 		return this.blogModel.findById(id);
 	}
 
@@ -25,5 +29,5 @@ export class QueryBlogsRepository implements QueryBlogsRepositoryInterface {
 
 	async count(searchString): Promise<number> {
 		return this.blogModel.countDocuments(searchString);
-	}
+	}*/
 }

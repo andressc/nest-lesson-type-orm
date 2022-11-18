@@ -4,15 +4,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostModel } from '../../entity/post.schema';
 import { CreatePostExtendsDto } from '../../dto';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
+import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
 
 @Injectable()
-export class PostsRepository implements PostsRepositoryInterface {
+export class PostsRepository
+	extends MainRepository<PostModel, CreatePostExtendsDto>
+	implements PostsRepositoryInterface
+{
 	constructor(
 		@InjectModel(Post.name)
 		private readonly postModel: Model<PostModel>,
-	) {}
+	) {
+		super(postModel);
+	}
 
-	async create(data: CreatePostExtendsDto): Promise<PostModel> {
+	/*async create(data: CreatePostExtendsDto): Promise<PostModel> {
 		return new this.postModel(data);
 	}
 
@@ -30,5 +36,5 @@ export class PostsRepository implements PostsRepositoryInterface {
 
 	async deleteAll(): Promise<void> {
 		await this.postModel.deleteMany();
-	}
+	}*/
 }

@@ -1,33 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Sort } from '../../../../common/dto';
 import { User, UserModel } from '../../entity/user.schema';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
-import { ObjectId } from 'mongodb';
+import { MainQueryRepository } from '../../../shared/infrastructure/query/main.query.repository';
 
 @Injectable()
-export class QueryUsersRepository implements QueryUsersRepositoryInterface {
+export class QueryUsersRepository
+	extends MainQueryRepository<UserModel>
+	implements QueryUsersRepositoryInterface
+{
 	constructor(
 		@InjectModel(User.name)
 		private readonly userModel: Model<UserModel>,
-	) {}
-
-	async find(id: ObjectId): Promise<UserModel | null> {
-		return this.userModel.findById(id);
-	}
-
-	async findQuery(
-		searchString: any,
-		sortBy: Sort,
-		skip: number,
-		pageSize: number,
-	): Promise<UserModel[] | null> {
-		return this.userModel.find(searchString).sort(sortBy).skip(skip).limit(pageSize);
-	}
-
-	async count(searchString): Promise<number> {
-		return this.userModel.countDocuments(searchString);
+	) {
+		super(userModel);
 	}
 
 	public searchTerm(login: string | undefined, email: string | undefined): any {
@@ -54,4 +41,23 @@ export class QueryUsersRepository implements QueryUsersRepositoryInterface {
 
 		return searchString;
 	}
+
+	/*
+	async find(id: ObjectId): Promise<UserModel | null> {
+		return this.userModel.findById(id);
+	}
+
+	async findQuery(
+		searchString: any,
+		sortBy: Sort,
+		skip: number,
+		pageSize: number,
+	): Promise<UserModel[] | null> {
+		return this.userModel.find(searchString).sort(sortBy).skip(skip).limit(pageSize);
+	}
+
+	async count(searchString): Promise<number> {
+		return this.userModel.countDocuments(searchString);
+	}
+	 */
 }

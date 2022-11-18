@@ -1,4 +1,4 @@
-import { MainRepositoryInterface } from '../../interfaces/main.repository.interface';
+import { MainRepositoryInterface } from '../../shared/interfaces/main.repository.interface';
 import { BlogModel } from '../entity/blog.schema';
 import { CreateBlogExtendsDto } from '../dto';
 

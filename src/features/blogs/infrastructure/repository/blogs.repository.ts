@@ -4,15 +4,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogModel } from '../../entity/blog.schema';
 import { CreateBlogExtendsDto } from '../../dto';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
+import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
 
 @Injectable()
-export class BlogsRepository implements BlogsRepositoryInterface {
+export class BlogsRepository
+	extends MainRepository<BlogModel, CreateBlogExtendsDto>
+	implements BlogsRepositoryInterface
+{
 	constructor(
 		@InjectModel(Blog.name)
 		private readonly blogModel: Model<BlogModel>,
-	) {}
+	) {
+		super(blogModel);
+	}
 
-	async create(data: CreateBlogExtendsDto): Promise<BlogModel> {
+	/*async create(data: CreateBlogExtendsDto): Promise<BlogModel> {
 		return new this.blogModel(data);
 	}
 
@@ -28,7 +34,7 @@ export class BlogsRepository implements BlogsRepositoryInterface {
 		await blogModel.delete();
 	}
 
-	async deleteAll(): Promise<void> {
+	/*async deleteAll(): Promise<void> {
 		await this.blogModel.deleteMany();
-	}
+	}*/
 }

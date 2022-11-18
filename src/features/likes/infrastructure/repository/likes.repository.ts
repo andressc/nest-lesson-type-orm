@@ -5,20 +5,18 @@ import { LikesRepositoryInterface } from '../../interfaces/likes.repository.inte
 import { Like, LikeModel } from '../../entity/like.schema';
 import { CreateLikeExtendsDto } from '../../dto/create-like-extends.dto';
 import { ObjectId } from 'mongodb';
+import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
 
 @Injectable()
-export class LikesRepository implements LikesRepositoryInterface {
+export class LikesRepository
+	extends MainRepository<LikeModel, CreateLikeExtendsDto>
+	implements LikesRepositoryInterface
+{
 	constructor(
 		@InjectModel(Like.name)
 		private readonly likeModel: Model<LikeModel>,
-	) {}
-
-	async find(id: string): Promise<LikeModel | null> {
-		return this.likeModel.findById(id);
-	}
-
-	async create(data: CreateLikeExtendsDto): Promise<LikeModel> {
-		return new this.likeModel(data);
+	) {
+		super(likeModel);
 	}
 
 	async findLikeByItemIdAndUserId(itemId: ObjectId, userId: ObjectId): Promise<LikeModel> {
@@ -27,6 +25,14 @@ export class LikesRepository implements LikesRepositoryInterface {
 
 	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
 		await this.likeModel.updateMany({ userId }, { isBanned });
+	}
+
+	/*async find(id: string): Promise<LikeModel | null> {
+		return this.likeModel.findById(id);
+	}
+
+	async create(data: CreateLikeExtendsDto): Promise<LikeModel> {
+		return new this.likeModel(data);
 	}
 
 	async save(likeModel: LikeModel): Promise<LikeModel> {
@@ -39,5 +45,5 @@ export class LikesRepository implements LikesRepositoryInterface {
 
 	async deleteAll(): Promise<void> {
 		await this.likeModel.deleteMany();
-	}
+	}*/
 }

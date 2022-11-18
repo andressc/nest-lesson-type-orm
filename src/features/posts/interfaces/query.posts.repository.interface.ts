@@ -1,5 +1,5 @@
 import { PostModel } from '../entity/post.schema';
-import { CountLikesRepositoryInterface } from '../../interfaces/count.likes.repository.interface';
+import { CountLikesRepositoryInterface } from '../../shared/interfaces/count.likes.repository.interface';
 import { LikesInfoExtended } from '../../../common/dto';
 
 /* eslint-disable */

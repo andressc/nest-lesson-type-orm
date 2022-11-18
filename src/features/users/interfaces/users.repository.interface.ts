@@ -1,6 +1,6 @@
 import { CreateUserExtendsDto } from '../dto';
 import { UserModel } from '../entity/user.schema';
-import { MainRepositoryInterface } from '../../interfaces/main.repository.interface';
+import { MainRepositoryInterface } from '../../shared/interfaces/main.repository.interface';
 
 /* eslint-disable */
 export interface UsersRepositoryInterface

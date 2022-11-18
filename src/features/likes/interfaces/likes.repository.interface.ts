@@ -1,7 +1,7 @@
 import { LikeModel } from '../entity/like.schema';
 import { CreateLikeExtendsDto } from '../dto/create-like-extends.dto';
 import { ObjectId } from 'mongodb';
-import { BanRepositoryInterface } from '../../interfaces/ban.repository.interface';
+import { BanRepositoryInterface } from '../../shared/interfaces/ban.repository.interface';
 
 /* eslint-disable */
 export interface LikesRepositoryInterface

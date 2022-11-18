@@ -1,6 +1,6 @@
 import { CreateCommentExtendsDto } from '../dto';
 import { CommentModel } from '../entity/comment.schema';
-import { BanRepositoryInterface } from '../../interfaces/ban.repository.interface';
+import { BanRepositoryInterface } from '../../shared/interfaces/ban.repository.interface';
 
 /* eslint-disable */
 export interface CommentsRepositoryInterface

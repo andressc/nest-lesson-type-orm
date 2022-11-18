@@ -1,4 +1,4 @@
-import { Sort } from '../../common/dto';
+import { Sort } from '../../../common/dto';
 import { ObjectId } from 'mongodb';
 
 export interface MainQueryRepositoryInterface<MODEL> {

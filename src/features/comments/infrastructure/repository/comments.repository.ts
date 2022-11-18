@@ -5,15 +5,25 @@ import { Comment, CommentModel } from '../../entity/comment.schema';
 import { CreateCommentExtendsDto } from '../../dto';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { ObjectId } from 'mongodb';
+import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
 
 @Injectable()
-export class CommentsRepository implements CommentsRepositoryInterface {
+export class CommentsRepository
+	extends MainRepository<CommentModel, CreateCommentExtendsDto>
+	implements CommentsRepositoryInterface
+{
 	constructor(
 		@InjectModel(Comment.name)
 		private readonly commentModel: Model<CommentModel>,
-	) {}
+	) {
+		super(commentModel);
+	}
 
-	async create(data: CreateCommentExtendsDto): Promise<CommentModel> {
+	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
+		await this.commentModel.updateMany({ userId }, { isBanned });
+	}
+
+	/*async create(data: CreateCommentExtendsDto): Promise<CommentModel> {
 		return new this.commentModel(data);
 	}
 
@@ -21,9 +31,6 @@ export class CommentsRepository implements CommentsRepositoryInterface {
 		return this.commentModel.findById(id);
 	}
 
-	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
-		await this.commentModel.updateMany({ userId }, { isBanned });
-	}
 	async save(commentModel: CommentModel): Promise<CommentModel> {
 		return commentModel.save();
 	}
@@ -34,5 +41,5 @@ export class CommentsRepository implements CommentsRepositoryInterface {
 
 	async deleteAll(): Promise<void> {
 		await this.commentModel.deleteMany();
-	}
+	}*/
 }
