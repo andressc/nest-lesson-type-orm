@@ -32,7 +32,7 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 		});
 	}
 
-	async validate(req: Request, payload: any): Promise<PasswordRecoveryTokenDataDto> {
+	async validate(req: Request, payload: { sub: string }): Promise<PasswordRecoveryTokenDataDto> {
 		const user: UserModel = await this.usersRepository.findUserByEmail(payload.sub);
 		if (!user) throw new EmailBadRequestException();
 

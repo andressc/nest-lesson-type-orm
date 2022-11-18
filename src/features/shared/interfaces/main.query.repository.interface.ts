@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 export interface MainQueryRepositoryInterface<MODEL> {
 	find(id: ObjectId): Promise<MODEL | null>;
 	findQuery(
-		searchString: any,
+		searchString: Record<string, unknown>,
 		sortBy: Sort,
 		skip: number,
 		pageSize: number,

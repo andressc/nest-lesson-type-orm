@@ -20,7 +20,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	async validate(payload: any) {
+	async validate(payload: { sub: string }) {
 		const user: UserModel = await this.usersRepository.find(payload.sub);
 		if (!user) throw new UnauthorizedException();
 

@@ -13,7 +13,7 @@ export class MainQueryRepository<MODEL> implements MainQueryRepositoryInterface<
 	}
 
 	async findQuery(
-		searchString: any,
+		searchString: Record<string, unknown>,
 		sortBy: Sort,
 		skip: number,
 		pageSize: number,

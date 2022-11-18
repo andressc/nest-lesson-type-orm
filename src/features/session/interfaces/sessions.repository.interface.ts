@@ -1,9 +1,10 @@
 import { SessionModel } from '../entity/session.schema';
 import { MainRepositoryInterface } from '../../shared/interfaces/main.repository.interface';
+import { CreateSessionDto } from '../dto/create-session.dto';
 
 /* eslint-disable */
 export interface SessionsRepositoryInterface
-	extends MainRepositoryInterface<SessionModel, any /* надо DTO запилить! */> {
+	extends MainRepositoryInterface<SessionModel, CreateSessionDto> {
 	findSession(
 		userId: string,
 		deviceId: string,

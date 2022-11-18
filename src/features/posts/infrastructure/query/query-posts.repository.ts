@@ -38,8 +38,7 @@ export class QueryPostsRepository
 	}
 
 	async findQuery(
-		searchString: any,
-		//sortBy: Sort,
+		searchString: Record<string, unknown>,
 		sortBy: any,
 		skip: number,
 		pageSize: number,

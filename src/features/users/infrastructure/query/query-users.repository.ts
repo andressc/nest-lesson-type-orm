@@ -17,7 +17,7 @@ export class QueryUsersRepository
 		super(userModel);
 	}
 
-	public searchTerm(login: string | undefined, email: string | undefined): any {
+	public searchTerm(login: string | undefined, email: string | undefined): Record<string, unknown> {
 		let searchString = {};
 
 		const searchLoginTerm = login
@@ -41,23 +41,4 @@ export class QueryUsersRepository
 
 		return searchString;
 	}
-
-	/*
-	async find(id: ObjectId): Promise<UserModel | null> {
-		return this.userModel.findById(id);
-	}
-
-	async findQuery(
-		searchString: any,
-		sortBy: Sort,
-		skip: number,
-		pageSize: number,
-	): Promise<UserModel[] | null> {
-		return this.userModel.find(searchString).sort(sortBy).skip(skip).limit(pageSize);
-	}
-
-	async count(searchString): Promise<number> {
-		return this.userModel.countDocuments(searchString);
-	}
-	 */
 }

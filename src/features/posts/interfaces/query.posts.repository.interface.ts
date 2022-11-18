@@ -6,15 +6,3 @@ import { LikesInfoExtended } from '../../../common/dto';
 export interface QueryPostsRepositoryInterface
 	extends CountLikesRepositoryInterface<PostModel, LikesInfoExtended> {
 }
-
-/*export abstract class QueryPostsRepositoryInterface {
-	abstract findPostModel(id: ObjectId): Promise<PostModel[] | null>;
-	abstract findPostQueryModel(
-		searchString: any,
-		sortBy: Sort,
-		skip: number,
-		pageSize: number,
-	): Promise<PostModel[] | null>;
-	abstract count(searchString): Promise<number>;
-	abstract countLikes(post: PostModel, currentUserId: string | null): LikesInfoExtended;
-}*/

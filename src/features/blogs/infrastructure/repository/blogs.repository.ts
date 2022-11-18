@@ -17,24 +17,4 @@ export class BlogsRepository
 	) {
 		super(blogModel);
 	}
-
-	/*async create(data: CreateBlogExtendsDto): Promise<BlogModel> {
-		return new this.blogModel(data);
-	}
-
-	async find(id: string): Promise<BlogModel | null> {
-		return this.blogModel.findById(id);
-	}
-
-	async save(blogModel: BlogModel): Promise<BlogModel> {
-		return blogModel.save();
-	}
-
-	async delete(blogModel: BlogModel): Promise<void> {
-		await blogModel.delete();
-	}
-
-	/*async deleteAll(): Promise<void> {
-		await this.blogModel.deleteMany();
-	}*/
 }

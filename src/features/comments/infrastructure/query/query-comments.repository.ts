@@ -38,7 +38,7 @@ export class QueryCommentsRepository
 	}
 
 	async findQuery(
-		searchString: any,
+		searchString: Record<string, unknown>,
 		sortBy: any,
 		skip: number,
 		pageSize: number,

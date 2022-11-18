@@ -22,24 +22,4 @@ export class CommentsRepository
 	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
 		await this.commentModel.updateMany({ userId }, { isBanned });
 	}
-
-	/*async create(data: CreateCommentExtendsDto): Promise<CommentModel> {
-		return new this.commentModel(data);
-	}
-
-	async find(id: string) {
-		return this.commentModel.findById(id);
-	}
-
-	async save(commentModel: CommentModel): Promise<CommentModel> {
-		return commentModel.save();
-	}
-
-	async delete(commentModel: CommentModel): Promise<void> {
-		await commentModel.delete();
-	}
-
-	async deleteAll(): Promise<void> {
-		await this.commentModel.deleteMany();
-	}*/
 }

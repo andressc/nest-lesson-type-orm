@@ -26,24 +26,4 @@ export class LikesRepository
 	async setBan(userId: ObjectId, isBanned: boolean): Promise<void> {
 		await this.likeModel.updateMany({ userId }, { isBanned });
 	}
-
-	/*async find(id: string): Promise<LikeModel | null> {
-		return this.likeModel.findById(id);
-	}
-
-	async create(data: CreateLikeExtendsDto): Promise<LikeModel> {
-		return new this.likeModel(data);
-	}
-
-	async save(likeModel: LikeModel): Promise<LikeModel> {
-		return likeModel.save();
-	}
-
-	async delete(likeModel: LikeModel): Promise<void> {
-		await likeModel.delete();
-	}
-
-	async deleteAll(): Promise<void> {
-		await this.likeModel.deleteMany();
-	}*/
 }

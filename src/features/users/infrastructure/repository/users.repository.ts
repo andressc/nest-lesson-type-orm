@@ -31,24 +31,4 @@ export class UsersRepository
 			confirmationCode,
 		});
 	}
-
-	/*async create(data: CreateUserExtendsDto): Promise<UserModel> {
-		return new this.userModel(data);
-	}
-
-	async find(id: string): Promise<UserModel | null> {
-		return this.userModel.findById(id);
-	}
-
-	async save(userModel: UserModel): Promise<UserModel> {
-		return userModel.save();
-	}
-
-	async delete(userModel: UserModel): Promise<void> {
-		await userModel.delete();
-	}
-
-	async deleteAll(): Promise<void> {
-		await this.userModel.deleteMany();
-	}*/
 }

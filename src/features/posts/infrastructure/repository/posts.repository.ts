@@ -17,24 +17,4 @@ export class PostsRepository
 	) {
 		super(postModel);
 	}
-
-	/*async create(data: CreatePostExtendsDto): Promise<PostModel> {
-		return new this.postModel(data);
-	}
-
-	async find(id: string): Promise<PostModel | null> {
-		return this.postModel.findById(id);
-	}
-
-	async save(postModel: PostModel): Promise<PostModel> {
-		return postModel.save();
-	}
-
-	async delete(postModel: PostModel): Promise<void> {
-		await postModel.delete();
-	}
-
-	async deleteAll(): Promise<void> {
-		await this.postModel.deleteMany();
-	}*/
 }
