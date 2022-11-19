@@ -14,7 +14,7 @@ import { ObjectIdDto } from '../../../common/dto';
 import { AccessTokenGuard } from '../../../common/guards';
 import { CreateBlogDto, QueryBlogDto, UpdateBlogDto } from '../dto';
 import { CreatePostOfBlogDto } from '../../posts/dto';
-import { CurrentUserId } from '../../../common/decorators/Param';
+import { CurrentUserId, CurrentUserLogin } from '../../../common/decorators/Param';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { FindOneBlogCommand } from '../application/queries/find-one-blog.handler';
 import { FindAllBlogCommand } from '../application/queries/find-all-blog.handler';
