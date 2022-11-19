@@ -29,16 +29,15 @@ import { ObjectIdsDto } from '../../../common/dto/object-ids.dto';
 import { RemovePostCommand } from '../../posts/application/commands/remove-post.handler';
 
 @Controller('blogger/blogs')
+@UseGuards(AccessTokenGuard)
 export class BloggerBlogsController {
 	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
-	@UseGuards(AccessTokenGuard)
 	@Get()
 	findAllBlogs(@Query() query: QueryBlogDto, @CurrentUserId() currentUserId) {
 		return this.queryBus.execute(new FindAllBlogCommand(query, currentUserId));
 	}
 
-	@UseGuards(AccessTokenGuard)
 	@Post()
 	async createBlog(
 		@Body() data: CreateBlogDto,
@@ -51,7 +50,6 @@ export class BloggerBlogsController {
 		return this.queryBus.execute(new FindOneBlogCommand(blogId));
 	}
 
-	@UseGuards(AccessTokenGuard)
 	@Post(':id/posts')
 	async createPostOfBlog(
 		@Body() data: CreatePostOfBlogDto,
@@ -63,7 +61,6 @@ export class BloggerBlogsController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(AccessTokenGuard)
 	@Put(':id')
 	async updateBlog(
 		@Param() param: ObjectIdDto,
@@ -74,14 +71,12 @@ export class BloggerBlogsController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(AccessTokenGuard)
 	@Delete(':id')
 	async removeBlog(@Param() param: ObjectIdDto, @CurrentUserId() currentUserId) {
 		await this.commandBus.execute(new RemoveBlogCommand(param.id, currentUserId));
 	}
 
 	@HttpCode(204)
-	@UseGuards(AccessTokenGuard)
 	@Put(':blogId/posts/:postId')
 	async updatePost(
 		@Param() param: ObjectIdsDto,
@@ -94,7 +89,6 @@ export class BloggerBlogsController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(AccessTokenGuard)
 	@Delete(':blogId/posts/:postId')
 	async removePost(@Param() param: ObjectIdsDto, @CurrentUserId() currentUserId) {
 		await this.commandBus.execute(new RemovePostCommand(param.blogId, param.postId, currentUserId));

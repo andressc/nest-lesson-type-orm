@@ -23,10 +23,10 @@ import { BanUnbanUserCommand } from '../application/commands/ban-unban-user.hand
 import { BanUnbanUserDto } from '../dto/ban-unban-user.dto';
 
 @Controller('sa/users')
+@UseGuards(BasicAuthGuard)
 export class UsersController {
 	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
-	@UseGuards(BasicAuthGuard)
 	@Post()
 	async createUser(@Body() data: CreateUserDto) {
 		const userId = await this.commandBus.execute(new CreateUserCommand(data, true));
@@ -39,14 +39,12 @@ export class UsersController {
 	}
 
 	@HttpCode(204)
-	@UseGuards(BasicAuthGuard)
 	@Put(':id/ban')
 	banUser(@Param() param: ObjectIdDto, @Body() data: BanUnbanUserDto) {
 		return this.commandBus.execute(new BanUnbanUserCommand(param.id, data));
 	}
 
 	@HttpCode(204)
-	@UseGuards(BasicAuthGuard)
 	@Delete(':id')
 	async removeUser(@Param() param: ObjectIdDto) {
 		await this.commandBus.execute(new RemoveUserCommand(param.id));

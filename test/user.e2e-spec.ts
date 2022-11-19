@@ -78,7 +78,10 @@ describe('BlogController (e2e)', () => {
 		let userId;
 
 		it('should return 200 and all user null', async () => {
-			const response = await request(app).get('/sa/users').expect(200);
+			const response = await request(app)
+				.get('/sa/users')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 0,
@@ -102,7 +105,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('get all users after add', async () => {
-			const allUsers = await request(app).get(`/sa/users`).expect(200);
+			const allUsers = await request(app)
+				.get(`/sa/users`)
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 			expect(allUsers.body).toEqual({
 				pagesCount: 1,
 				page: 1,
@@ -117,7 +123,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('should return 200 and all user null after delete', async () => {
-			const response = await request(app).get(`/sa/users`).expect(200);
+			const response = await request(app)
+				.get(`/sa/users`)
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 0,
@@ -210,9 +219,13 @@ describe('BlogController (e2e)', () => {
 		});
 	});
 
-	describe('add, delete user with not authorized basic', () => {
+	describe('add, delete, get user with not authorized basic', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
+		});
+
+		it('get users with not authorized basic', async () => {
+			await request(app).get(`/sa/users`).set('authorization', 'wrongAuth').expect(401);
 		});
 
 		it('add user with not authorized basic', async () => {
@@ -243,7 +256,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('should return 200 and all users', async () => {
-			const response = await request(app).get('/sa/users').expect(200);
+			const response = await request(app)
+				.get('/sa/users')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -261,6 +277,7 @@ describe('BlogController (e2e)', () => {
 		it('sorting and pages users', async () => {
 			const response = await request(app)
 				.get('/sa/users?sortBy=login&pageSize=2&sortDirection=asc')
+				.set('authorization', BASIC_AUTH)
 				.expect(200);
 
 			expect(response.body).toEqual({
@@ -288,7 +305,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from login first step', async () => {
-			const response = await request(app).get('/sa/users?searchLoginTerm=bLogin').expect(200);
+			const response = await request(app)
+				.get('/sa/users?searchLoginTerm=bLogin')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -300,7 +320,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from login second step', async () => {
-			const response = await request(app).get('/sa/users?searchLoginTerm=login').expect(200);
+			const response = await request(app)
+				.get('/sa/users?searchLoginTerm=login')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -318,6 +341,7 @@ describe('BlogController (e2e)', () => {
 		it('search users from email first step', async () => {
 			const response = await request(app)
 				.get('/sa/users?searchEmailTerm=cemail@email.ru')
+				.set('authorization', BASIC_AUTH)
 				.expect(200);
 
 			expect(response.body).toEqual({
@@ -330,7 +354,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from email second step', async () => {
-			const response = await request(app).get('/sa/users?searchEmailTerm=Email').expect(200);
+			const response = await request(app)
+				.get('/sa/users?searchEmailTerm=Email')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -348,6 +375,7 @@ describe('BlogController (e2e)', () => {
 		it('search users from email and login first step', async () => {
 			const response = await request(app)
 				.get('/sa/users?searchEmailTerm=cemai&searchLoginTerm=bLog')
+				.set('authorization', BASIC_AUTH)
 				.expect(200);
 
 			expect(response.body).toEqual({
@@ -362,6 +390,7 @@ describe('BlogController (e2e)', () => {
 		it('search users from email and login second step', async () => {
 			const response = await request(app)
 				.get('/sa/users?searchEmailTerm=bEmail&searchLoginTerm=blogin')
+				.set('authorization', BASIC_AUTH)
 				.expect(200);
 
 			expect(response.body).toEqual({
