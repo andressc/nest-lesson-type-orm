@@ -29,8 +29,14 @@ export class Blog {
 		this.description = data.description;
 		this.websiteUrl = data.websiteUrl;
 	}
+
+	bindBlogWithUser(userId: string, userLogin: string): void {
+		this.userId = userId;
+		this.userLogin = userLogin;
+	}
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 
 BlogSchema.methods.updateData = Blog.prototype.updateData;
+BlogSchema.methods.bindBlogWithUser = Blog.prototype.bindBlogWithUser;

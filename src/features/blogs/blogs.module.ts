@@ -17,8 +17,15 @@ import { BlogInjectionToken } from './application/blog.injection.token';
 import { AdminBlogsController } from './api/admin.blogs.controller';
 import { BlogsController } from './api/blogs.controller';
 import { FindAllBlogAdminHandler } from './application/queries/find-all-blog-admin.handler';
+import { BindBlogWithUserHandler } from './application/commands/bind-blog-with-user.handler';
+import { UsersModule } from '../users/users.module';
 
-export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
+export const CommandHandlers = [
+	CreateBlogHandler,
+	RemoveBlogHandler,
+	UpdateBlogHandler,
+	BindBlogWithUserHandler,
+];
 export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler, FindAllBlogAdminHandler];
 export const Repositories = [
 	{
@@ -36,6 +43,7 @@ export const Modules = [
 	MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 	CqrsModule,
 	PaginationModule,
+	UsersModule,
 ];
 
 @Module({
