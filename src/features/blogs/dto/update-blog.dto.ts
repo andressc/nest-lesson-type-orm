@@ -5,7 +5,7 @@ import { trim } from '../../../common/helpers';
 export class UpdateBlogDto {
 	@IsNotEmpty()
 	@Transform(({ value }) => trim(value))
-	@MaxLength(10)
+	@MaxLength(15)
 	name: string;
 
 	@IsNotEmpty()
