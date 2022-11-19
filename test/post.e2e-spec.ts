@@ -417,7 +417,7 @@ describe('PostController (e2e)', () => {
 		});
 	});
 
-	describe('delete, update blog with alien user', () => {
+	describe('add, delete, update blog with alien user', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
@@ -444,14 +444,26 @@ describe('PostController (e2e)', () => {
 			token = authToken.body.accessToken;
 		});
 
-		it('delete post with not authorized user (BLOGGER ENDPOINT)', async () => {
+		it('add post with alien user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.post(`/blogger/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					title: postData.title,
+					shortDescription: postData.shortDescription,
+					content: postData.content,
+				})
+				.expect(403);
+		});
+
+		it('delete post with alien user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
 				.delete(`/blogger/blogs/${blogData.id}/posts/${postDataId}`)
 				.set('authorization', `Bearer ${token}`)
 				.expect(403);
 		});
 
-		it('update post with not authorized user (BLOGGER ENDPOINT)', async () => {
+		it('update post with alien user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
 				.put(`/blogger/blogs/${blogData.id}/posts/${postDataId}`)
 				.set('authorization', `Bearer ${token}`)

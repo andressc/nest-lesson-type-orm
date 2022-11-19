@@ -5,11 +5,15 @@ import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { PostInjectionToken } from '../post.injection.token';
 
 export class CreatePostOfBlogCommand implements ICommand {
-	constructor(public data: CreatePostOfBlogDto, public blogId: string) {}
+	constructor(
+		public data: CreatePostOfBlogDto,
+		public blogId: string,
+		public currentUserId: string,
+	) {}
 }
 
 @CommandHandler(CreatePostOfBlogCommand)
@@ -25,6 +29,8 @@ export class CreatePostOfBlogHandler implements ICommandHandler<CreatePostOfBlog
 		await this.validationService.validate(command.data, CreatePostOfBlogDto);
 
 		const blog: BlogModel = await this.blogsService.findBlogOrErrorThrow(command.blogId);
+
+		if (blog.userId !== command.currentUserId) throw new ForbiddenException();
 
 		const newPost = await this.postsRepository.create({
 			...command.data,

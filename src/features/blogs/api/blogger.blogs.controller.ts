@@ -56,7 +56,9 @@ export class BloggerBlogsController {
 		@Param() param: ObjectIdDto,
 		@CurrentUserId() currentUserId,
 	) {
-		const postId = await this.commandBus.execute(new CreatePostOfBlogCommand(data, param.id));
+		const postId = await this.commandBus.execute(
+			new CreatePostOfBlogCommand(data, param.id, currentUserId),
+		);
 		return this.queryBus.execute(new FindOnePostCommand(postId, currentUserId));
 	}
 
