@@ -6,16 +6,19 @@ import { getModelToken } from '@nestjs/mongoose';
 import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
-import { postCreator } from './dbSeeding/postCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
-import { BASIC_AUTH } from './constants';
 import { Blog } from '../src/features/blogs/entity/blog.schema';
 import { Post } from '../src/features/posts/entity/post.schema';
+import { userCreator } from './dbSeeding/userCreator';
+import { User } from '../src/features/users/entity/user.schema';
+import { postCreator } from './dbSeeding/postCreator';
+import { BASIC_AUTH } from './constants';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 	let BlogModel: Model<Blog>;
 	let PostModel: Model<Post>;
+	let UserModel: Model<User>;
 	let connection: Connection;
 	let app: INestApplication;
 	let module: TestingModule;
@@ -29,6 +32,8 @@ describe('PostController (e2e)', () => {
 		createdAt: expect.any(String),
 	};
 
+	const userDataId = new ObjectId().toString();
+	const userDataIdAlien = new ObjectId().toString();
 	const userDataLogin = {
 		login: 'login',
 		email: 'email@email.ru',
@@ -82,6 +87,7 @@ describe('PostController (e2e)', () => {
 		newestLikes: [],
 	};
 
+	const postDataId = new ObjectId().toString();
 	const postData = {
 		id: expect.any(String),
 		title: 'title',
@@ -112,10 +118,10 @@ describe('PostController (e2e)', () => {
 				field: 'content',
 				message: expect.any(String),
 			},
-			{
+			/*{
 				field: 'blogId',
 				message: expect.any(String),
-			},
+			},*/
 		],
 	};
 
@@ -150,6 +156,7 @@ describe('PostController (e2e)', () => {
 
 		BlogModel = module.get<Model<Blog>>(getModelToken(Blog.name));
 		PostModel = module.get<Model<Post>>(getModelToken(Post.name));
+		UserModel = module.get<Model<User>>(getModelToken(User.name));
 	});
 
 	afterAll(async () => {
@@ -161,20 +168,24 @@ describe('PostController (e2e)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+			await BlogModel.create(
+				blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id, userDataId),
+			);
 		});
 
 		let postId;
+		let token;
 
-		it('should return 404 for not existing post', async () => {
+		it('should return 404 for not existing post (PUBLIC ENDPOINT)', async () => {
 			await request(app).get(`/posts/${randomId}`).expect(404);
 		});
 
-		it('should return 404 for not existing post', async () => {
+		it('should return 404 for not existing post (PUBLIC ENDPOINT)', async () => {
 			await request(app).get(`/posts/${randomId}/comments`).expect(404);
 		});
 
-		it('should return 200 and all posts null', async () => {
+		it('should return 200 and all posts null (PUBLIC ENDPOINT)', async () => {
 			const response = await request(app).get('/posts').expect(200);
 
 			expect(response.body).toEqual({
@@ -186,15 +197,27 @@ describe('PostController (e2e)', () => {
 			});
 		});
 
-		it('add new post', async () => {
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add new post (BLOGGER ENDPOINT)', async () => {
 			const createdPost = await request(app)
-				.post('/posts')
-				.set('authorization', BASIC_AUTH)
+				.post(`/blogger/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
 					content: postData.content,
-					blogId: blogData.id,
 				})
 				.expect(201);
 
@@ -203,7 +226,7 @@ describe('PostController (e2e)', () => {
 			postId = createdPost.body.id;
 		});
 
-		it('get all posts after add', async () => {
+		it('get all posts after add (PUBLIC ENDPOINT)', async () => {
 			const allPosts = await request(app).get(`/posts`).expect(200);
 
 			expect(allPosts.body).toEqual({
@@ -215,21 +238,27 @@ describe('PostController (e2e)', () => {
 			});
 		});
 
-		it('find existing post by id after add', async () => {
+		it('find existing post by id after add (PUBLIC ENDPOINT)', async () => {
 			const blog = await request(app).get(`/posts/${postId}`).expect(200);
 			expect(blog.body).toEqual(postData);
 		});
 
-		it('delete post by id', async () => {
-			await request(app).delete(`/posts/${postId}`).set('authorization', BASIC_AUTH).expect(204);
+		it('delete post by id (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogData.id}/posts/${postId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(204);
 		});
 
-		it('find not existing post by id after delete', async () => {
+		it('find not existing post by id after delete (PUBLIC ENDPOINT)', async () => {
 			await request(app).get(`/posts/${postId}`).expect(404);
 		});
 
-		it('delete a post that does not exist', async () => {
-			await request(app).delete(`/posts/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
+		it('delete a post that does not exist (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogData.id}/posts/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(404);
 		});
 	});
 
@@ -239,43 +268,59 @@ describe('PostController (e2e)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+
 			await BlogModel.insertMany([
-				blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id),
-				blogCreator('newName', 1, blogData.youtubeUrl, blogIdNew),
+				blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id, userDataId),
+				blogCreator('newName', 1, blogData.youtubeUrl, blogIdNew, userDataId),
 			]);
 		});
 
 		let postId;
+		let token;
 
-		it('add new post', async () => {
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add new post (BLOGGER ENDPOINT)', async () => {
 			const createdPost = await request(app)
-				.post('/posts')
-				.set('authorization', BASIC_AUTH)
+				.post(`/blogger/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					title: postData.title,
 					shortDescription: postData.shortDescription,
 					content: postData.content,
-					blogId: blogData.id,
 				})
 				.expect(201);
+
+			expect(createdPost.body).toEqual(postData);
 
 			postId = createdPost.body.id;
 		});
 
-		it('update post after add', async () => {
+		it('update post after add (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/posts/${postId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${blogData.id}/posts/${postId}`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					title: 'new title',
 					shortDescription: 'new Short description',
 					content: 'new Content',
-					blogId: blogIdNew,
 				})
 				.expect(204);
 		});
 
-		it('get post after update', async () => {
+		it('get post after update (PUBLIC ENDPOINT)', async () => {
 			const getUpdatedPost = await request(app).get(`/posts/${postId}`).expect(200);
 
 			expect(getUpdatedPost.body).toEqual({
@@ -283,15 +328,13 @@ describe('PostController (e2e)', () => {
 				title: 'new title',
 				shortDescription: 'new Short description',
 				content: 'new Content',
-				blogId: blogIdNew,
-				blogName: 'newName',
 			});
 		});
 
-		it('update a post that does not exist', async () => {
+		it('update a post that does not exist (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/posts/${randomId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${blogData.id}/posts/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					title: 'new title',
 					shortDescription: 'new Short description',
@@ -305,32 +348,43 @@ describe('PostController (e2e)', () => {
 	describe('add, update new post with incorrect body data', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+			await BlogModel.create(
+				blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id, userDataId),
+			);
 		});
 
-		it('add a new post with incorrect body data', async () => {
+		let token;
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add a new post with incorrect body data (BLOGGER ENDPOINT)', async () => {
 			const addPostError = await request(app)
-				.post('/posts')
-				.set('authorization', BASIC_AUTH)
+				.post(`/blogger/blogs/${blogData.id}/posts`)
+				.set('authorization', `Bearer ${token}`)
 				.expect(400);
 
 			expect(addPostError.body).toEqual(postErrorsMessages);
 		});
 
-		it('update post with incorrect body data', async () => {
+		it('update post with incorrect body data (BLOGGER ENDPOINT)', async () => {
 			const updatePostError = await request(app)
-				.put(`/posts/${randomId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${blogData.id}/posts/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
 				.expect(400);
 
-			expect(updatePostError.body).toEqual({
-				errorsMessages: [
-					...postErrorsMessages.errorsMessages,
-					{
-						field: 'blogId',
-						message: expect.any(String),
-					},
-				],
-			});
+			expect(updatePostError.body).toEqual(postErrorsMessages);
 		});
 	});
 
@@ -339,54 +393,70 @@ describe('PostController (e2e)', () => {
 			await connection.dropDatabase();
 		});
 
-		it('add post with not authorized user', async () => {
+		it('add post with not authorized user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.post('/posts')
+				.post(`/blogger/blogs/${blogData.id}/posts`)
 				.set('authorization', 'wrongAuth')
 				.send(postData)
 				.expect(401);
 		});
 
-		it('delete post with not authorized user', async () => {
-			await request(app).delete(`/posts/${randomId}`).set('authorization', 'wrongAuth').expect(401);
+		it('delete post with not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogData.id}/posts/${randomId}`)
+				.set('authorization', 'wrongAuth')
+				.expect(401);
 		});
 
-		it('update post with not authorized user', async () => {
+		it('update post with not authorized user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/posts/${randomId}`)
+				.put(`/blogger/blogs/${blogData.id}/posts/${randomId}`)
 				.set('authorization', 'wrongAuth')
 				.send(postData)
 				.expect(401);
 		});
 	});
 
-	describe('create new post for specific blog', () => {
+	describe('delete, update blog with alien user', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+
+			await BlogModel.create(
+				blogCreator('newName', 1, blogData.youtubeUrl, blogData.id, userDataIdAlien),
+			);
+			await PostModel.create(postCreator('aTitle', postData, 1, postDataId));
 		});
 
-		it('create new post for specific blog with not authorized user', async () => {
-			await request(app)
-				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', 'wrongAuth')
-				.send(postData)
-				.expect(401);
-		});
+		let token;
 
-		it('create new post for specific blog', async () => {
-			const createdPost = await request(app)
-				.post(`/blogs/${blogData.id}/posts`)
-				.set('authorization', BASIC_AUTH)
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
 				.send({
-					title: postData.title,
-					shortDescription: postData.shortDescription,
-					content: postData.content,
+					login: userDataLogin.login,
+					password: userDataLogin.password,
 				})
-				.expect(201);
+				.expect(200);
 
-			expect(createdPost.body).toEqual(postData);
+			token = authToken.body.accessToken;
+		});
+
+		it('delete post with not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogData.id}/posts/${postDataId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(403);
+		});
+
+		it('update post with not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.put(`/blogger/blogs/${blogData.id}/posts/${postDataId}`)
+				.set('authorization', `Bearer ${token}`)
+				.send(postData)
+				.expect(403);
 		});
 	});
 
@@ -404,7 +474,7 @@ describe('PostController (e2e)', () => {
 
 		it('add new user', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -559,12 +629,12 @@ describe('PostController (e2e)', () => {
 		});
 
 		it('should return 401 with not authorized at users ban', async () => {
-			await request(app).put(`/users/${userId}/ban`).expect(401);
+			await request(app).put(`/sa/users/${userId}/ban`).expect(401);
 		});
 
 		it('should return 400 with incorrect body data from ban user', async () => {
 			const usersBan = await request(app)
-				.put(`/users/${userId}/ban`)
+				.put(`/sa/users/${userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.expect(400);
 
@@ -573,7 +643,7 @@ describe('PostController (e2e)', () => {
 
 		it('should return 404 with user not found', async () => {
 			const usersBan = await request(app)
-				.put(`/users/${randomId}/ban`)
+				.put(`/sa/users/${randomId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: false, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(404);
@@ -590,7 +660,7 @@ describe('PostController (e2e)', () => {
 
 		it('should return 204 with user banned', async () => {
 			await request(app)
-				.put(`/users/${userId}/ban`)
+				.put(`/sa/users/${userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(204);

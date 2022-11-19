@@ -1,5 +1,5 @@
 import { QueryDto } from './query.dto';
-import { SortOrder } from 'mongoose';
+import { Expression, SortOrder } from 'mongoose';
 
 export type Sort =
 	| string
@@ -7,6 +7,11 @@ export type Sort =
 			[key: string]: SortOrder | { $meta: 'textScore' };
 	  }
 	| [string, SortOrder][];
+
+export type SortAggregate =
+	| string
+	| Record<string, 1 | -1 | Expression.Meta>
+	| Record<string, SortOrder>;
 
 export class PaginationDto<T> {
 	pagesCount: number;

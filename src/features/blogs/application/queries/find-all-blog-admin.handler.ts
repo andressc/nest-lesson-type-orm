@@ -1,4 +1,4 @@
-import { QueryBlogDto, ResponseBlogDto } from '../../dto';
+import { QueryBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { BlogModel } from '../../entity/blog.schema';
@@ -6,31 +6,29 @@ import { PaginationService } from '../../../../shared/pagination/application/pag
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
 import { Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';
+import { ResponseBlogAdminDto } from '../../dto/response-blog-admin.dto';
 
-export class FindAllBlogCommand {
-	constructor(public query: QueryBlogDto, public currentUserId?: string) {}
+export class FindAllBlogAdminCommand {
+	constructor(public query: QueryBlogDto) {}
 }
 
-@QueryHandler(FindAllBlogCommand)
-export class FindAllBlogHandler implements IQueryHandler<FindAllBlogCommand> {
+@QueryHandler(FindAllBlogAdminCommand)
+export class FindAllBlogAdminHandler implements IQueryHandler<FindAllBlogAdminCommand> {
 	constructor(
 		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 
-	async execute(command: FindAllBlogCommand): Promise<PaginationDto<ResponseBlogDto[]>> {
-		const blogCurrentUser = command.currentUserId ? { userId: command.currentUserId } : {};
-
+	async execute(command: FindAllBlogAdminCommand): Promise<PaginationDto<ResponseBlogAdminDto[]>> {
 		const searchString = command.query.searchNameTerm
 			? {
 					name: {
 						$regex: command.query.searchNameTerm,
 						$options: 'i',
 					},
-					...blogCurrentUser,
 			  }
-			: blogCurrentUser;
+			: {};
 
 		const totalCount: number = await this.queryBlogsRepository.count(searchString);
 		const paginationData: PaginationCalc = this.paginationService.pagination({
@@ -56,6 +54,10 @@ export class FindAllBlogHandler implements IQueryHandler<FindAllBlogCommand> {
 				description: v.description,
 				websiteUrl: v.websiteUrl,
 				createdAt: v.createdAt,
+				blogOwnerInfo: {
+					userId: v.userId,
+					userLogin: v.userLogin,
+				},
 			})),
 		};
 	}

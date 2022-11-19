@@ -4,11 +4,11 @@ import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../entity/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';
 
 export class UpdateBlogCommand {
-	constructor(public id: string, public data: UpdateBlogDto) {}
+	constructor(public id: string, public data: UpdateBlogDto, public currentUserId: string) {}
 }
 
 @CommandHandler(UpdateBlogCommand)
@@ -24,6 +24,8 @@ export class UpdateBlogHandler implements ICommandHandler<UpdateBlogCommand> {
 		await this.validationService.validate(command.data, UpdateBlogDto);
 
 		const blog: BlogModel = await this.blogsService.findBlogOrErrorThrow(command.id);
+		if (blog.userId !== command.currentUserId) throw new ForbiddenException();
+
 		blog.updateData(command.data);
 		await this.blogsRepository.save(blog);
 	}

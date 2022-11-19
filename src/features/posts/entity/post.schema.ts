@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UpdatePostExtendsDto } from '../dto';
 import { LikesDto } from '../../../common/dto';
+import { UpdatePostOfBlogDto } from '../dto/update-post-of-blog.dto';
 
 export type PostModel = Post & Document;
 
@@ -28,12 +28,10 @@ export class Post {
 	@Prop({ type: [] })
 	likes: LikesDto[];
 
-	updateData(data: UpdatePostExtendsDto): void {
+	updateData(data: UpdatePostOfBlogDto): void {
 		this.title = data.title;
 		this.shortDescription = data.shortDescription;
 		this.content = data.content;
-		this.blogId = data.blogId;
-		this.blogName = data.blogName;
 	}
 }
 

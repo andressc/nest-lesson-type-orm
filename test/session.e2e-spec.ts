@@ -61,7 +61,7 @@ describe('PostController (e2 e)', () => {
 
 		it('create new user 1', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -69,7 +69,7 @@ describe('PostController (e2 e)', () => {
 
 		it('create new user 2', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin2)
 				.expect(201);

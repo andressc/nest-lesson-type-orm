@@ -9,10 +9,13 @@ import { blogCreator } from './dbSeeding/blogCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
 import { Blog } from '../src/features/blogs/entity/blog.schema';
+import { userCreator } from './dbSeeding/userCreator';
+import { User } from '../src/features/users/entity/user.schema';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
 	let BlogModel: Model<Blog>;
+	let UserModel: Model<User>;
 	let connection: Connection;
 	let app: INestApplication;
 	let module: TestingModule;
@@ -21,9 +24,17 @@ describe('BlogController (e2e)', () => {
 
 	const blogData = {
 		id: expect.any(String),
-		youtubeUrl: 'https://youtube.com/343344343fvcxv32rfdsvd',
 		name: 'name',
+		description: 'description',
+		websiteUrl: 'https://youtube.com/343344343fvcxv32rfdsvd',
 		createdAt: expect.any(String),
+	};
+
+	const userDataId = new ObjectId().toString();
+	const userDataLogin = {
+		login: 'login',
+		email: 'email@email.ru',
+		password: '123456',
 	};
 
 	const blogErrorsMessages = {
@@ -33,7 +44,11 @@ describe('BlogController (e2e)', () => {
 				message: expect.any(String),
 			},
 			{
-				field: 'youtubeUrl',
+				field: 'websiteUrl',
+				message: expect.any(String),
+			},
+			{
+				field: 'description',
 				message: expect.any(String),
 			},
 		],
@@ -47,6 +62,7 @@ describe('BlogController (e2e)', () => {
 		module = dataApp.module;
 
 		BlogModel = module.get<Model<Blog>>(getModelToken(Blog.name));
+		UserModel = module.get<Model<User>>(getModelToken(User.name));
 	});
 
 	afterAll(async () => {
@@ -54,18 +70,12 @@ describe('BlogController (e2e)', () => {
 		await dataApp.app.close();
 	});
 
-	describe('add, get, delete new blog', () => {
+	/*describe('get blog for superAdmin (SUPER ADMIN ENDPOINT)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 		});
 
-		let blogId;
-
-		it('should return 404 for not existing blog', async () => {
-			await request(app).get(`/blogs/${randomId}`).expect(404);
-		});
-
-		it('should return 200 and all blogs null', async () => {
+		it('should return 200 and all blogs null (PUBLIC ENDPOINT)', async () => {
 			const response = await request(app).get('/blogs').expect(200);
 
 			expect(response.body).toEqual({
@@ -76,14 +86,87 @@ describe('BlogController (e2e)', () => {
 				items: [],
 			});
 		});
+	});*/
 
-		it('add new blog', async () => {
-			const blog = await request(app)
-				.post('/blogs')
+	describe('get blog', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+		});
+
+		it('should return 200 and all blogs null (PUBLIC ENDPOINT)', async () => {
+			const response = await request(app).get('/blogs').expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 0,
+				page: 1,
+				pageSize: 10,
+				totalCount: 0,
+				items: [],
+			});
+		});
+	});
+
+	describe('add, get, delete new blog', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl));
+		});
+
+		let blogId;
+		let token;
+		let userId;
+
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+
+			userId = user.body.id;
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('should return 404 for not existing blog (PUBLIC ENDPOINT)', async () => {
+			await request(app).get(`/blogs/${randomId}`).expect(404);
+		});
+
+		it('should return 200 and all blogs null (BLOGGER ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 0,
+				page: 1,
+				pageSize: 10,
+				totalCount: 0,
+				items: [],
+			});
+		});
+
+		it('add new blog (BLOGGER ENDPOINT)', async () => {
+			const blog = await request(app)
+				.post('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					name: blogData.name,
-					youtubeUrl: blogData.youtubeUrl,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
 				})
 				.expect(201);
 
@@ -92,8 +175,23 @@ describe('BlogController (e2e)', () => {
 			blogId = blog.body.id;
 		});
 
-		it('get all blogs after add', async () => {
+		it('get all blogs after add (PUBLIC ENDPOINT)', async () => {
 			const allBlogs = await request(app).get('/blogs').expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 2,
+				items: [blogData, blogData],
+			});
+		});
+
+		it('get all blogs after add (BLOGGER ENDPOINT)', async () => {
+			const allBlogs = await request(app)
+				.get('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
 
 			expect(allBlogs.body).toEqual({
 				pagesCount: 1,
@@ -104,21 +202,27 @@ describe('BlogController (e2e)', () => {
 			});
 		});
 
-		it('find existing blog by id after add', async () => {
+		it('find existing blog by id after add (PUBLIC ENDPOINT)', async () => {
 			const blog = await request(app).get(`/blogs/${blogId}`).expect(200);
 			expect(blog.body).toEqual(blogData);
 		});
 
-		it('delete blog by id', async () => {
-			await request(app).delete(`/blogs/${blogId}`).set('authorization', BASIC_AUTH).expect(204);
+		it('delete blog by id (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(204);
 		});
 
-		it('find not existing blog by id after delete', async () => {
+		it('find not existing blog by id after delete (PUBLIC ENDPOINT)', async () => {
 			await request(app).get(`/blogs/${blogId}`).expect(404);
 		});
 
-		it('delete a blog that does not exist', async () => {
-			await request(app).delete(`/blogs/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
+		it('delete a blog that does not exist (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(404);
 		});
 	});
 
@@ -128,48 +232,77 @@ describe('BlogController (e2e)', () => {
 		});
 
 		let blogId;
+		let token;
+		let userId;
 
-		it('add new blog', async () => {
-			const blog = await request(app)
-				.post('/blogs')
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+
+			userId = user.body.id;
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add new blog (BLOGGER ENDPOINT)', async () => {
+			const blog = await request(app)
+				.post('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					name: blogData.name,
-					youtubeUrl: blogData.youtubeUrl,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
 				})
 				.expect(201);
 
 			blogId = blog.body.id;
 		});
 
-		it('update blog after add', async () => {
+		it('update blog after add (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/blogs/${blogId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${blogId}`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					name: 'newName',
-					youtubeUrl: 'https://www.youtube.com/channel/aaaaaaaaaaaaaaaaaaaa',
+					description: 'newDescription',
+					websiteUrl: 'https://www.youtube.com/channel/aaaaaaaaaaaaaaaaaaaa',
 				})
 				.expect(204);
 		});
 
-		it('get blog after update', async () => {
+		it('get blog after update (PUBLIC ENDPOINT)', async () => {
 			const blog = await request(app).get(`/blogs/${blogId}`).expect(200);
 
 			expect(blog.body).toEqual({
 				...blogData,
 				name: 'newName',
-				youtubeUrl: 'https://www.youtube.com/channel/aaaaaaaaaaaaaaaaaaaa',
+				description: 'newDescription',
+				websiteUrl: 'https://www.youtube.com/channel/aaaaaaaaaaaaaaaaaaaa',
 			});
 		});
 
-		it('update a blog that does not exist', async () => {
+		it('update a blog that does not exist (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/blogs/${randomId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
 					name: blogData.name,
-					youtubeUrl: blogData.youtubeUrl,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
 				})
 				.expect(404);
 		});
@@ -180,24 +313,50 @@ describe('BlogController (e2e)', () => {
 			await connection.dropDatabase();
 		});
 
-		it('add a new blog with incorrect body data', async () => {
-			const blogError = await request(app)
-				.post('/blogs')
+		let token;
+		let userId;
+
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+
+			userId = user.body.id;
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
 				.send({
-					youtubeUrl: 'invalid-url',
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add a new blog with incorrect body data (BLOGGER ENDPOINT)', async () => {
+			const blogError = await request(app)
+				.post('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					websiteUrl: 'invalid-url',
 				})
 				.expect(400);
 
 			expect(blogError.body).toEqual(blogErrorsMessages);
 		});
 
-		it('update blog with incorrect body data', async () => {
+		it('update blog with incorrect body data (BLOGGER ENDPOINT)', async () => {
 			const blogError = await request(app)
-				.put(`/blogs/${randomId}`)
-				.set('authorization', BASIC_AUTH)
+				.put(`/blogger/blogs/${randomId}`)
+				.set('authorization', `Bearer ${token}`)
 				.send({
-					youtubeUrl: 'invalid-url',
+					websiteUrl: 'invalid-url',
 				})
 				.expect(400);
 
@@ -210,39 +369,98 @@ describe('BlogController (e2e)', () => {
 			await connection.dropDatabase();
 		});
 
-		it('add blog with not authorized user', async () => {
+		it('should return 401 get all blogs with not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app).get('/blogger/blogs').set('authorization', `Wrong Auth`).expect(401);
+		});
+
+		it('add blog with not authorized user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.post('/blogs')
+				.post('/blogger/blogs')
 				.set('authorization', 'wrongAuth')
 				.send(blogData)
 				.expect(401);
 		});
 
-		it('delete blog with not authorized user', async () => {
-			await request(app).delete(`/blogs/${randomId}`).set('authorization', 'wrongAuth').expect(401);
+		it('delete blog with not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${randomId}`)
+				.set('authorization', 'wrongAuth')
+				.expect(401);
 		});
 
-		it('update blog with not authorized user', async () => {
+		it('update blog with not authorized user (BLOGGER ENDPOINT)', async () => {
 			await request(app)
-				.put(`/blogs/${randomId}`)
+				.put(`/blogger/blogs/${randomId}`)
 				.set('authorization', 'wrongAuth')
 				.send(blogData)
 				.expect(401);
 		});
 	});
 
-	describe('get all blogs and sorting', () => {
+	describe('delete, update blog with alien user', () => {
+		const blogId = new ObjectId().toString();
+		beforeAll(async () => {
+			await connection.dropDatabase();
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogId));
+		});
+		let token;
+		let userId;
+
+		it('add new user', async () => {
+			const user = await request(app)
+				.post('/sa/users')
+				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+
+			userId = user.body.id;
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('delete blog with alien user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.delete(`/blogger/blogs/${blogId}`)
+				.set('authorization', `Bearer ${token}`)
+				.expect(403);
+		});
+
+		it('update blog with alien user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.put(`/blogger/blogs/${blogId}`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					name: blogData.name,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
+				})
+				.expect(403);
+		});
+	});
+
+	describe('get all blogs and sorting (PUBLIC ENDPOINT)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
 			await BlogModel.insertMany([
-				blogCreator('aName', 1, blogData.youtubeUrl),
-				blogCreator('cName', 2, blogData.youtubeUrl),
-				blogCreator('bName', 3, blogData.youtubeUrl),
+				blogCreator('aName', 1, blogData.websiteUrl),
+				blogCreator('cName', 2, blogData.websiteUrl),
+				blogCreator('bName', 3, blogData.websiteUrl),
 			]);
 		});
 
-		it('should return 200 and all blogs', async () => {
+		it('should return 200 and all blogs (PUBLIC ENDPOINT)', async () => {
 			const response = await request(app).get('/blogs').expect(200);
 
 			expect(response.body).toEqual({
@@ -258,9 +476,74 @@ describe('BlogController (e2e)', () => {
 			});
 		});
 
-		it('sorting and pages blogs', async () => {
+		it('sorting and pages blogs (PUBLIC ENDPOINT)', async () => {
 			const response = await request(app)
 				.get('/blogs?sortBy=name&pageSize=2&sortDirection=asc')
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 2,
+				page: 1,
+				pageSize: 2,
+				totalCount: 3,
+				items: [
+					{ ...blogData, name: 'aName' },
+					{ ...blogData, name: 'bName' },
+				],
+			});
+		});
+	});
+
+	describe('get all blogs and sorting (BLOGGER ENDPOINT)', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+			await BlogModel.insertMany([
+				blogCreator('aName', 1, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('cName', 2, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('bName', 3, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+			]);
+		});
+
+		let token;
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					login: userDataLogin.login,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('should return 200 and all blogs (BLOGGER ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 3,
+				items: [
+					{ ...blogData, name: 'bName' },
+					{ ...blogData, name: 'cName' },
+					{ ...blogData, name: 'aName' },
+				],
+			});
+		});
+
+		it('sorting and pages blogs (BLOGGER ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/blogger/blogs?sortBy=name&pageSize=2&sortDirection=asc')
+				.set('authorization', `Bearer ${token}`)
 				.expect(200);
 
 			expect(response.body).toEqual({

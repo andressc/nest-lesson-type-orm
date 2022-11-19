@@ -8,7 +8,11 @@ import { Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';
 
 export class CreateBlogCommand implements ICommand {
-	constructor(public data: CreateBlogDto) {}
+	constructor(
+		public data: CreateBlogDto,
+		public currentUserId: string,
+		public currentUserLogin: string,
+	) {}
 }
 
 @CommandHandler(CreateBlogCommand)
@@ -24,6 +28,8 @@ export class CreateBlogHandler implements ICommandHandler<CreateBlogCommand> {
 
 		const newBlog: BlogModel = await this.blogsRepository.create({
 			...command.data,
+			userId: command.currentUserId,
+			userLogin: command.currentUserLogin,
 			createdAt: createDate(),
 		});
 		const result: BlogModel = await this.blogsRepository.save(newBlog);

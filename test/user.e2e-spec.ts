@@ -78,7 +78,7 @@ describe('BlogController (e2e)', () => {
 		let userId;
 
 		it('should return 200 and all user null', async () => {
-			const response = await request(app).get('/users').expect(200);
+			const response = await request(app).get('/sa/users').expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 0,
@@ -91,7 +91,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add new user', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -102,7 +102,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('get all users after add', async () => {
-			const allUsers = await request(app).get(`/users`).expect(200);
+			const allUsers = await request(app).get(`/sa/users`).expect(200);
 			expect(allUsers.body).toEqual({
 				pagesCount: 1,
 				page: 1,
@@ -113,11 +113,11 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete user by id', async () => {
-			await request(app).delete(`/users/${userId}`).set('authorization', BASIC_AUTH).expect(204);
+			await request(app).delete(`/sa/users/${userId}`).set('authorization', BASIC_AUTH).expect(204);
 		});
 
 		it('should return 200 and all user null after delete', async () => {
-			const response = await request(app).get(`/users`).expect(200);
+			const response = await request(app).get(`/sa/users`).expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 0,
@@ -129,7 +129,10 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('delete a user that does not exist', async () => {
-			await request(app).delete(`/users/${randomId}`).set('authorization', BASIC_AUTH).expect(404);
+			await request(app)
+				.delete(`/sa/users/${randomId}`)
+				.set('authorization', BASIC_AUTH)
+				.expect(404);
 		});
 	});
 
@@ -140,7 +143,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add new user wrong body data', async () => {
 			const addBlogError = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.expect(400);
 
@@ -149,7 +152,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -157,7 +160,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add a user that already exists login', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send({ ...userDataLogin, email: 'email2@mail.ru' })
 				.expect(400);
@@ -174,7 +177,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add a user that already exists email', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send({ ...userDataLogin, login: 'login2' })
 				.expect(400);
@@ -191,7 +194,7 @@ describe('BlogController (e2e)', () => {
 
 		it('add a user that already exists email and login', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(400);
@@ -214,14 +217,17 @@ describe('BlogController (e2e)', () => {
 
 		it('add user with not authorized basic', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', 'wrongAuth')
 				.send(userDataLogin)
 				.expect(401);
 		});
 
 		it('delete user with not authorized basic', async () => {
-			await request(app).delete(`/users/${randomId}`).set('authorization', 'wrongAuth').expect(401);
+			await request(app)
+				.delete(`/sa/users/${randomId}`)
+				.set('authorization', 'wrongAuth')
+				.expect(401);
 		});
 	});
 
@@ -237,7 +243,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('should return 200 and all users', async () => {
-			const response = await request(app).get('/users').expect(200);
+			const response = await request(app).get('/sa/users').expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -254,7 +260,7 @@ describe('BlogController (e2e)', () => {
 
 		it('sorting and pages users', async () => {
 			const response = await request(app)
-				.get('/users?sortBy=login&pageSize=2&sortDirection=asc')
+				.get('/sa/users?sortBy=login&pageSize=2&sortDirection=asc')
 				.expect(200);
 
 			expect(response.body).toEqual({
@@ -282,7 +288,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from login first step', async () => {
-			const response = await request(app).get('/users?searchLoginTerm=bLogin').expect(200);
+			const response = await request(app).get('/sa/users?searchLoginTerm=bLogin').expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -294,7 +300,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from login second step', async () => {
-			const response = await request(app).get('/users?searchLoginTerm=login').expect(200);
+			const response = await request(app).get('/sa/users?searchLoginTerm=login').expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -310,7 +316,9 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from email first step', async () => {
-			const response = await request(app).get('/users?searchEmailTerm=cemail@email.ru').expect(200);
+			const response = await request(app)
+				.get('/sa/users?searchEmailTerm=cemail@email.ru')
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -322,7 +330,7 @@ describe('BlogController (e2e)', () => {
 		});
 
 		it('search users from email second step', async () => {
-			const response = await request(app).get('/users?searchEmailTerm=Email').expect(200);
+			const response = await request(app).get('/sa/users?searchEmailTerm=Email').expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 1,
@@ -339,7 +347,7 @@ describe('BlogController (e2e)', () => {
 
 		it('search users from email and login first step', async () => {
 			const response = await request(app)
-				.get('/users?searchEmailTerm=cemai&searchLoginTerm=bLog')
+				.get('/sa/users?searchEmailTerm=cemai&searchLoginTerm=bLog')
 				.expect(200);
 
 			expect(response.body).toEqual({
@@ -353,7 +361,7 @@ describe('BlogController (e2e)', () => {
 
 		it('search users from email and login second step', async () => {
 			const response = await request(app)
-				.get('/users?searchEmailTerm=bEmail&searchLoginTerm=blogin')
+				.get('/sa/users?searchEmailTerm=bEmail&searchLoginTerm=blogin')
 				.expect(200);
 
 			expect(response.body).toEqual({

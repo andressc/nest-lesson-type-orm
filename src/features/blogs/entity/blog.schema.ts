@@ -10,14 +10,24 @@ export class Blog {
 	name: string;
 
 	@Prop({ required: true })
-	youtubeUrl: string;
+	websiteUrl: string;
 
 	@Prop({ required: true })
 	createdAt: string;
 
+	@Prop({ required: true })
+	description: string;
+
+	@Prop({ required: true })
+	userId: string;
+
+	@Prop({ required: true })
+	userLogin: string;
+
 	updateData(data: UpdateBlogDto): void {
 		this.name = data.name;
-		this.youtubeUrl = data.youtubeUrl;
+		this.description = data.description;
+		this.websiteUrl = data.websiteUrl;
 	}
 }
 

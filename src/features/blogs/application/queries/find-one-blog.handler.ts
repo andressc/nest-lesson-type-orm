@@ -24,8 +24,9 @@ export class FindOneBlogHandler implements IQueryHandler<FindOneBlogCommand> {
 
 		return {
 			id: blog._id,
-			youtubeUrl: blog.youtubeUrl,
 			name: blog.name,
+			description: blog.description,
+			websiteUrl: blog.websiteUrl,
 			createdAt: blog.createdAt,
 		};
 	}

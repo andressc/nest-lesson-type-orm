@@ -1,11 +1,19 @@
 import { ObjectId } from 'mongodb';
 import add from 'date-fns/add';
 
-export const blogCreator = (name: string, hours: number, youtubeUrl: string, id?: string) => {
+export const blogCreator = (
+	name: string,
+	hours: number,
+	websiteUrl: string,
+	id?: string,
+	userId?: string,
+) => {
 	return {
 		_id: !id ? new ObjectId() : id,
 		name,
-		youtubeUrl,
+		description: 'description',
+		websiteUrl,
+		userId: !userId ? new ObjectId().toString() : userId,
 		createdAt: add(new Date(), {
 			hours: hours,
 		}),

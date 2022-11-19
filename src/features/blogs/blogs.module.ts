@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BlogsController } from './api/blogs.controller';
+import { BloggerBlogsController } from './api/blogger.blogs.controller';
 import { BlogsService } from './application/blogs.service';
 import { BlogsRepository } from './infrastructure/repository/blogs.repository';
 import { CreateBlogHandler } from './application/commands/create-blog.handler';
@@ -14,9 +14,12 @@ import { Blog, BlogSchema } from './entity/blog.schema';
 import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { BlogInjectionToken } from './application/blog.injection.token';
+import { AdminBlogsController } from './api/admin.blogs.controller';
+import { BlogsController } from './api/blogs.controller';
+import { FindAllBlogAdminHandler } from './application/queries/find-all-blog-admin.handler';
 
 export const CommandHandlers = [CreateBlogHandler, RemoveBlogHandler, UpdateBlogHandler];
-export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler];
+export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler, FindAllBlogAdminHandler];
 export const Repositories = [
 	{
 		provide: BlogInjectionToken.QUERY_BLOG_REPOSITORY,
@@ -37,7 +40,7 @@ export const Modules = [
 
 @Module({
 	imports: Modules,
-	controllers: [BlogsController],
+	controllers: [BloggerBlogsController, AdminBlogsController, BlogsController],
 	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
 	exports: [

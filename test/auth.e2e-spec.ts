@@ -59,7 +59,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('create new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -163,7 +163,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('create new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -216,7 +216,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('create new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -259,7 +259,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('registration confirmation', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -282,7 +282,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('registration email resending', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -305,7 +305,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('registration-email-resending', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -321,7 +321,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('new password', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -344,7 +344,7 @@ describe('BlogController (e2 e)', () => {
 
 		it('password recovery', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);

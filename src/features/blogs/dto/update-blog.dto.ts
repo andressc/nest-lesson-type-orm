@@ -11,5 +11,10 @@ export class UpdateBlogDto {
 	@IsNotEmpty()
 	@Matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
 	@MaxLength(100)
-	youtubeUrl: string;
+	websiteUrl: string;
+
+	@IsNotEmpty()
+	@Transform(({ value }) => trim(value))
+	@MaxLength(500)
+	description: string;
 }

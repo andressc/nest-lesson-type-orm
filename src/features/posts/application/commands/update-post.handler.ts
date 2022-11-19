@@ -1,16 +1,21 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UpdatePostDto } from '../../dto';
 import { PostsService } from '../posts.service';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/entity/blog.schema';
 import { PostModel } from '../../entity/post.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { PostInjectionToken } from '../post.injection.token';
+import { UpdatePostOfBlogDto } from '../../dto/update-post-of-blog.dto';
 
 export class UpdatePostCommand {
-	constructor(public id: string, public data: UpdatePostDto) {}
+	constructor(
+		public blogId: string,
+		public postId: string,
+		public data: UpdatePostOfBlogDto,
+		public currentUserId: string,
+	) {}
 }
 
 @CommandHandler(UpdatePostCommand)
@@ -24,15 +29,13 @@ export class UpdatePostHandler implements ICommandHandler<UpdatePostCommand> {
 	) {}
 
 	async execute(command: UpdatePostCommand): Promise<void> {
-		await this.validationService.validate(command.data, UpdatePostDto);
+		await this.validationService.validate(command.data, UpdatePostOfBlogDto);
 
-		const blog: BlogModel = await this.blogsService.findBlogOrErrorThrow(command.data.blogId);
+		const blog: BlogModel = await this.blogsService.findBlogOrErrorThrow(command.blogId);
+		if (blog.userId !== command.currentUserId) throw new ForbiddenException();
 
-		const post: PostModel = await this.postsService.findPostOrErrorThrow(command.id);
-		post.updateData({
-			...command.data,
-			blogName: blog.name,
-		});
+		const post: PostModel = await this.postsService.findPostOrErrorThrow(command.postId);
+		post.updateData(command.data);
 		await this.postsRepository.save(post);
 	}
 }

@@ -22,7 +22,7 @@ import { FindAllUserCommand } from '../application/queries/find-all-user.handler
 import { BanUnbanUserCommand } from '../application/commands/ban-unban-user.handler';
 import { BanUnbanUserDto } from '../dto/ban-unban-user.dto';
 
-@Controller('users')
+@Controller('sa/users')
 export class UsersController {
 	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 

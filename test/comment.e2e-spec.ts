@@ -30,7 +30,7 @@ describe('CommentController (e2e)', () => {
 
 	const blogData = {
 		id: new ObjectId().toString(),
-		youtubeUrl: 'https://youtube.com/343344343fvcxv32rfdsvd',
+		websiteUrl: 'https://youtube.com/343344343fvcxv32rfdsvd',
 		name: 'name',
 		createdAt: expect.any(String),
 	};
@@ -162,7 +162,7 @@ describe('CommentController (e2e)', () => {
 		beforeAll(async () => {
 			await connection.db.dropDatabase();
 
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogData.id));
 			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
 		});
 
@@ -172,7 +172,7 @@ describe('CommentController (e2e)', () => {
 
 		it('add new user', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -244,7 +244,7 @@ describe('CommentController (e2e)', () => {
 
 		it('should return 204 with user banned', async () => {
 			await request(app)
-				.put(`/users/${userId}/ban`)
+				.put(`/sa/users/${userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(204);
@@ -256,7 +256,7 @@ describe('CommentController (e2e)', () => {
 
 		/*it('should return 204 with user un banned', async () => {
 			await request(app)
-				.put(`/users/${userId}/ban`)
+				.put(`/sa/users/${userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: false, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(204);
@@ -306,7 +306,7 @@ describe('CommentController (e2e)', () => {
 
 		it('add new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -347,7 +347,7 @@ describe('CommentController (e2e)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogData.id));
 			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
 		});
 
@@ -355,7 +355,7 @@ describe('CommentController (e2e)', () => {
 
 		it('add new user', async () => {
 			await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -429,7 +429,7 @@ describe('CommentController (e2e)', () => {
 
 		beforeAll(async () => {
 			await connection.dropDatabase();
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogData.id));
 			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
 
 			/*await CommentModel.create(
@@ -450,7 +450,7 @@ describe('CommentController (e2e)', () => {
 
 		it('add new user', async () => {
 			const user = await request(app)
-				.post('/users')
+				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
@@ -590,7 +590,7 @@ describe('CommentController (e2e)', () => {
 
 		it('should return 204 with user banned', async () => {
 			await request(app)
-				.put(`/users/${userId}/ban`)
+				.put(`/sa/users/${userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(204);
@@ -631,7 +631,7 @@ describe('CommentController (e2e)', () => {
 			await connection.dropDatabase();
 
 			await UserModel.create(userCreator(userData.login, userData.email, 1, commentData.userId));
-			await BlogModel.create(blogCreator(blogData.name, 1, blogData.youtubeUrl, blogData.id));
+			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogData.id));
 			await PostModel.create(postCreator('aTitle', postData, 1, postData.id));
 
 			await CommentModel.insertMany([
@@ -676,7 +676,7 @@ describe('CommentController (e2e)', () => {
 
 		it('should return 204 with user banned', async () => {
 			await request(app)
-				.put(`/users/${commentData.userId}/ban`)
+				.put(`/sa/users/${commentData.userId}/ban`)
 				.set('authorization', BASIC_AUTH)
 				.send({ isBanned: true, banReason: 'wrehjnrgwrg343tergb45ergetrherth' })
 				.expect(204);
