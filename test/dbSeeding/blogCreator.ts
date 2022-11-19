@@ -14,6 +14,7 @@ export const blogCreator = (
 		description: 'description',
 		websiteUrl,
 		userId: !userId ? new ObjectId().toString() : userId,
+		userLogin: 'userLogin',
 		createdAt: add(new Date(), {
 			hours: hours,
 		}),
