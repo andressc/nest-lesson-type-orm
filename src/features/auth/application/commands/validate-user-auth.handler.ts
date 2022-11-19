@@ -17,12 +17,17 @@ export class ValidateUserAuthHandler implements ICommandHandler<ValidateUserAuth
 	) {}
 
 	async execute(command: ValidateUserAuthCommand): Promise<UserModel | null> {
-		const user: UserModel | null = await this.usersRepository.findUserByLogin(command.login);
+		const user: UserModel | null = await this.usersRepository.findUserByEmailOrLogin(command.login);
+
 		if (!user) throw new UnauthorizedException();
 
 		const passwordHash = await generateHash(command.password, user.salt);
 
-		if (user && user.password === passwordHash && user.login === command.login) {
+		if (
+			user &&
+			user.password === passwordHash &&
+			(user.login === command.login || user.email === command.login)
+		) {
 			return user;
 		}
 

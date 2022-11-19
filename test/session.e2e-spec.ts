@@ -80,7 +80,7 @@ describe('PostController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test1')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -97,7 +97,7 @@ describe('PostController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test3')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -114,7 +114,7 @@ describe('PostController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test2')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -131,7 +131,7 @@ describe('PostController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'testOtherUser')
 				.send({
-					login: userDataLogin2.login,
+					loginOrEmail: userDataLogin2.login,
 					password: userDataLogin2.password,
 				})
 				.expect(200);

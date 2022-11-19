@@ -9,7 +9,7 @@ import { UserModel } from '../../users/entity/user.schema';
 export class LocalStrategy extends PassportStrategy(Strategy) {
 	constructor(private readonly commandBus: CommandBus) {
 		super({
-			usernameField: 'login',
+			usernameField: 'loginOrEmail',
 		});
 	}
 

@@ -185,7 +185,7 @@ describe('CommentController (e2e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -317,7 +317,7 @@ describe('CommentController (e2e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -366,7 +366,7 @@ describe('CommentController (e2e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -463,7 +463,7 @@ describe('CommentController (e2e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);

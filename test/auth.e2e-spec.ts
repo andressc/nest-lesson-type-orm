@@ -70,7 +70,7 @@ describe('BlogController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -174,7 +174,7 @@ describe('BlogController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
@@ -193,10 +193,6 @@ describe('BlogController (e2 e)', () => {
 				.post('/auth/refresh-token')
 				.set('Cookie', [newRefreshToken])
 				.set('user-agent', 'test')
-				.send({
-					login: userDataLogin.login,
-					password: userDataLogin.password,
-				})
 				.expect(200);
 
 			expect(newTokens.body).toEqual({
@@ -227,7 +223,7 @@ describe('BlogController (e2 e)', () => {
 				.post('/auth/login')
 				.set('user-agent', 'test')
 				.send({
-					login: userDataLogin.login,
+					loginOrEmail: userDataLogin.login,
 					password: userDataLogin.password,
 				})
 				.expect(200);
