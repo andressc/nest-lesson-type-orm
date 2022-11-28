@@ -18,6 +18,7 @@ import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment
 import { CreateLikeCommentHandler } from './application/commands/create-like-comment.handler';
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { CommentInjectionToken } from './application/comment.injection.token';
+import { BlogsModule } from '../blogs/blogs.module';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -43,6 +44,7 @@ export const Modules = [
 	CqrsModule,
 	UsersModule,
 	PostsModule,
+	BlogsModule,
 	LikesModule,
 	PaginationModule,
 ];

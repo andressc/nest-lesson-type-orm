@@ -7,8 +7,12 @@ import { UserModel } from '../../../users/entity/user.schema';
 import { CommentModel } from '../../entity/comment.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { CommentInjectionToken } from '../comment.injection.token';
+import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
+import { BlogsRepositoryInterface } from '../../../blogs/interfaces/blogs.repository.interface';
+import { BanModel } from '../../../blogs/entity/ban.schema';
+import { PostModel } from '../../../posts/entity/post.schema';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(
@@ -25,6 +29,8 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 		private readonly postsService: PostsService,
 		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
 		private readonly commentsRepository: CommentsRepositoryInterface,
+		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
+		private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 
@@ -32,7 +38,14 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 		await this.validationService.validate(command.data, CreateCommentOfPostDto);
 
 		const user: UserModel = await this.usersService.findUserByIdOrErrorThrow(command.authUserId);
-		await this.postsService.findPostOrErrorThrow(command.postId);
+		const post: PostModel = await this.postsService.findPostOrErrorThrow(command.postId);
+
+		const banned: BanModel | null = await this.blogsRepository.findBanByBlogIdAndUserId(
+			post.blogId,
+			command.authUserId,
+		);
+
+		if (banned && banned.isBanned === true) throw new ForbiddenException();
 
 		const newComment: CommentModel = await this.commentsRepository.create({
 			...command.data,

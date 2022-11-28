@@ -14,6 +14,9 @@ export class Ban {
 	@Prop({ required: true })
 	blogId: string;
 
+	@Prop({ required: true })
+	blogName: string;
+
 	@Prop({ default: false })
 	isBanned: boolean;
 
@@ -22,9 +25,6 @@ export class Ban {
 
 	@Prop({ default: null })
 	banDate: string;
-
-	@Prop({ required: true })
-	createdAt: string;
 
 	banUnbanUser(isBanned, banReason, banDate): void {
 		this.isBanned = isBanned;

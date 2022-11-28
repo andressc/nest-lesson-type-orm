@@ -21,6 +21,10 @@ import { BindBlogWithUserHandler } from './application/commands/bind-blog-with-u
 import { UsersModule } from '../users/users.module';
 import { BanBlogHandler } from './application/commands/ban-blog.handler';
 import { FindAllCommentsBlogHandler } from './application/queries/find-all-comments-blog.handler';
+import { BanUnbanBlogOfUserHandler } from './application/commands/ban-unban-blog-of-user.handler';
+import { Ban, BanSchema } from './entity/ban.schema';
+import { BloggerUsersController } from '../users/api/blogger.users.controller';
+import { FindAllBannedBlogOfUserHandler } from './application/queries/find-all-banned-blog-of-user.handler';
 
 export const CommandHandlers = [
 	CreateBlogHandler,
@@ -28,19 +32,20 @@ export const CommandHandlers = [
 	UpdateBlogHandler,
 	BindBlogWithUserHandler,
 	BanBlogHandler,
+	BanUnbanBlogOfUserHandler,
 ];
 export const QueryHandlers = [
 	FindOneBlogHandler,
 	FindAllBlogHandler,
 	FindAllBlogAdminHandler,
 	FindAllCommentsBlogHandler,
+	FindAllBannedBlogOfUserHandler,
 ];
 export const Repositories = [
 	{
 		provide: BlogInjectionToken.QUERY_BLOG_REPOSITORY,
 		useClass: QueryBlogsRepository,
 	},
-
 	{
 		provide: BlogInjectionToken.BLOG_REPOSITORY,
 		useClass: BlogsRepository,
@@ -49,6 +54,7 @@ export const Repositories = [
 export const Services = [BlogsService, IsUserCommentValidatorConstraint];
 export const Modules = [
 	MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+	MongooseModule.forFeature([{ name: Ban.name, schema: BanSchema }]),
 	CqrsModule,
 	PaginationModule,
 	UsersModule,
@@ -56,7 +62,12 @@ export const Modules = [
 
 @Module({
 	imports: Modules,
-	controllers: [BloggerBlogsController, AdminBlogsController, BlogsController],
+	controllers: [
+		BloggerBlogsController,
+		AdminBlogsController,
+		BlogsController,
+		BloggerUsersController,
+	],
 	providers: [...Services, ...Repositories, ...QueryHandlers, ...CommandHandlers],
 
 	exports: [
