@@ -10,7 +10,7 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { ObjectIdDto } from '../../../common/dto';
+import { ObjectIdDto, QueryDto } from '../../../common/dto';
 import { AccessTokenGuard } from '../../../common/guards';
 import { CreateBlogDto, QueryBlogDto, UpdateBlogDto } from '../dto';
 import { CreatePostOfBlogDto } from '../../posts/dto';
@@ -27,6 +27,7 @@ import { UpdatePostOfBlogDto } from '../../posts/dto/update-post-of-blog.dto';
 import { UpdatePostCommand } from '../../posts/application/commands/update-post.handler';
 import { ObjectIdsDto } from '../../../common/dto/object-ids.dto';
 import { RemovePostCommand } from '../../posts/application/commands/remove-post.handler';
+import { FindAllCommentsBlogCommand } from '../application/queries/find-all-comments-blog.handler';
 
 @Controller('blogger/blogs')
 @UseGuards(AccessTokenGuard)
@@ -36,6 +37,11 @@ export class BloggerBlogsController {
 	@Get()
 	findAllBlogs(@Query() query: QueryBlogDto, @CurrentUserId() currentUserId) {
 		return this.queryBus.execute(new FindAllBlogCommand(query, currentUserId));
+	}
+
+	@Get()
+	findAllCommentsBlogs(@Query() query: QueryDto, @CurrentUserId() currentUserId) {
+		return this.queryBus.execute(new FindAllCommentsBlogCommand(query, currentUserId));
 	}
 
 	@Post()

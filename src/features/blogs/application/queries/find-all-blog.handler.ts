@@ -20,7 +20,9 @@ export class FindAllBlogHandler implements IQueryHandler<FindAllBlogCommand> {
 	) {}
 
 	async execute(command: FindAllBlogCommand): Promise<PaginationDto<ResponseBlogDto[]>> {
-		const blogCurrentUser = command.currentUserId ? { userId: command.currentUserId } : {};
+		const blogCurrentUser = command.currentUserId
+			? { userId: command.currentUserId, isBanned: false }
+			: { isBanned: false };
 
 		const searchString = command.query.searchNameTerm
 			? {

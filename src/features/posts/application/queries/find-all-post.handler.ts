@@ -37,6 +37,7 @@ export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 			new ObjectId(command.blogId),
 		);
 		if (!blog && command.blogId) throw new BlogNotFoundException(command.blogId);
+		if (blog.isBanned) throw new BlogNotFoundException(command.blogId);
 
 		const totalCount: number = await this.queryPostsRepository.count(searchString);
 

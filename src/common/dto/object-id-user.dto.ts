@@ -4,5 +4,8 @@ export class ObjectIdUserDto {
 	@IsMongoId()
 	@IsString()
 	blogId: string;
+
+	@IsMongoId()
+	@IsString()
 	userId: string;
 }

@@ -21,6 +21,7 @@ export class FindOneBlogHandler implements IQueryHandler<FindOneBlogCommand> {
 	async execute(command: FindOneBlogCommand): Promise<ResponseBlogDto> {
 		const blog: BlogModel | null = await this.queryBlogsRepository.find(new ObjectId(command.id));
 		if (!blog) throw new BlogNotFoundException(command.id);
+		if (blog.isBanned) throw new BlogNotFoundException(command.id);
 
 		return {
 			id: blog._id,

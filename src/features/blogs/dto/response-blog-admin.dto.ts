@@ -8,4 +8,8 @@ export class ResponseBlogAdminDto {
 		userId: string;
 		userLogin: string;
 	};
+	banInfo: {
+		isBanned: boolean;
+		banDate: string;
+	};
 }

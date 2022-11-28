@@ -24,10 +24,21 @@ export class Blog {
 	@Prop({ required: true })
 	userLogin: string;
 
+	@Prop({ default: false })
+	isBanned: boolean;
+
+	@Prop({ default: null })
+	banDate: string;
+
 	updateData(data: UpdateBlogDto): void {
 		this.name = data.name;
 		this.description = data.description;
 		this.websiteUrl = data.websiteUrl;
+	}
+
+	ban(isBanned: boolean, banDate: string | null): void {
+		this.isBanned = isBanned;
+		this.banDate = banDate;
 	}
 
 	bindBlogWithUser(userId: string, userLogin: string): void {
@@ -40,3 +51,4 @@ export const BlogSchema = SchemaFactory.createForClass(Blog);
 
 BlogSchema.methods.updateData = Blog.prototype.updateData;
 BlogSchema.methods.bindBlogWithUser = Blog.prototype.bindBlogWithUser;
+BlogSchema.methods.ban = Blog.prototype.ban;

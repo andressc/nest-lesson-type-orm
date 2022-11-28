@@ -19,14 +19,22 @@ import { BlogsController } from './api/blogs.controller';
 import { FindAllBlogAdminHandler } from './application/queries/find-all-blog-admin.handler';
 import { BindBlogWithUserHandler } from './application/commands/bind-blog-with-user.handler';
 import { UsersModule } from '../users/users.module';
+import { BanBlogHandler } from './application/commands/ban-blog.handler';
+import { FindAllCommentsBlogHandler } from './application/queries/find-all-comments-blog.handler';
 
 export const CommandHandlers = [
 	CreateBlogHandler,
 	RemoveBlogHandler,
 	UpdateBlogHandler,
 	BindBlogWithUserHandler,
+	BanBlogHandler,
 ];
-export const QueryHandlers = [FindOneBlogHandler, FindAllBlogHandler, FindAllBlogAdminHandler];
+export const QueryHandlers = [
+	FindOneBlogHandler,
+	FindAllBlogHandler,
+	FindAllBlogAdminHandler,
+	FindAllCommentsBlogHandler,
+];
 export const Repositories = [
 	{
 		provide: BlogInjectionToken.QUERY_BLOG_REPOSITORY,
