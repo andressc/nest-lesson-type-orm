@@ -30,10 +30,39 @@ describe('BlogController (e2e)', () => {
 		createdAt: expect.any(String),
 	};
 
+	const banInfoFalse = {
+		banDate: null,
+		isBanned: false,
+	};
+
+	const banInfoTrue = {
+		banDate: expect.any(String),
+		isBanned: true,
+	};
+
+	const blogDataSuperAdmin = {
+		id: expect.any(String),
+		name: 'name',
+		description: 'description',
+		websiteUrl: 'https://youtube.com/343344343fvcxv32rfdsvd',
+		createdAt: expect.any(String),
+		banInfo: banInfoTrue,
+		blogOwnerInfo: {
+			userId: expect.any(String),
+			userLogin: expect.any(String),
+		},
+	};
+
 	const userDataId = new ObjectId().toString();
 	const userDataLogin = {
 		login: 'login',
 		email: 'email@email.ru',
+		password: '123456',
+	};
+
+	const userDataLogin2 = {
+		login: 'login2',
+		email: 'email@email2.ru',
 		password: '123456',
 	};
 
@@ -70,13 +99,245 @@ describe('BlogController (e2e)', () => {
 		await dataApp.app.close();
 	});
 
-	/*describe('get blog for superAdmin (SUPER ADMIN ENDPOINT)', () => {
+	describe('ban user of blog (BLOGGER ENDPOINT)', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+
+			await UserModel.create(
+				userCreator(userDataLogin2.login, userDataLogin2.email, 1, userDataId),
+			);
+		});
+
+		let blogId;
+		let postId;
+		let token;
+		let token2;
+
+		it('add new user', async () => {
+			await request(app)
+				.post('/sa/users')
+				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					loginOrEmail: userDataLogin.email,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add new blog (BLOGGER ENDPOINT)', async () => {
+			const blog = await request(app)
+				.post('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					name: blogData.name,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
+				})
+				.expect(201);
+
+			expect(blog.body).toEqual(blogData);
+
+			blogId = blog.body.id;
+		});
+
+		it('add new post of blog (BLOGGER ENDPOINT)', async () => {
+			const post = await request(app)
+				.post(`/blogger/blogs/${blogId}/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					title: 'title title title',
+					shortDescription: 'shortDescription shortDescription',
+					content: 'content content content content content content content content ',
+				})
+				.expect(201);
+
+			postId = post.body.id;
+		});
+
+		it('ban user of blog (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.put(`/blogger/users/${userDataId}/ban`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					isBanned: true,
+					banReason: 'stringstringstringst',
+					blogId: blogId,
+				})
+				.expect(204);
+		});
+
+		it('get banned user of blog (BLOGGER ENDPOINT)', async () => {
+			const bannedUsers = await request(app)
+				.get(`/blogger/users/blog/${blogId}`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					isBanned: true,
+					banReason: 'stringstringstringst',
+					blogId: blogId,
+				})
+				.expect(200);
+
+			expect(bannedUsers.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 1,
+				items: [
+					{
+						id: expect.any(String),
+						login: userDataLogin2.login,
+						banInfo: {
+							isBanned: true,
+							banDate: expect.any(String),
+							banReason: 'stringstringstringst',
+						},
+					},
+				],
+			});
+		});
+
+		it('authorization banned user of blog', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					loginOrEmail: userDataLogin2.email,
+					password: userDataLogin2.password,
+				})
+				.expect(200);
+
+			token2 = authToken.body.accessToken;
+		});
+
+		it('send comment from blog after ban (PUBLIC ENDPOINT)', async () => {
+			await request(app)
+				.post(`/posts/${postId}/comments`)
+				.set('authorization', `Bearer ${token2}`)
+				.send({
+					content: 'stringstringstringst',
+				})
+				.expect(403);
+		});
+
+		/*it('update comment from blog after ban (PUBLIC ENDPOINT)', async () => {
+			const response = await request(app)
+				.put('/blogger/blogs')
+				.set('authorization', `Bearer ${token2}`)
+				.expect(403);
+		});
+
+		it('delete comment from blog after ban (PUBLIC ENDPOINT)', async () => {
+			const response = await request(app)
+				.put('/blogger/blogs')
+				.set('authorization', `Bearer ${token2}`)
+				.expect(403);
+		});*/
+
+		it('unBan user of blog (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.put(`/blogger/users/${userDataId}/ban`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					isBanned: false,
+					banReason: 'stringstringstringst',
+					blogId: blogId,
+				})
+				.expect(204);
+		});
+
+		it('send comment from blog after unBan (PUBLIC ENDPOINT)', async () => {
+			await request(app)
+				.post(`/posts/${postId}/comments`)
+				.set('authorization', `Bearer ${token2}`)
+				.send({
+					content: 'stringstringstringst',
+				})
+				.expect(201);
+		});
+
+		/*it('update comment from blog after unBan (PUBLIC ENDPOINT)', async () => {
+			const response = await request(app)
+				.put('/blogger/blogs')
+				.set('authorization', `Bearer ${token2}`)
+				.expect(403);
+		});
+
+		it('delete comment from blog after unBan (PUBLIC ENDPOINT)', async () => {
+			const response = await request(app)
+				.put('/blogger/blogs')
+				.set('authorization', `Bearer ${token2}`)
+				.expect(403);
+		});*/
+	});
+
+	describe('ban blog (SUPER ADMIN ENDPOINT)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 		});
 
-		it('should return 200 and all blogs null (PUBLIC ENDPOINT)', async () => {
-			const response = await request(app).get('/blogs').expect(200);
+		let blogId;
+		let token;
+
+		it('add new user', async () => {
+			await request(app)
+				.post('/sa/users')
+				.set('authorization', BASIC_AUTH)
+				.send(userDataLogin)
+				.expect(201);
+		});
+
+		it('authorization user', async () => {
+			const authToken = await request(app)
+				.post('/auth/login')
+				.set('user-agent', 'test')
+				.send({
+					loginOrEmail: userDataLogin.email,
+					password: userDataLogin.password,
+				})
+				.expect(200);
+
+			token = authToken.body.accessToken;
+		});
+
+		it('add new blog (BLOGGER ENDPOINT)', async () => {
+			const blog = await request(app)
+				.post('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					name: blogData.name,
+					description: blogData.description,
+					websiteUrl: blogData.websiteUrl,
+				})
+				.expect(201);
+
+			expect(blog.body).toEqual(blogData);
+
+			blogId = blog.body.id;
+		});
+
+		it('ban blog (SUPER ADMIN ENDPOINT)', async () => {
+			await request(app)
+				.put(`/sa/blogs/${blogId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: true })
+				.expect(204);
+		});
+
+		it('get all blogs after ban (BLOGGER ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
 
 			expect(response.body).toEqual({
 				pagesCount: 0,
@@ -86,9 +347,121 @@ describe('BlogController (e2e)', () => {
 				items: [],
 			});
 		});
-	});*/
 
-	describe('get blog', () => {
+		it('get all blogs after ban (PUBLIC ENDPOINT)', async () => {
+			const allBlogs = await request(app).get('/blogs').expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 0,
+				page: 1,
+				pageSize: 10,
+				totalCount: 0,
+				items: [],
+			});
+		});
+
+		it('get all blogs after ban (SUPER ADMIN ENDPOINT)', async () => {
+			const allBlogs = await request(app)
+				.get('/sa/blogs')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 1,
+				items: [blogDataSuperAdmin],
+			});
+		});
+
+		it('find existing blog by id after ban (PUBLIC ENDPOINT)', async () => {
+			await request(app).get(`/blogs/${blogId}`).expect(404);
+		});
+
+		it('unBan blog (SUPER ADMIN ENDPOINT)', async () => {
+			await request(app)
+				.put(`/sa/blogs/${blogId}/ban`)
+				.set('authorization', BASIC_AUTH)
+				.send({ isBanned: false })
+				.expect(204);
+		});
+
+		it('get all blogs after unBan (BLOGGER ENDPOINT)', async () => {
+			const allBlogs = await request(app)
+				.get('/blogger/blogs')
+				.set('authorization', `Bearer ${token}`)
+				.expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 1,
+				items: [blogData],
+			});
+		});
+
+		it('get all blogs after unBan (PUBLIC ENDPOINT)', async () => {
+			const allBlogs = await request(app).get('/blogs').expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 1,
+				items: [blogData],
+			});
+		});
+
+		it('get all blogs after unBan (SUPER ADMIN ENDPOINT)', async () => {
+			const allBlogs = await request(app)
+				.get('/sa/blogs')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(allBlogs.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 1,
+				items: [
+					{
+						...blogDataSuperAdmin,
+						banInfo: banInfoFalse,
+					},
+				],
+			});
+		});
+
+		it('find existing blog by id after unBan (PUBLIC ENDPOINT)', async () => {
+			const blog = await request(app).get(`/blogs/${blogId}`).expect(200);
+			expect(blog.body).toEqual(blogData);
+		});
+	});
+
+	describe('get blog for superAdmin (SUPER ADMIN ENDPOINT)', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+		});
+
+		it('should return 200 and all blogs null (SUPER ADMIN ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/sa/blogs')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 0,
+				page: 1,
+				pageSize: 10,
+				totalCount: 0,
+				items: [],
+			});
+		});
+	});
+
+	describe('get blog (PUBLIC ENDPOINT)', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 		});
@@ -115,16 +488,13 @@ describe('BlogController (e2e)', () => {
 
 		let blogId;
 		let token;
-		let userId;
 
 		it('add new user', async () => {
-			const user = await request(app)
+			await request(app)
 				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
-
-			userId = user.body.id;
 		});
 
 		it('authorization user', async () => {
@@ -233,16 +603,13 @@ describe('BlogController (e2e)', () => {
 
 		let blogId;
 		let token;
-		let userId;
 
 		it('add new user', async () => {
-			const user = await request(app)
+			await request(app)
 				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
-
-			userId = user.body.id;
 		});
 
 		it('authorization user', async () => {
@@ -314,16 +681,13 @@ describe('BlogController (e2e)', () => {
 		});
 
 		let token;
-		let userId;
 
 		it('add new user', async () => {
-			const user = await request(app)
+			await request(app)
 				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
-
-			userId = user.body.id;
 		});
 
 		it('authorization user', async () => {
@@ -364,7 +728,7 @@ describe('BlogController (e2e)', () => {
 		});
 	});
 
-	describe('add, delete, update blog with not authorized user', () => {
+	describe('add, delete, update, ban blog with not authorized user', () => {
 		beforeAll(async () => {
 			await connection.dropDatabase();
 		});
@@ -395,6 +759,29 @@ describe('BlogController (e2e)', () => {
 				.send(blogData)
 				.expect(401);
 		});
+
+		it('ban blog with not authorized user (SUPER ADMIN ENDPOINT)', async () => {
+			await request(app)
+				.put(`/sa/blogs/${randomId}/ban`)
+				.set('authorization', 'wrongAuth')
+				.send({ isBanned: true })
+				.expect(401);
+		});
+
+		it('ban blog with user for not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.put(`/blogger/users/${randomId}/ban`)
+				.set('authorization', 'wrongAuth')
+				.send({ isBanned: true })
+				.expect(401);
+		});
+
+		it('get all banned user from blog for not authorized user (BLOGGER ENDPOINT)', async () => {
+			await request(app)
+				.get(`/blogger/users/blog/${randomId}`)
+				.set('authorization', 'wrongAuth')
+				.expect(401);
+		});
 	});
 
 	describe('delete, update blog with alien user', () => {
@@ -404,16 +791,13 @@ describe('BlogController (e2e)', () => {
 			await BlogModel.create(blogCreator(blogData.name, 1, blogData.websiteUrl, blogId));
 		});
 		let token;
-		let userId;
 
 		it('add new user', async () => {
-			const user = await request(app)
+			await request(app)
 				.post('/sa/users')
 				.set('authorization', BASIC_AUTH)
 				.send(userDataLogin)
 				.expect(201);
-
-			userId = user.body.id;
 		});
 
 		it('authorization user', async () => {
@@ -558,4 +942,104 @@ describe('BlogController (e2e)', () => {
 			});
 		});
 	});
+
+	describe('get all blogs and sorting (SUPER ADMIN ENDPOINT)', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+			await BlogModel.insertMany([
+				blogCreator('aName', 1, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('cName', 2, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('bName', 3, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+			]);
+		});
+
+		it('should return 200 and all blogs (SUPER ADMIN ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/sa/blogs')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 3,
+				items: [
+					{ ...blogDataSuperAdmin, banInfo: banInfoFalse, name: 'bName' },
+					{ ...blogDataSuperAdmin, banInfo: banInfoFalse, name: 'cName' },
+					{ ...blogDataSuperAdmin, banInfo: banInfoFalse, name: 'aName' },
+				],
+			});
+		});
+
+		it('sorting and pages blogs (SUPER ADMIN ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/sa/blogs?sortBy=name&pageSize=2&sortDirection=asc')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 2,
+				page: 1,
+				pageSize: 2,
+				totalCount: 3,
+				items: [
+					{ ...blogDataSuperAdmin, banInfo: banInfoFalse, name: 'aName' },
+					{ ...blogDataSuperAdmin, banInfo: banInfoFalse, name: 'bName' },
+				],
+			});
+		});
+	});
+
+	/*describe('get all banned users from blog and sorting (BLOGGER ENDPOINT)', () => {
+		beforeAll(async () => {
+			await connection.dropDatabase();
+
+			await UserModel.create(userCreator(userDataLogin.login, userDataLogin.email, 1, userDataId));
+			await BlogModel.insertMany([
+				blogCreator('aName', 1, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('cName', 2, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+				blogCreator('bName', 3, blogData.websiteUrl, new ObjectId().toString(), userDataId),
+			]);
+		});
+
+		it('should return 200 and all blogs (SUPER ADMIN ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/sa/blogger/blogs')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 1,
+				page: 1,
+				pageSize: 10,
+				totalCount: 3,
+				items: [
+					{ ...blogData, name: 'bName' },
+					{ ...blogData, name: 'cName' },
+					{ ...blogData, name: 'aName' },
+				],
+			});
+		});
+
+		it('sorting and pages blogs (SUPER ADMIN ENDPOINT)', async () => {
+			const response = await request(app)
+				.get('/sa/blogger/blogs?sortBy=name&pageSize=2&sortDirection=asc')
+				.set('authorization', BASIC_AUTH)
+				.expect(200);
+
+			expect(response.body).toEqual({
+				pagesCount: 2,
+				page: 1,
+				pageSize: 2,
+				totalCount: 3,
+				items: [
+					{ ...blogData, name: 'aName' },
+					{ ...blogData, name: 'bName' },
+				],
+			});
+		});
+	});*/
 });

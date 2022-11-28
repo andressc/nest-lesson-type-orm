@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Put, Query, UseGuards } from '@nestjs/common';
 
 import { AccessTokenGuard } from '../../../common/guards';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -14,6 +14,7 @@ import { FindAllBannedBlogOfUserCommand } from '../../blogs/application/queries/
 export class BloggerUsersController {
 	constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
+	@HttpCode(204)
 	@Put(':id/ban')
 	async banUnbanUser(
 		@Param() param: ObjectIdDto,
