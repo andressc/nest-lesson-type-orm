@@ -64,7 +64,7 @@ export class FindAllBannedBlogOfUserHandler
 			pageSize: paginationData.pageSize,
 			totalCount: totalCount,
 			items: ban.map((v: BanModel) => ({
-				id: v._id.toString(),
+				id: v.userId,
 				login: v.login,
 				banInfo: {
 					isBanned: v.isBanned,

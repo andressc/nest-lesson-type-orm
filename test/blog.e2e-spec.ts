@@ -180,11 +180,6 @@ describe('BlogController (e2e)', () => {
 			const bannedUsers = await request(app)
 				.get(`/blogger/users/blog/${blogId}`)
 				.set('authorization', `Bearer ${token}`)
-				.send({
-					isBanned: true,
-					banReason: 'stringstringstringst',
-					blogId: blogId,
-				})
 				.expect(200);
 
 			expect(bannedUsers.body).toEqual({
