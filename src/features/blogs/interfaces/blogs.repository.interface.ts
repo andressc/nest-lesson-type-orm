@@ -10,4 +10,5 @@ export interface BlogsRepositoryInterface
 	findBanByBlogIdAndUserId(blogId: string, userId: string): Promise<BanModel | null>
 	createBanModel(data: BanUnbanBlogOfUserExtendsDto): Promise<BanModel>
 	saveBanModel(model: BanModel): Promise<BanModel>
+	deleteAllBan(): Promise<void>
 }

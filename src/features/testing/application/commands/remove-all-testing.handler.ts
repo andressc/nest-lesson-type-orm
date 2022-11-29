@@ -38,6 +38,7 @@ export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTesting
 	async execute(): Promise<void> {
 		this.storage.clearStorage();
 		await this.blogsRepository.deleteAll();
+		await this.blogsRepository.deleteAllBan();
 		await this.postsRepository.deleteAll();
 		await this.usersRepository.deleteAll();
 		await this.commentsRepository.deleteAll();

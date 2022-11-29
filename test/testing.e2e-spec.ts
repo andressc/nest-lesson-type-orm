@@ -15,6 +15,8 @@ import { Post } from '../src/features/posts/entity/post.schema';
 import { Session } from 'inspector';
 import { User } from '../src/features/users/entity/user.schema';
 import { Comment } from '../src/features/comments/entity/comment.schema';
+import { Ban } from '../src/features/blogs/entity/ban.schema';
+import { banCreator } from './dbSeeding/banCreator';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -23,6 +25,7 @@ describe('PostController (e2e)', () => {
 	let CommentModel: Model<Comment>;
 	let SessionModel: Model<Session>;
 	let UserModel: Model<User>;
+	let BanModel: Model<Ban>;
 
 	let connection: Connection;
 	let app: INestApplication;
@@ -47,6 +50,7 @@ describe('PostController (e2e)', () => {
 		CommentModel = module.get<Model<Comment>>(getModelToken(Comment.name));
 		SessionModel = module.get<Model<Session>>(getModelToken(Session.name));
 		UserModel = module.get<Model<User>>(getModelToken(User.name));
+		BanModel = module.get<Model<Ban>>(getModelToken(Ban.name));
 	});
 
 	afterAll(async () => {
@@ -62,6 +66,7 @@ describe('PostController (e2e)', () => {
 			await UserModel.create(userCreator('login', 'email', 1));
 			await CommentModel.create(commentCreator('content', 'userId', 'userLogin', 'postId', 1));
 			await SessionModel.create(sessionCreator());
+			await BanModel.create(banCreator());
 		});
 
 		it('delete all', async () => {
@@ -74,12 +79,14 @@ describe('PostController (e2e)', () => {
 			const userCount = await UserModel.countDocuments({});
 			const commentCount = await CommentModel.countDocuments({});
 			const sessionIpCount = await SessionModel.countDocuments({});
+			const banCount = await BanModel.countDocuments({});
 
 			expect(postCount).toBe(0);
 			expect(blogCount).toBe(0);
 			expect(userCount).toBe(0);
 			expect(commentCount).toBe(0);
 			expect(sessionIpCount).toBe(0);
+			expect(banCount).toBe(0);
 		});
 	});
 });

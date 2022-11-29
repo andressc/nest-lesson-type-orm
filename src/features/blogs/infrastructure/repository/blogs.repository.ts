@@ -34,4 +34,8 @@ export class BlogsRepository
 	async saveBanModel(model: BanModel): Promise<BanModel> {
 		return model.save();
 	}
+
+	async deleteAllBan(): Promise<void> {
+		await this.banModel.deleteMany();
+	}
 }
