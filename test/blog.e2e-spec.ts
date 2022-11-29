@@ -287,6 +287,7 @@ describe('BlogController (e2e)', () => {
 
 		let blogId;
 		let token;
+		let postId;
 
 		it('add new user', async () => {
 			await request(app)
@@ -325,6 +326,20 @@ describe('BlogController (e2e)', () => {
 			blogId = blog.body.id;
 		});
 
+		it('add new post (BLOGGER ENDPOINT)', async () => {
+			const createdPost = await request(app)
+				.post(`/blogger/blogs/${blogId}/posts`)
+				.set('authorization', `Bearer ${token}`)
+				.send({
+					title: 'title',
+					shortDescription: 'shortDescription',
+					content: 'content content content content content content content',
+				})
+				.expect(201);
+
+			postId = createdPost.body.id;
+		});
+
 		it('ban blog (SUPER ADMIN ENDPOINT)', async () => {
 			await request(app)
 				.put(`/sa/blogs/${blogId}/ban`)
@@ -360,6 +375,18 @@ describe('BlogController (e2e)', () => {
 			});
 		});
 
+		/*it('get all posts after ban (PUBLIC ENDPOINT)', async () => {
+			const allPosts = await request(app).get('/posts').expect(200);
+
+			expect(allPosts.body).toEqual({
+				pagesCount: 0,
+				page: 1,
+				pageSize: 10,
+				totalCount: 0,
+				items: [],
+			});
+		});*/
+
 		it('get all blogs after ban (SUPER ADMIN ENDPOINT)', async () => {
 			const allBlogs = await request(app)
 				.get('/sa/blogs')
@@ -377,6 +404,10 @@ describe('BlogController (e2e)', () => {
 
 		it('find existing blog by id after ban (PUBLIC ENDPOINT)', async () => {
 			await request(app).get(`/blogs/${blogId}`).expect(404);
+		});
+
+		it('find existing post of blog by id after ban (PUBLIC ENDPOINT)', async () => {
+			await request(app).get(`/posts/${postId}`).expect(404);
 		});
 
 		it('unBan blog (SUPER ADMIN ENDPOINT)', async () => {
@@ -437,6 +468,10 @@ describe('BlogController (e2e)', () => {
 		it('find existing blog by id after unBan (PUBLIC ENDPOINT)', async () => {
 			const blog = await request(app).get(`/blogs/${blogId}`).expect(200);
 			expect(blog.body).toEqual(blogData);
+		});
+
+		it('find existing post of blog by id after unBan (PUBLIC ENDPOINT)', async () => {
+			await request(app).get(`/posts/${postId}`).expect(200);
 		});
 	});
 
