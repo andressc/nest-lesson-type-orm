@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../entity/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
@@ -6,6 +6,7 @@ import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.inte
 import { Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';
 import { BanBlogDto } from '../../dto/ban-blog.dto';
+import { BanUnbanPostCommand } from '../../../posts/application/commands/ban-unban-post.handler';
 
 export class BanBlogCommand {
 	constructor(public id: string, public data: BanBlogDto) {}
@@ -18,6 +19,7 @@ export class BanBlogHandler implements ICommandHandler<BanBlogCommand> {
 		private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 		private readonly validationService: ValidationService,
+		private readonly commandBus: CommandBus,
 	) {}
 
 	async execute(command: BanBlogCommand): Promise<void> {
@@ -31,5 +33,7 @@ export class BanBlogHandler implements ICommandHandler<BanBlogCommand> {
 
 		blog.ban(command.data.isBanned, banDate);
 		await this.blogsRepository.save(blog);
+
+		await this.commandBus.execute(new BanUnbanPostCommand(blog.id, command.data.isBanned));
 	}
 }

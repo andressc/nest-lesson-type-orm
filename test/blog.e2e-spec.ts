@@ -375,7 +375,7 @@ describe('BlogController (e2e)', () => {
 			});
 		});
 
-		/*it('get all posts after ban (PUBLIC ENDPOINT)', async () => {
+		it('get all posts after ban (PUBLIC ENDPOINT)', async () => {
 			const allPosts = await request(app).get('/posts').expect(200);
 
 			expect(allPosts.body).toEqual({
@@ -385,7 +385,7 @@ describe('BlogController (e2e)', () => {
 				totalCount: 0,
 				items: [],
 			});
-		});*/
+		});
 
 		it('get all blogs after ban (SUPER ADMIN ENDPOINT)', async () => {
 			const allBlogs = await request(app)

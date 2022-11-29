@@ -31,13 +31,14 @@ export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 	) {}
 
 	async execute(command: FindAllPostCommand): Promise<PaginationDto<ResponsePostDto[]>> {
-		const searchString = command.blogId ? { blogId: command.blogId } : {};
+		const searchString = command.blogId
+			? { blogId: command.blogId, isBanned: false }
+			: { isBanned: false };
 
 		const blog: BlogModel | null = await this.queryBlogsRepository.find(
 			new ObjectId(command.blogId),
 		);
 		if (!blog && command.blogId) throw new BlogNotFoundException(command.blogId);
-		if (blog && blog.isBanned) throw new BlogNotFoundException(command.blogId);
 
 		const totalCount: number = await this.queryPostsRepository.count(searchString);
 

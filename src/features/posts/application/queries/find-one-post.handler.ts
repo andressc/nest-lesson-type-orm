@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { BlogNotFoundException, PostNotFoundException } from '../../../../common/exceptions';
+import { PostNotFoundException } from '../../../../common/exceptions';
 import { ResponsePostDto } from '../../dto';
 import { PostModel } from '../../entity/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interfaces/query.posts.repository.interface';
@@ -8,7 +8,6 @@ import { Inject } from '@nestjs/common';
 import { PostInjectionToken } from '../post.injection.token';
 import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
 import { QueryBlogsRepositoryInterface } from '../../../blogs/interfaces/query.blogs.repository.interface';
-import { BlogModel } from '../../../blogs/entity/blog.schema';
 
 export class FindOnePostCommand {
 	constructor(public id: string, public currentUserId: string | null) {}
@@ -26,10 +25,6 @@ export class FindOnePostHandler implements IQueryHandler<FindOnePostCommand> {
 	async execute(command: FindOnePostCommand): Promise<ResponsePostDto | null> {
 		const post: PostModel | null = await this.queryPostsRepository.find(new ObjectId(command.id));
 		if (!post) throw new PostNotFoundException(command.id);
-
-		const blog: BlogModel | null = await this.queryBlogsRepository.find(new ObjectId(post.blogId));
-		if (!blog && post.blogId) throw new BlogNotFoundException(post.blogId);
-		if (blog && blog.isBanned) throw new BlogNotFoundException(post.blogId);
 
 		const extendedLikesInfo = this.queryPostsRepository.countLikes(post, command.currentUserId);
 

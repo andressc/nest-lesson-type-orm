@@ -22,7 +22,7 @@ export class QueryPostsRepository
 
 	async find(id: ObjectId): Promise<PostModel | null> {
 		const post: PostModel[] = await this.postModel.aggregate([
-			{ $match: { _id: id } },
+			{ $match: { _id: id, isBanned: false } },
 			{
 				$graphLookup: {
 					from: 'likes',

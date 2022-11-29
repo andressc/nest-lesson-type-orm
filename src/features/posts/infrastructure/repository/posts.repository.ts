@@ -17,4 +17,8 @@ export class PostsRepository
 	) {
 		super(postModel);
 	}
+
+	async setBan(blogId: string, isBanned: boolean): Promise<void> {
+		await this.postModel.updateMany({ blogId }, { isBanned });
+	}
 }

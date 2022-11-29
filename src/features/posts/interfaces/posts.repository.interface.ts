@@ -5,4 +5,5 @@ import { MainRepositoryInterface } from '../../shared/interfaces/main.repository
 /* eslint-disable */
 export interface PostsRepositoryInterface
 	extends MainRepositoryInterface<PostModel, CreatePostExtendsDto> {
+	setBan(blogId: string, isBanned: boolean): Promise<void>
 }

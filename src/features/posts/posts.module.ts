@@ -18,6 +18,7 @@ import { LikesModule } from '../likes/likes.module';
 import { CreateLikePostHandler } from './application/commands/create-post-comment.handler';
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { PostInjectionToken } from './application/post.injection.token';
+import { BanUnbanPostHandler } from './application/commands/ban-unban-post.handler';
 
 export const CommandHandlers = [
 	CreatePostHandler,
@@ -25,6 +26,7 @@ export const CommandHandlers = [
 	UpdatePostHandler,
 	CreatePostOfBlogHandler,
 	CreateLikePostHandler,
+	BanUnbanPostHandler,
 ];
 export const QueryHandlers = [FindOnePostHandler, FindAllPostHandler];
 export const Repositories = [
