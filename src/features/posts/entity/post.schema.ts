@@ -22,6 +22,9 @@ export class Post {
 	@Prop({ required: true })
 	blogName: string;
 
+	@Prop({ required: true })
+	blogUserId: string;
+
 	@Prop({ default: false })
 	isBanned: boolean;
 

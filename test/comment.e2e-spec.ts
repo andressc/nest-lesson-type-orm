@@ -100,6 +100,7 @@ describe('CommentController (e2e)', () => {
 		content: 'content content content content content',
 		blogId: blogData.id,
 		blogName: blogData.name,
+		blogUserId: new ObjectId().toString(),
 		createdAt: expect.any(String),
 		extendedLikesInfo: {
 			dislikesCount: 0,

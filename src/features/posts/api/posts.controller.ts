@@ -24,7 +24,7 @@ import { FindOnePostCommand } from '../application/queries/find-one-post.handler
 import { FindAllPostCommand } from '../application/queries/find-all-post.handler';
 import { FindOneCommentCommand } from '../../comments/application/queries/find-one-comment.handler';
 import { FindAllCommentOfPostCommand } from '../../comments/application/queries/find-all-comment-of-post.handler';
-import { CreateLikePostCommand } from '../application/commands/create-post-comment.handler';
+import { CreateLikePostCommand } from '../application/commands/create-like-post.handler';
 
 @Controller('posts')
 export class PostsController {

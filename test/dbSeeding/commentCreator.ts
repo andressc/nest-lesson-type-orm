@@ -15,6 +15,11 @@ export const commentCreator = (
 		userId,
 		userLogin,
 		postId,
+		blogUserId: new ObjectId(postId).toString(),
+		postTitle: 'postTitle',
+		blogId: new ObjectId(postId).toString(),
+		blogName: 'blogName',
+
 		createdAt: add(new Date(), {
 			hours: hours,
 		}),

@@ -17,6 +17,7 @@ import { User } from '../src/features/users/entity/user.schema';
 import { Comment } from '../src/features/comments/entity/comment.schema';
 import { Ban } from '../src/features/blogs/entity/ban.schema';
 import { banCreator } from './dbSeeding/banCreator';
+import { ObjectId } from 'mongodb';
 
 describe('PostController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };
@@ -36,6 +37,7 @@ describe('PostController (e2e)', () => {
 		content: 'content',
 		blogId: 'blogId',
 		blogName: 'blogName',
+		blogUserId: 'blogUserId',
 	};
 
 	beforeAll(async () => {
@@ -64,7 +66,9 @@ describe('PostController (e2e)', () => {
 			await PostModel.create(postCreator('title', postData, 1));
 			await BlogModel.create(blogCreator('name', 1, 'youtubeUrl'));
 			await UserModel.create(userCreator('login', 'email', 1));
-			await CommentModel.create(commentCreator('content', 'userId', 'userLogin', 'postId', 1));
+			await CommentModel.create(
+				commentCreator('content', 'userId', 'userLogin', new ObjectId().toString(), 1),
+			);
 			await SessionModel.create(sessionCreator());
 			await BanModel.create(banCreator());
 		});

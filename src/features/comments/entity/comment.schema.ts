@@ -20,6 +20,18 @@ export class Comment {
 	postId: string;
 
 	@Prop({ required: true })
+	blogUserId: string;
+
+	@Prop({ required: true })
+	postTitle: string;
+
+	@Prop({ required: true })
+	blogId: string;
+
+	@Prop({ required: true })
+	blogName: string;
+
+	@Prop({ required: true })
 	createdAt: string;
 
 	@Prop({ default: false })

@@ -15,7 +15,7 @@ import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';
 import { UsersModule } from '../users/users.module';
 import { LikesModule } from '../likes/likes.module';
-import { CreateLikePostHandler } from './application/commands/create-post-comment.handler';
+import { CreateLikePostHandler } from './application/commands/create-like-post.handler';
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { PostInjectionToken } from './application/post.injection.token';
 import { BanUnbanPostHandler } from './application/commands/ban-unban-post.handler';

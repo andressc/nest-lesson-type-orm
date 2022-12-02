@@ -20,7 +20,6 @@ import { FindAllBlogAdminHandler } from './application/queries/find-all-blog-adm
 import { BindBlogWithUserHandler } from './application/commands/bind-blog-with-user.handler';
 import { UsersModule } from '../users/users.module';
 import { BanBlogHandler } from './application/commands/ban-blog.handler';
-import { FindAllCommentsBlogHandler } from './application/queries/find-all-comments-blog.handler';
 import { BanUnbanBlogOfUserHandler } from './application/commands/ban-unban-blog-of-user.handler';
 import { Ban, BanSchema } from './entity/ban.schema';
 import { BloggerUsersController } from '../users/api/blogger.users.controller';
@@ -38,7 +37,6 @@ export const QueryHandlers = [
 	FindOneBlogHandler,
 	FindAllBlogHandler,
 	FindAllBlogAdminHandler,
-	FindAllCommentsBlogHandler,
 	FindAllBannedBlogOfUserHandler,
 ];
 export const Repositories = [

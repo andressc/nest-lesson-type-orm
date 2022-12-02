@@ -29,6 +29,7 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 		const newPost = await this.postsRepository.create({
 			...command.data,
 			blogName: blog.name,
+			blogUserId: blog.userId,
 			createdAt: createDate(),
 		});
 

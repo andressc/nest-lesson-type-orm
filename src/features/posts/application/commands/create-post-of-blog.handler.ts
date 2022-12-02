@@ -36,6 +36,7 @@ export class CreatePostOfBlogHandler implements ICommandHandler<CreatePostOfBlog
 			...command.data,
 			blogId: command.blogId,
 			blogName: blog.name,
+			blogUserId: blog.userId,
 			createdAt: createDate(),
 		});
 
