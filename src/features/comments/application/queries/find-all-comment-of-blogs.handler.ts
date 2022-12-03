@@ -10,12 +10,12 @@ import { CommentInjectionToken } from '../comment.injection.token';
 import { PostInjectionToken } from '../../../posts/application/post.injection.token';
 import { ResponseCommentOfPostsDto } from '../../dto/response-comment-of-posts.dto';
 
-export class FindAllCommentOfPostsCommand {
+export class FindAllCommentOfBlogsCommand {
 	constructor(public query: QueryCommentDto, public currentUserId: string | null) {}
 }
 
-@QueryHandler(FindAllCommentOfPostsCommand)
-export class FindAllCommentOfPostsHandler implements IQueryHandler<FindAllCommentOfPostsCommand> {
+@QueryHandler(FindAllCommentOfBlogsCommand)
+export class FindAllCommentOfBlogsHandler implements IQueryHandler<FindAllCommentOfBlogsCommand> {
 	constructor(
 		@Inject(CommentInjectionToken.QUERY_COMMENT_REPOSITORY)
 		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
@@ -25,7 +25,7 @@ export class FindAllCommentOfPostsHandler implements IQueryHandler<FindAllCommen
 	) {}
 
 	async execute(
-		command: FindAllCommentOfPostsCommand,
+		command: FindAllCommentOfBlogsCommand,
 	): Promise<PaginationDto<ResponseCommentOfPostsDto[]>> {
 		const searchString = { blogUserId: command.currentUserId };
 

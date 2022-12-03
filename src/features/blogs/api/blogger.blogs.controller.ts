@@ -27,7 +27,7 @@ import { UpdatePostOfBlogDto } from '../../posts/dto/update-post-of-blog.dto';
 import { UpdatePostCommand } from '../../posts/application/commands/update-post.handler';
 import { ObjectIdsDto } from '../../../common/dto/object-ids.dto';
 import { RemovePostCommand } from '../../posts/application/commands/remove-post.handler';
-import { FindAllCommentOfPostsCommand } from '../../comments/application/queries/find-all-comment-of-posts.handler';
+import { FindAllCommentOfBlogsCommand } from '../../comments/application/queries/find-all-comment-of-blogs.handler';
 
 @Controller('blogger/blogs')
 @UseGuards(AccessTokenGuard)
@@ -41,7 +41,7 @@ export class BloggerBlogsController {
 
 	@Get('comments')
 	findAllCommentsOfPosts(@Query() query: QueryDto, @CurrentUserId() currentUserId) {
-		return this.queryBus.execute(new FindAllCommentOfPostsCommand(query, currentUserId));
+		return this.queryBus.execute(new FindAllCommentOfBlogsCommand(query, currentUserId));
 	}
 
 	@Post()

@@ -19,7 +19,7 @@ import { CreateLikeCommentHandler } from './application/commands/create-like-com
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { CommentInjectionToken } from './application/comment.injection.token';
 import { BlogsModule } from '../blogs/blogs.module';
-import { FindAllCommentOfPostsHandler } from './application/queries/find-all-comment-of-posts.handler';
+import { FindAllCommentOfBlogsHandler } from './application/queries/find-all-comment-of-blogs.handler';
 
 export const CommandHandlers = [
 	CreateCommentOfPostHandler,
@@ -31,7 +31,7 @@ export const CommandHandlers = [
 export const QueryHandlers = [
 	FindAllCommentOfPostHandler,
 	FindOneCommentHandler,
-	FindAllCommentOfPostsHandler,
+	FindAllCommentOfBlogsHandler,
 ];
 export const Repositories = [
 	{
