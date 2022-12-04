@@ -7,31 +7,24 @@ import { UsersRepositoryInterface } from '../../../users/interfaces/users.reposi
 import { LikesRepositoryInterface } from '../../../likes/interfaces/likes.repository.interface';
 import { InjectThrottlerStorage } from '@nestjs/throttler';
 import { ThrottlerStorageService } from '../../../../shared/throttler/application/throttler.storage.service';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
-import { PostInjectionToken } from '../../../posts/application/post.injection.token';
-import { CommentInjectionToken } from '../../../comments/application/comment.injection.token';
-import { LikeInjectionToken } from '../../../likes/application/like.injection.token';
-import { SessionInjectionToken } from '../../../session/application/session.injection.token';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
+import { InjectBlogsRepository } from '../../../blogs/infrastructure/providers/blogs-repository.provider';
+import { InjectCommentsRepository } from '../../../comments/infrastructure/providers/comments-repository.provider';
+import { InjectLikesRepository } from '../../../likes/infrastructure/providers/likes-repository.provider';
+import { InjectPostsRepository } from '../../../posts/infrastructure/providers/posts-repository.provider';
+import { InjectSessionsRepository } from '../../../session/infrastructure/providers/sessions-repository.provider';
 
 export class RemoveAllTestingCommand implements ICommand {}
 
 @CommandHandler(RemoveAllTestingCommand)
 export class RemoveAllTestingHandler implements ICommandHandler<RemoveAllTestingCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
-		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
-		private readonly commentsRepository: CommentsRepositoryInterface,
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionRepository: SessionsRepositoryInterface,
-		@Inject(LikeInjectionToken.LIKE_REPOSITORY)
-		private readonly likesRepository: LikesRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
+		@InjectCommentsRepository() private readonly commentsRepository: CommentsRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionRepository: SessionsRepositoryInterface,
+		@InjectLikesRepository() private readonly likesRepository: LikesRepositoryInterface,
 		@InjectThrottlerStorage() private storage: ThrottlerStorageService,
 	) {}
 

@@ -1,7 +1,6 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepositoryInterface } from '../../interfaces/sessions.repository.interface';
-import { Inject } from '@nestjs/common';
-import { SessionInjectionToken } from '../session.injection.token';
+import { InjectSessionsRepository } from '../../infrastructure/providers/sessions-repository.provider';
 
 export class RemoveAllUserSessionCommand implements ICommand {
 	constructor(public userId: string, public deviceId: string) {}
@@ -10,8 +9,7 @@ export class RemoveAllUserSessionCommand implements ICommand {
 @CommandHandler(RemoveAllUserSessionCommand)
 export class RemoveAllUserSessionHandler implements ICommandHandler<RemoveAllUserSessionCommand> {
 	constructor(
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: RemoveAllUserSessionCommand): Promise<void> {

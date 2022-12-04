@@ -7,10 +7,9 @@ import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { BlogNotFoundException } from '../../../../common/exceptions';
 import { QueryBlogsRepositoryInterface } from '../../../blogs/interfaces/query.blogs.repository.interface';
 import { QueryPostsRepositoryInterface } from '../../interfaces/query.posts.repository.interface';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
 import { ObjectId } from 'mongodb';
-import { PostInjectionToken } from '../post.injection.token';
+import { InjectQueryBlogsRepository } from '../../../blogs/infrastructure/providers/query-blogs-repository.provider';
+import { InjectQueryPostsRepository } from '../../infrastructure/providers/query-posts-repository.provider';
 
 export class FindAllPostCommand {
 	constructor(
@@ -23,9 +22,9 @@ export class FindAllPostCommand {
 @QueryHandler(FindAllPostCommand)
 export class FindAllPostHandler implements IQueryHandler<FindAllPostCommand> {
 	constructor(
-		@Inject(PostInjectionToken.QUERY_POST_REPOSITORY)
+		@InjectQueryPostsRepository()
 		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
-		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
+		@InjectQueryBlogsRepository()
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}

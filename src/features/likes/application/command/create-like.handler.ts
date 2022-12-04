@@ -5,8 +5,7 @@ import { LikesRepositoryInterface } from '../../interfaces/likes.repository.inte
 import { CreateRequestLikeDto } from '../../../comments/dto';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { ObjectId } from 'mongodb';
-import { Inject } from '@nestjs/common';
-import { LikeInjectionToken } from '../like.injection.token';
+import { InjectLikesRepository } from '../../infrastructure/providers/likes-repository.provider';
 
 export class CreateLikeCommand implements ICommand {
 	constructor(
@@ -20,8 +19,7 @@ export class CreateLikeCommand implements ICommand {
 @CommandHandler(CreateLikeCommand)
 export class CreateLikeHandler implements ICommandHandler<CreateLikeCommand> {
 	constructor(
-		@Inject(LikeInjectionToken.LIKE_REPOSITORY)
-		private readonly likesRepository: LikesRepositoryInterface,
+		@InjectLikesRepository() private readonly likesRepository: LikesRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

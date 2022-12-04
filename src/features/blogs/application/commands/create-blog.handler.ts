@@ -4,8 +4,7 @@ import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
 
 export class CreateBlogCommand implements ICommand {
 	constructor(
@@ -18,8 +17,7 @@ export class CreateBlogCommand implements ICommand {
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogHandler implements ICommandHandler<CreateBlogCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

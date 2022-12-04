@@ -5,8 +5,7 @@ import { CreatePostDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { Inject } from '@nestjs/common';
-import { PostInjectionToken } from '../post.injection.token';
+import { InjectPostsRepository } from '../../infrastructure/providers/posts-repository.provider';
 
 export class CreatePostCommand implements ICommand {
 	constructor(public data: CreatePostDto) {}
@@ -16,7 +15,7 @@ export class CreatePostCommand implements ICommand {
 export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		@Inject(PostInjectionToken.POST_REPOSITORY)
+		@InjectPostsRepository()
 		private readonly postsRepository: PostsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}

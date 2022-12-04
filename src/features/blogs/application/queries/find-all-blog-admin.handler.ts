@@ -4,9 +4,8 @@ import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { BlogModel } from '../../domain/blog.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
 import { ResponseBlogAdminDto } from '../../dto/response-blog-admin.dto';
+import { InjectQueryBlogsRepository } from '../../infrastructure/providers/query-blogs-repository.provider';
 
 export class FindAllBlogAdminCommand {
 	constructor(public query: QueryBlogDto) {}
@@ -15,7 +14,7 @@ export class FindAllBlogAdminCommand {
 @QueryHandler(FindAllBlogAdminCommand)
 export class FindAllBlogAdminHandler implements IQueryHandler<FindAllBlogAdminCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
+		@InjectQueryBlogsRepository()
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}

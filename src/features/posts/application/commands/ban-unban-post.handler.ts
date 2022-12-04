@@ -1,7 +1,6 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { PostInjectionToken } from '../post.injection.token';
+import { InjectPostsRepository } from '../../infrastructure/providers/posts-repository.provider';
 
 export class BanUnbanPostCommand implements ICommand {
 	constructor(public blogId: string, public isBanned: boolean) {}
@@ -10,8 +9,7 @@ export class BanUnbanPostCommand implements ICommand {
 @CommandHandler(BanUnbanPostCommand)
 export class BanUnbanPostHandler implements ICommandHandler<BanUnbanPostCommand> {
 	constructor(
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
 	) {}
 
 	async execute(command: BanUnbanPostCommand): Promise<void> {

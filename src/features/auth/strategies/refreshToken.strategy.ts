@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -9,16 +9,14 @@ import { UserModel } from '../../users/domain/user.schema';
 import { SessionModel } from '../../session/domain/session.schema';
 import { SessionsRepositoryInterface } from '../../session/interfaces/sessions.repository.interface';
 import { UsersRepositoryInterface } from '../../users/interfaces/users.repository.interface';
-import { SessionInjectionToken } from '../../session/application/session.injection.token';
-import { UserInjectionToken } from '../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../users/infrastructure/providers/users-repository.provider';
+import { InjectSessionsRepository } from '../../session/infrastructure/providers/sessions-repository.provider';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
 	constructor(
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionsRepository: SessionsRepositoryInterface,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({

@@ -4,8 +4,8 @@ import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../domain/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
+import { ForbiddenException } from '@nestjs/common';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
 
 export class UpdateBlogCommand {
 	constructor(public id: string, public data: UpdateBlogDto, public currentUserId: string) {}
@@ -14,8 +14,7 @@ export class UpdateBlogCommand {
 @CommandHandler(UpdateBlogCommand)
 export class UpdateBlogHandler implements ICommandHandler<UpdateBlogCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 		private readonly validationService: ValidationService,
 	) {}

@@ -1,9 +1,9 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { DeviceIdNotFoundException } from '../../../../common/exceptions';
-import { ForbiddenException, Inject } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { SessionModel } from '../../domain/session.schema';
 import { SessionsRepositoryInterface } from '../../interfaces/sessions.repository.interface';
-import { SessionInjectionToken } from '../session.injection.token';
+import { InjectSessionsRepository } from '../../infrastructure/providers/sessions-repository.provider';
 
 export class RemoveUserSessionCommand implements ICommand {
 	constructor(public userId: string, public deviceId: string) {}
@@ -12,8 +12,7 @@ export class RemoveUserSessionCommand implements ICommand {
 @CommandHandler(RemoveUserSessionCommand)
 export class RemoveUserSessionHandler implements ICommandHandler<RemoveUserSessionCommand> {
 	constructor(
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: RemoveUserSessionCommand): Promise<void> {

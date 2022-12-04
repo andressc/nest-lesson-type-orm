@@ -7,12 +7,12 @@ import { UserModel } from '../../../users/domain/user.schema';
 import { CommentModel } from '../../domain/comment.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { CommentInjectionToken } from '../comment.injection.token';
-import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
+import { ForbiddenException } from '@nestjs/common';
 import { BlogsRepositoryInterface } from '../../../blogs/interfaces/blogs.repository.interface';
 import { BanModel } from '../../../blogs/domain/ban.schema';
 import { PostModel } from '../../../posts/domain/post.schema';
+import { InjectBlogsRepository } from '../../../blogs/infrastructure/providers/blogs-repository.provider';
+import { InjectCommentsRepository } from '../../infrastructure/providers/comments-repository.provider';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(
@@ -27,10 +27,8 @@ export class CreateCommentOfPostHandler implements ICommandHandler<CreateComment
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly postsService: PostsService,
-		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
-		private readonly commentsRepository: CommentsRepositoryInterface,
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectCommentsRepository() private readonly commentsRepository: CommentsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

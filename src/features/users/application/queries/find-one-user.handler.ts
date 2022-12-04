@@ -4,8 +4,7 @@ import { ResponseUserDto } from '../../dto';
 import { UserModel } from '../../domain/user.schema';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
 import { ObjectId } from 'mongodb';
-import { Inject } from '@nestjs/common';
-import { UserInjectionToken } from '../user.injection.token';
+import { InjectQueryUsersRepository } from '../../infrastructure/providers/query-users-repository.provider';
 
 export class FindOneUserCommand {
 	constructor(public id: string) {}
@@ -14,7 +13,7 @@ export class FindOneUserCommand {
 @QueryHandler(FindOneUserCommand)
 export class FindOneUserHandler implements IQueryHandler<FindOneUserCommand> {
 	constructor(
-		@Inject(UserInjectionToken.QUERY_USER_REPOSITORY)
+		@InjectQueryUsersRepository()
 		private readonly queryUsersRepository: QueryUsersRepositoryInterface,
 	) {}
 

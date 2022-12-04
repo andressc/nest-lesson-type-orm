@@ -2,12 +2,12 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationDto } from '../../dto';
 import { CreateUserCommand } from '../../../users/application/commands/create-user.handler';
 import { UserNotFoundException } from '../../../../common/exceptions';
-import { Inject, RequestTimeoutException } from '@nestjs/common';
+import { RequestTimeoutException } from '@nestjs/common';
 import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../shared/mailer/application/commands/send-email-registration-message-mailer.handler';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
 
 export class RegistrationAuthCommand {
 	constructor(public data: RegistrationDto) {}
@@ -17,8 +17,7 @@ export class RegistrationAuthCommand {
 export class RegistrationAuthHandler implements ICommandHandler<RegistrationAuthCommand> {
 	constructor(
 		private readonly validationService: ValidationService,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 		private readonly commandBus: CommandBus,
 	) {}
 

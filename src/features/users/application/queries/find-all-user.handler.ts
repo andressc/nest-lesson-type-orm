@@ -4,8 +4,7 @@ import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { UserModel } from '../../domain/user.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
-import { Inject } from '@nestjs/common';
-import { UserInjectionToken } from '../user.injection.token';
+import { InjectQueryUsersRepository } from '../../infrastructure/providers/query-users-repository.provider';
 
 export class FindAllUserCommand {
 	constructor(public query: QueryUserDto) {}
@@ -14,7 +13,7 @@ export class FindAllUserCommand {
 @QueryHandler(FindAllUserCommand)
 export class FindAllUserHandler implements IQueryHandler<FindAllUserCommand> {
 	constructor(
-		@Inject(UserInjectionToken.QUERY_USER_REPOSITORY)
+		@InjectQueryUsersRepository()
 		private readonly queryUsersRepository: QueryUsersRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}

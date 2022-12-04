@@ -3,9 +3,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogNotFoundException } from '../../../../common/exceptions';
 import { BlogModel } from '../../domain/blog.schema';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
 import { ObjectId } from 'mongodb';
+import { InjectQueryBlogsRepository } from '../../infrastructure/providers/query-blogs-repository.provider';
 
 export class FindOneBlogCommand {
 	constructor(public id: string) {}
@@ -14,7 +13,7 @@ export class FindOneBlogCommand {
 @QueryHandler(FindOneBlogCommand)
 export class FindOneBlogHandler implements IQueryHandler<FindOneBlogCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
+		@InjectQueryBlogsRepository()
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 	) {}
 

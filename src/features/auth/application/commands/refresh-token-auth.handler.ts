@@ -3,10 +3,10 @@ import { PayloadTokenDto, RefreshTokenDataDto, ResponseTokensDto } from '../../d
 import { payloadDateCreator } from '../../../../common/helpers';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { SessionModel } from '../../../session/domain/session.schema';
 import { SessionsRepositoryInterface } from '../../../session/interfaces/sessions.repository.interface';
-import { SessionInjectionToken } from '../../../session/application/session.injection.token';
+import { InjectSessionsRepository } from '../../../session/infrastructure/providers/sessions-repository.provider';
 
 export class RefreshTokenAuthCommand {
 	constructor(public refreshTokenData: RefreshTokenDataDto) {}
@@ -17,8 +17,7 @@ export class RefreshTokenAuthHandler implements ICommandHandler<RefreshTokenAuth
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: RefreshTokenAuthCommand): Promise<ResponseTokensDto> {

@@ -4,10 +4,9 @@ import { ResponsePostDto } from '../../dto';
 import { PostModel } from '../../domain/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interfaces/query.posts.repository.interface';
 import { ObjectId } from 'mongodb';
-import { Inject } from '@nestjs/common';
-import { PostInjectionToken } from '../post.injection.token';
-import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
 import { QueryBlogsRepositoryInterface } from '../../../blogs/interfaces/query.blogs.repository.interface';
+import { InjectQueryBlogsRepository } from '../../../blogs/infrastructure/providers/query-blogs-repository.provider';
+import { InjectQueryPostsRepository } from '../../infrastructure/providers/query-posts-repository.provider';
 
 export class FindOnePostCommand {
 	constructor(public id: string, public currentUserId: string | null) {}
@@ -16,9 +15,9 @@ export class FindOnePostCommand {
 @QueryHandler(FindOnePostCommand)
 export class FindOnePostHandler implements IQueryHandler<FindOnePostCommand> {
 	constructor(
-		@Inject(PostInjectionToken.QUERY_POST_REPOSITORY)
+		@InjectQueryPostsRepository()
 		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
-		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
+		@InjectQueryBlogsRepository()
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
 	) {}
 

@@ -32,36 +32,4 @@ export class BlogsController {
 	findOneBlog(@Param() param: ObjectIdDto) {
 		return this.queryBus.execute(new FindOneBlogCommand(param.id));
 	}
-
-	/*@UseGuards(BasicAuthGuard)
-	@Post()
-	async createBlog(@Body() data: CreateBlogDto) {
-		const blogId = await this.commandBus.execute(new CreateBlogCommand(data));
-		return this.queryBus.execute(new FindOneBlogCommand(blogId));
-	}
-
-	@UseGuards(BasicAuthGuard)
-	@Post(':id/posts')
-	async createPostOfBlog(
-		@Body() data: CreatePostOfBlogDto,
-		@Param() param: ObjectIdDto,
-		@CurrentUserIdNonAuthorized() currentUserId,
-	) {
-		const postId = await this.commandBus.execute(new CreatePostOfBlogCommand(data, param.id));
-		return this.queryBus.execute(new FindOnePostCommand(postId, currentUserId));
-	}
-
-	@HttpCode(204)
-	@UseGuards(BasicAuthGuard)
-	@Put(':id')
-	async updateBlog(@Param() param: ObjectIdDto, @Body() data: UpdateBlogDto) {
-		await this.commandBus.execute(new UpdateBlogCommand(param.id, data));
-	}
-
-	@HttpCode(204)
-	@UseGuards(BasicAuthGuard)
-	@Delete(':id')
-	async removeBlog(@Param() param: ObjectIdDto) {
-		await this.commandBus.execute(new RemoveBlogCommand(param.id));
-	}*/
 }

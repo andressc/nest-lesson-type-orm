@@ -2,12 +2,12 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationEmailResendingDto } from '../../dto';
 import { EmailBadRequestException } from '../../../../common/exceptions';
 import { v4 as uuidv4 } from 'uuid';
-import { Inject, RequestTimeoutException } from '@nestjs/common';
+import { RequestTimeoutException } from '@nestjs/common';
 import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../shared/mailer/application/commands/send-email-registration-message-mailer.handler';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
 
 export class RegistrationEmailResendingAuthCommand {
 	constructor(public data: RegistrationEmailResendingDto) {}
@@ -19,8 +19,7 @@ export class RegistrationEmailResendingAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 		private readonly commandBus: CommandBus,
 	) {}
 

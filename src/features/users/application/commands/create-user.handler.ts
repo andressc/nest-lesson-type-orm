@@ -6,8 +6,7 @@ import { UsersService } from '../users.service';
 import { UserModel } from '../../domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
-import { Inject } from '@nestjs/common';
-import { UserInjectionToken } from '../user.injection.token';
+import { InjectUsersRepository } from '../../infrastructure/providers/users-repository.provider';
 
 export class CreateUserCommand implements ICommand {
 	constructor(public data: CreateUserDto, public isConfirmed = false) {}
@@ -17,8 +16,7 @@ export class CreateUserCommand implements ICommand {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 	constructor(
 		private readonly usersService: UsersService,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

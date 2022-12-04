@@ -4,8 +4,7 @@ import { ConfirmCodeBadRequestException } from '../../../../common/exceptions';
 import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
-import { Inject } from '@nestjs/common';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
 
 export class RegistrationConfirmationAuthCommand {
 	constructor(public data: RegistrationConfirmationDto) {}
@@ -17,8 +16,7 @@ export class RegistrationConfirmationAuthHandler
 {
 	constructor(
 		private readonly validationService: ValidationService,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 	) {}
 
 	async execute(command: RegistrationConfirmationAuthCommand): Promise<void> {

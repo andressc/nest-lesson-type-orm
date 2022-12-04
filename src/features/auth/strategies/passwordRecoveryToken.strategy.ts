@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -7,7 +7,7 @@ import { EmailBadRequestException } from '../../../common/exceptions';
 import { AuthConfig } from '../../../configuration';
 import { UserModel } from '../../users/domain/user.schema';
 import { UsersRepositoryInterface } from '../../users/interfaces/users.repository.interface';
-import { UserInjectionToken } from '../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../users/infrastructure/providers/users-repository.provider';
 
 @Injectable()
 export class PasswordRecoveryTokenStrategy extends PassportStrategy(
@@ -15,8 +15,7 @@ export class PasswordRecoveryTokenStrategy extends PassportStrategy(
 	'jwt-recovery-password',
 ) {
 	constructor(
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 		private readonly authConfig: AuthConfig,
 	) {
 		super({

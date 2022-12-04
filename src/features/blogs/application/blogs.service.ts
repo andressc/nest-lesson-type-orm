@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BlogNotFoundException } from '../../../common/exceptions';
 import { BlogModel } from '../domain/blog.schema';
 import { BlogsRepositoryInterface } from '../interfaces/blogs.repository.interface';
-import { BlogInjectionToken } from './blog.injection.token';
+import { InjectBlogsRepository } from '../infrastructure/providers/blogs-repository.provider';
 
 @Injectable()
 export class BlogsService {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 	) {}
 
 	public async findBlogOrErrorThrow(id: string): Promise<BlogModel> {

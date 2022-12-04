@@ -4,8 +4,7 @@ import { CommentNotFoundException } from '../../../../common/exceptions';
 import { ResponseCommentDto } from '../../dto';
 import { QueryCommentsRepositoryInterface } from '../../interfaces/query.comments.repository.interface';
 import { ObjectId } from 'mongodb';
-import { Inject } from '@nestjs/common';
-import { CommentInjectionToken } from '../comment.injection.token';
+import { InjectQueryCommentsRepository } from '../../infrastructure/providers/query-comments-repository.provider';
 
 export class FindOneCommentCommand {
 	constructor(public id: string, public currentUserId: string | null) {}
@@ -14,7 +13,7 @@ export class FindOneCommentCommand {
 @QueryHandler(FindOneCommentCommand)
 export class FindOneCommentHandler implements IQueryHandler<FindOneCommentCommand> {
 	constructor(
-		@Inject(CommentInjectionToken.QUERY_COMMENT_REPOSITORY)
+		@InjectQueryCommentsRepository()
 		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
 	) {}
 

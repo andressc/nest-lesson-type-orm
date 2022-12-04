@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
 	UserExistsEmailException,
 	UserExistsLoginException,
@@ -6,13 +6,12 @@ import {
 } from '../../../common/exceptions';
 import { UserModel } from '../domain/user.schema';
 import { UsersRepositoryInterface } from '../interfaces/users.repository.interface';
-import { UserInjectionToken } from './user.injection.token';
+import { InjectUsersRepository } from '../infrastructure/providers/users-repository.provider';
 
 @Injectable()
 export class UsersService {
 	constructor(
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 	) {}
 
 	public async findUserByIdOrErrorThrow(id: string): Promise<UserModel> {

@@ -5,9 +5,9 @@ import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { PostModel } from '../../domain/post.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { PostInjectionToken } from '../post.injection.token';
+import { ForbiddenException } from '@nestjs/common';
 import { UpdatePostOfBlogDto } from '../../dto/update-post-of-blog.dto';
+import { InjectPostsRepository } from '../../infrastructure/providers/posts-repository.provider';
 
 export class UpdatePostCommand {
 	constructor(
@@ -21,8 +21,7 @@ export class UpdatePostCommand {
 @CommandHandler(UpdatePostCommand)
 export class UpdatePostHandler implements ICommandHandler<UpdatePostCommand> {
 	constructor(
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 		private readonly postsService: PostsService,
 		private readonly validationService: ValidationService,

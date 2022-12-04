@@ -5,8 +5,8 @@ import { BlogsService } from '../../../blogs/application/blogs.service';
 import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { PostInjectionToken } from '../post.injection.token';
+import { ForbiddenException } from '@nestjs/common';
+import { InjectPostsRepository } from '../../infrastructure/providers/posts-repository.provider';
 
 export class CreatePostOfBlogCommand implements ICommand {
 	constructor(
@@ -20,8 +20,7 @@ export class CreatePostOfBlogCommand implements ICommand {
 export class CreatePostOfBlogHandler implements ICommandHandler<CreatePostOfBlogCommand> {
 	constructor(
 		private readonly blogsService: BlogsService,
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

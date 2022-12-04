@@ -3,15 +3,15 @@ import { UsersService } from '../../../users/application/users.service';
 import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { ForbiddenException } from '@nestjs/common';
 import { BanUnbanBlogOfUserDto } from '../../dto/ban-unban-blog-of-user.dto';
 import { BlogModel } from '../../domain/blog.schema';
 import { BlogsService } from '../blogs.service';
 import { UserIdBadRequestException } from '../../../../common/exceptions/userIdBadRequestException';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { BlogInjectionToken } from '../blog.injection.token';
 import { BanModel } from '../../domain/ban.schema';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
 
 export class BanUnbanBlogOfUserCommand implements ICommand {
 	constructor(
@@ -26,10 +26,8 @@ export class BanUnbanBlogOfUserHandler implements ICommandHandler<BanUnbanBlogOf
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly blogsService: BlogsService,
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 		private readonly validationService: ValidationService,
 	) {}
 

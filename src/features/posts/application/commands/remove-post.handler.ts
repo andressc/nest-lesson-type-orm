@@ -2,10 +2,10 @@ import { PostModel } from '../../domain/post.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsService } from '../posts.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { PostInjectionToken } from '../post.injection.token';
+import { ForbiddenException } from '@nestjs/common';
 import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { BlogsService } from '../../../blogs/application/blogs.service';
+import { InjectPostsRepository } from '../../infrastructure/providers/posts-repository.provider';
 
 export class RemovePostCommand {
 	constructor(public blogId: string, public postId: string, public currentUserId: string) {}
@@ -14,8 +14,7 @@ export class RemovePostCommand {
 @CommandHandler(RemovePostCommand)
 export class RemovePostHandler implements ICommandHandler<RemovePostCommand> {
 	constructor(
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
 		private readonly postsService: PostsService,
 		private readonly blogsService: BlogsService,
 	) {}

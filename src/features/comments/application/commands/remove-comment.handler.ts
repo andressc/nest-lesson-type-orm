@@ -2,9 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsService } from '../comments.service';
 import { UsersService } from '../../../users/application/users.service';
 import { CommentModel } from '../../domain/comment.schema';
-import { Inject } from '@nestjs/common';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
-import { CommentInjectionToken } from '../comment.injection.token';
+import { InjectCommentsRepository } from '../../infrastructure/providers/comments-repository.provider';
 
 export class RemoveCommentCommand {
 	constructor(public id: string, public authUserId: string) {}
@@ -13,8 +12,7 @@ export class RemoveCommentCommand {
 @CommandHandler(RemoveCommentCommand)
 export class RemoveCommentHandler implements ICommandHandler<RemoveCommentCommand> {
 	constructor(
-		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
-		private readonly commentsRepository: CommentsRepositoryInterface,
+		@InjectCommentsRepository() private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly commentsService: CommentsService,
 		private readonly usersService: UsersService,
 	) {}

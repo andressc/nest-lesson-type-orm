@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { generateHash } from '../../../../common/helpers';
 import { UserModel } from '../../../users/domain/user.schema';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
-import { UserInjectionToken } from '../../../users/application/user.injection.token';
+import { InjectUsersRepository } from '../../../users/infrastructure/providers/users-repository.provider';
 
 export class ValidateUserAuthCommand {
 	constructor(public login: string, public password: string) {}
@@ -12,8 +12,7 @@ export class ValidateUserAuthCommand {
 @CommandHandler(ValidateUserAuthCommand)
 export class ValidateUserAuthHandler implements ICommandHandler<ValidateUserAuthCommand> {
 	constructor(
-		@Inject(UserInjectionToken.USER_REPOSITORY)
-		private readonly usersRepository: UsersRepositoryInterface,
+		@InjectUsersRepository() private readonly usersRepository: UsersRepositoryInterface,
 	) {}
 
 	async execute(command: ValidateUserAuthCommand): Promise<UserModel | null> {

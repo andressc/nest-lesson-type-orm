@@ -6,8 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { SessionModel } from '../../../session/domain/session.schema';
 import { SessionsRepositoryInterface } from '../../../session/interfaces/sessions.repository.interface';
-import { Inject } from '@nestjs/common';
-import { SessionInjectionToken } from '../../../session/application/session.injection.token';
+import { InjectSessionsRepository } from '../../../session/infrastructure/providers/sessions-repository.provider';
 
 export class LoginAuthCommand {
 	constructor(public userId: string, public ip: string, public userAgent: string) {}
@@ -18,8 +17,7 @@ export class LoginAuthHandler implements ICommandHandler<LoginAuthCommand> {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
-		@Inject(SessionInjectionToken.SESSION_REPOSITORY)
-		private readonly sessionsRepository: SessionsRepositoryInterface,
+		@InjectSessionsRepository() private readonly sessionsRepository: SessionsRepositoryInterface,
 	) {}
 
 	async execute(command: LoginAuthCommand): Promise<ResponseTokensDto> {

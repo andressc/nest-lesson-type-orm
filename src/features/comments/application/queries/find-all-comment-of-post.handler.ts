@@ -8,9 +8,8 @@ import { PaginationService } from '../../../../shared/pagination/application/pag
 import { QueryCommentsRepositoryInterface } from '../../interfaces/query.comments.repository.interface';
 import { QueryPostsRepositoryInterface } from '../../../posts/interfaces/query.posts.repository.interface';
 import { ObjectId } from 'mongodb';
-import { Inject } from '@nestjs/common';
-import { CommentInjectionToken } from '../comment.injection.token';
-import { PostInjectionToken } from '../../../posts/application/post.injection.token';
+import { InjectQueryCommentsRepository } from '../../infrastructure/providers/query-comments-repository.provider';
+import { InjectQueryPostsRepository } from '../../../posts/infrastructure/providers/query-posts-repository.provider';
 
 export class FindAllCommentOfPostCommand {
 	constructor(
@@ -23,9 +22,9 @@ export class FindAllCommentOfPostCommand {
 @QueryHandler(FindAllCommentOfPostCommand)
 export class FindAllCommentOfPostHandler implements IQueryHandler<FindAllCommentOfPostCommand> {
 	constructor(
-		@Inject(CommentInjectionToken.QUERY_COMMENT_REPOSITORY)
+		@InjectQueryCommentsRepository()
 		private readonly queryCommentsRepository: QueryCommentsRepositoryInterface,
-		@Inject(PostInjectionToken.QUERY_POST_REPOSITORY)
+		@InjectQueryPostsRepository()
 		private readonly queryPostsRepository: QueryPostsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}

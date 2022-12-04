@@ -3,10 +3,9 @@ import { BlogsService } from '../blogs.service';
 import { BlogModel } from '../../domain/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
 import { BanBlogDto } from '../../dto/ban-blog.dto';
 import { BanUnbanPostCommand } from '../../../posts/application/commands/ban-unban-post.handler';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
 
 export class BanBlogCommand {
 	constructor(public id: string, public data: BanBlogDto) {}
@@ -15,8 +14,7 @@ export class BanBlogCommand {
 @CommandHandler(BanBlogCommand)
 export class BanBlogHandler implements ICommandHandler<BanBlogCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 		private readonly validationService: ValidationService,
 		private readonly commandBus: CommandBus,

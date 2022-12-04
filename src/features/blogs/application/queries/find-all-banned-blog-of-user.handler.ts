@@ -3,13 +3,14 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
+import { ForbiddenException } from '@nestjs/common';
 import { ResponseBannedBlogOfUserDto } from '../../dto/response-banned-blog-of-user.dto';
 import { BanModel } from '../../domain/ban.schema';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
 import { BlogModel } from '../../domain/blog.schema';
 import { BlogsService } from '../blogs.service';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
+import { InjectQueryBlogsRepository } from '../../infrastructure/providers/query-blogs-repository.provider';
 
 export class FindAllBannedBlogOfUserCommand {
 	constructor(public blogId: string, public query: QueryBlogDto, public currentUserId: string) {}
@@ -21,10 +22,9 @@ export class FindAllBannedBlogOfUserHandler
 {
 	constructor(
 		private readonly blogsService: BlogsService,
-		@Inject(BlogInjectionToken.QUERY_BLOG_REPOSITORY)
+		@InjectQueryBlogsRepository()
 		private readonly queryBlogsRepository: QueryBlogsRepositoryInterface,
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly paginationService: PaginationService,
 	) {}
 

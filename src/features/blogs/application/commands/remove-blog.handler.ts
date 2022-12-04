@@ -2,8 +2,8 @@ import { BlogModel } from '../../domain/blog.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { BlogInjectionToken } from '../blog.injection.token';
+import { ForbiddenException } from '@nestjs/common';
+import { InjectBlogsRepository } from '../../infrastructure/providers/blogs-repository.provider';
 
 export class RemoveBlogCommand {
 	constructor(public id: string, public currentUserId: string) {}
@@ -12,8 +12,7 @@ export class RemoveBlogCommand {
 @CommandHandler(RemoveBlogCommand)
 export class RemoveBlogHandler implements ICommandHandler<RemoveBlogCommand> {
 	constructor(
-		@Inject(BlogInjectionToken.BLOG_REPOSITORY)
-		private readonly blogsRepository: BlogsRepositoryInterface,
+		@InjectBlogsRepository() private readonly blogsRepository: BlogsRepositoryInterface,
 		private readonly blogsService: BlogsService,
 	) {}
 

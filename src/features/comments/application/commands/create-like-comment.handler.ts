@@ -5,8 +5,7 @@ import { ValidationService } from '../../../../shared/validation/application/val
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { CreateLikeCommand } from '../../../likes/application/command/create-like.handler';
 import { CommentNotFoundException } from '../../../../common/exceptions';
-import { Inject } from '@nestjs/common';
-import { CommentInjectionToken } from '../comment.injection.token';
+import { InjectCommentsRepository } from '../../infrastructure/providers/comments-repository.provider';
 
 export class CreateLikeCommentCommand implements ICommand {
 	constructor(
@@ -20,8 +19,7 @@ export class CreateLikeCommentCommand implements ICommand {
 @CommandHandler(CreateLikeCommentCommand)
 export class CreateLikeCommentHandler implements ICommandHandler<CreateLikeCommentCommand> {
 	constructor(
-		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
-		private readonly commentsRepository: CommentsRepositoryInterface,
+		@InjectCommentsRepository() private readonly commentsRepository: CommentsRepositoryInterface,
 		private readonly validationService: ValidationService,
 		private readonly commandBus: CommandBus,
 	) {}

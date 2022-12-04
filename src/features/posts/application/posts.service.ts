@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PostModel } from '../domain/post.schema';
 import { PostNotFoundException } from '../../../common/exceptions';
 import { PostsRepositoryInterface } from '../interfaces/posts.repository.interface';
-import { PostInjectionToken } from './post.injection.token';
+import { InjectPostsRepository } from '../infrastructure/providers/posts-repository.provider';
 
 @Injectable()
 export class PostsService {
 	constructor(
-		@Inject(PostInjectionToken.POST_REPOSITORY)
-		private readonly postsRepository: PostsRepositoryInterface,
+		@InjectPostsRepository() private readonly postsRepository: PostsRepositoryInterface,
 	) {}
 
 	public async findPostOrErrorThrow(id: string): Promise<PostModel> {

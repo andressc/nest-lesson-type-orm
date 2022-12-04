@@ -1,14 +1,13 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CommentModel } from '../domain/comment.schema';
 import { CommentNotFoundException } from '../../../common/exceptions';
 import { CommentsRepositoryInterface } from '../interfaces/comments.repository.interface';
-import { CommentInjectionToken } from './comment.injection.token';
+import { InjectCommentsRepository } from '../infrastructure/providers/comments-repository.provider';
 
 @Injectable()
 export class CommentsService {
 	constructor(
-		@Inject(CommentInjectionToken.COMMENT_REPOSITORY)
-		private readonly commentsRepository: CommentsRepositoryInterface,
+		@InjectCommentsRepository() private readonly commentsRepository: CommentsRepositoryInterface,
 	) {}
 
 	public async findCommentOrErrorThrow(id: string, authUserId?: string): Promise<CommentModel> {
