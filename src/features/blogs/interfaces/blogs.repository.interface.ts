@@ -1,7 +1,7 @@
 import { MainRepositoryInterface } from '../../shared/interfaces/main.repository.interface';
-import { BlogModel } from '../entity/blog.schema';
+import { BlogModel } from '../domain/blog.schema';
 import { CreateBlogExtendsDto } from '../dto';
-import { BanModel } from '../entity/ban.schema';
+import { BanModel } from '../domain/ban.schema';
 import { BanUnbanBlogOfUserExtendsDto } from '../dto/ban-unban-blog-of-user-extends.dto';
 
 /* eslint-disable */

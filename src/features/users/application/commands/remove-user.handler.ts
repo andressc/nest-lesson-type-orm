@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../users.service';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../domain/user.schema';
 import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
 import { Inject } from '@nestjs/common';
 import { UserInjectionToken } from '../user.injection.token';

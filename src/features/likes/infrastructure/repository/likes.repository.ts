@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesRepositoryInterface } from '../../interfaces/likes.repository.interface';
-import { Like, LikeModel } from '../../entity/like.schema';
+import { Like, LikeModel } from '../../domain/like.schema';
 import { CreateLikeExtendsDto } from '../../dto/create-like-extends.dto';
 import { ObjectId } from 'mongodb';
 import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';

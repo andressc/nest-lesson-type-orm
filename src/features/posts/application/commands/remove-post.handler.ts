@@ -1,10 +1,10 @@
-import { PostModel } from '../../entity/post.schema';
+import { PostModel } from '../../domain/post.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsService } from '../posts.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
 import { ForbiddenException, Inject } from '@nestjs/common';
 import { PostInjectionToken } from '../post.injection.token';
-import { BlogModel } from '../../../blogs/entity/blog.schema';
+import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { BlogsService } from '../../../blogs/application/blogs.service';
 
 export class RemovePostCommand {

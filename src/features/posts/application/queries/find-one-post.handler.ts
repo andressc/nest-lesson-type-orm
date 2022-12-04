@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostNotFoundException } from '../../../../common/exceptions';
 import { ResponsePostDto } from '../../dto';
-import { PostModel } from '../../entity/post.schema';
+import { PostModel } from '../../domain/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interfaces/query.posts.repository.interface';
 import { ObjectId } from 'mongodb';
 import { Inject } from '@nestjs/common';

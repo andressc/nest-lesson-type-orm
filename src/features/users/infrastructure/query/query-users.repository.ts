@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModel } from '../../entity/user.schema';
+import { User, UserModel } from '../../domain/user.schema';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
 import { MainQueryRepository } from '../../../shared/infrastructure/query/main.query.repository';
 

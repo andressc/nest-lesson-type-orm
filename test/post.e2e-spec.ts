@@ -7,10 +7,10 @@ import { mainTest } from '../src/main-test';
 import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
-import { Blog } from '../src/features/blogs/entity/blog.schema';
-import { Post } from '../src/features/posts/entity/post.schema';
+import { Blog } from '../src/features/blogs/domain/blog.schema';
+import { Post } from '../src/features/posts/domain/post.schema';
 import { userCreator } from './dbSeeding/userCreator';
-import { User } from '../src/features/users/entity/user.schema';
+import { User } from '../src/features/users/domain/user.schema';
 import { postCreator } from './dbSeeding/postCreator';
 import { BASIC_AUTH } from './constants';
 

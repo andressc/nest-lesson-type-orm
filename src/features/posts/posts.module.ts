@@ -9,7 +9,7 @@ import { FindAllPostHandler } from './application/queries/find-all-post.handler'
 import { QueryPostsRepository } from './infrastructure/query/query-posts.repository';
 import { PostsRepository } from './infrastructure/repository/posts.repository';
 import { PostsService } from './application/posts.service';
-import { Post, PostSchema } from './entity/post.schema';
+import { Post, PostSchema } from './domain/post.schema';
 import { BlogsModule } from '../blogs/blogs.module';
 import { PostsController } from './api/posts.controller';
 import { CreatePostOfBlogHandler } from './application/commands/create-post-of-blog.handler';

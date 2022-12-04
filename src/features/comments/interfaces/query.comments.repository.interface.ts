@@ -1,4 +1,4 @@
-import { CommentModel } from '../entity/comment.schema';
+import { CommentModel } from '../domain/comment.schema';
 import { CountLikesRepositoryInterface } from '../../shared/interfaces/count.likes.repository.interface';
 import { LikesInfo } from '../../../common/dto';
 

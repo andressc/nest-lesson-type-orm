@@ -1,7 +1,7 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { DeviceIdNotFoundException } from '../../../../common/exceptions';
 import { ForbiddenException, Inject } from '@nestjs/common';
-import { SessionModel } from '../../entity/session.schema';
+import { SessionModel } from '../../domain/session.schema';
 import { SessionsRepositoryInterface } from '../../interfaces/sessions.repository.interface';
 import { SessionInjectionToken } from '../session.injection.token';
 

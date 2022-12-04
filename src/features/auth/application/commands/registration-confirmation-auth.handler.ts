@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegistrationConfirmationDto } from '../../dto';
 import { ConfirmCodeBadRequestException } from '../../../../common/exceptions';
-import { UserModel } from '../../../users/entity/user.schema';
+import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
 import { Inject } from '@nestjs/common';

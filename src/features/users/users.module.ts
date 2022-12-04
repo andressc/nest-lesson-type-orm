@@ -9,7 +9,7 @@ import { CreateUserHandler } from './application/commands/create-user.handler';
 import { FindOneUserHandler } from './application/queries/find-one-user.handler';
 import { FindMeUserHandler } from './application/queries/find-me-user.handler';
 import { FindAllUserHandler } from './application/queries/find-all-user.handler';
-import { User, UserSchema } from './entity/user.schema';
+import { User, UserSchema } from './domain/user.schema';
 import { UsersRepository } from './infrastructure/repository/users.repository';
 import { BanUnbanUserHandler } from './application/commands/ban-unban-user.handler';
 import { SessionsModule } from '../session/sessions.module';

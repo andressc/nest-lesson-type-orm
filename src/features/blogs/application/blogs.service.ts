@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BlogNotFoundException } from '../../../common/exceptions';
-import { BlogModel } from '../entity/blog.schema';
+import { BlogModel } from '../domain/blog.schema';
 import { BlogsRepositoryInterface } from '../interfaces/blogs.repository.interface';
 import { BlogInjectionToken } from './blog.injection.token';
 

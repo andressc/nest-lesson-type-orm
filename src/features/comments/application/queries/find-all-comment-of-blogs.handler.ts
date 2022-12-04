@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
 import { QueryCommentDto } from '../../dto';
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryCommentsRepositoryInterface } from '../../interfaces/query.comments.repository.interface';
 import { QueryPostsRepositoryInterface } from '../../../posts/interfaces/query.posts.repository.interface';

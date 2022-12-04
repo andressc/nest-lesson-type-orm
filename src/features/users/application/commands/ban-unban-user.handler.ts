@@ -1,6 +1,6 @@
 import { CommandBus, CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../users.service';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
 import { BanUnbanUserDto } from '../../dto/ban-unban-user.dto';

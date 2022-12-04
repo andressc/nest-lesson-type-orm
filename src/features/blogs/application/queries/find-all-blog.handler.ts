@@ -1,7 +1,7 @@
 import { QueryBlogDto, ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
 import { Inject } from '@nestjs/common';

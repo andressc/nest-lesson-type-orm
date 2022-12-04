@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
-import { CommentModel } from '../entity/comment.schema';
+import { CommentModel } from '../domain/comment.schema';
 import { CommentNotFoundException } from '../../../common/exceptions';
 import { CommentsRepositoryInterface } from '../interfaces/comments.repository.interface';
 import { CommentInjectionToken } from './comment.injection.token';

@@ -1,6 +1,6 @@
 import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { LikeModel } from '../../entity/like.schema';
+import { LikeModel } from '../../domain/like.schema';
 import { LikesRepositoryInterface } from '../../interfaces/likes.repository.interface';
 import { CreateRequestLikeDto } from '../../../comments/dto';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';

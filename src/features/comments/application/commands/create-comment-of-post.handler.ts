@@ -3,16 +3,16 @@ import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCommentOfPostDto } from '../../dto';
 import { UsersService } from '../../../users/application/users.service';
 import { PostsService } from '../../../posts/application/posts.service';
-import { UserModel } from '../../../users/entity/user.schema';
-import { CommentModel } from '../../entity/comment.schema';
+import { UserModel } from '../../../users/domain/user.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { ForbiddenException, Inject } from '@nestjs/common';
 import { CommentInjectionToken } from '../comment.injection.token';
 import { BlogInjectionToken } from '../../../blogs/application/blog.injection.token';
 import { BlogsRepositoryInterface } from '../../../blogs/interfaces/blogs.repository.interface';
-import { BanModel } from '../../../blogs/entity/ban.schema';
-import { PostModel } from '../../../posts/entity/post.schema';
+import { BanModel } from '../../../blogs/domain/ban.schema';
+import { PostModel } from '../../../posts/domain/post.schema';
 
 export class CreateCommentOfPostCommand implements ICommand {
 	constructor(

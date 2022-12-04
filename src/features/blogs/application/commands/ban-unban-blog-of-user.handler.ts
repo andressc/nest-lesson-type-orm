@@ -1,17 +1,17 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { UsersService } from '../../../users/application/users.service';
-import { UserModel } from '../../../users/entity/user.schema';
+import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
 import { ForbiddenException, Inject } from '@nestjs/common';
 import { UserInjectionToken } from '../../../users/application/user.injection.token';
 import { BanUnbanBlogOfUserDto } from '../../dto/ban-unban-blog-of-user.dto';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { BlogsService } from '../blogs.service';
 import { UserIdBadRequestException } from '../../../../common/exceptions/userIdBadRequestException';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
 import { BlogInjectionToken } from '../blog.injection.token';
-import { BanModel } from '../../entity/ban.schema';
+import { BanModel } from '../../domain/ban.schema';
 
 export class BanUnbanBlogOfUserCommand implements ICommand {
 	constructor(

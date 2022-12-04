@@ -1,6 +1,6 @@
 import { CommandBus, CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreateRequestLikeDto } from '../../dto';
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { CreateLikeCommand } from '../../../likes/application/command/create-like.handler';

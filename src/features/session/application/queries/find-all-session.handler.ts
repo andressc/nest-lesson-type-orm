@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ResponseSessionDto } from '../../dto/response-session.dto';
-import { SessionModel } from '../../entity/session.schema';
+import { SessionModel } from '../../domain/session.schema';
 import { QuerySessionsRepositoryInterface } from '../../interfaces/query.sessions.repository.interface';
 import { Inject } from '@nestjs/common';
 import { SessionInjectionToken } from '../session.injection.token';

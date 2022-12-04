@@ -1,5 +1,5 @@
 import { CreateBlogDto } from '../../dto';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';

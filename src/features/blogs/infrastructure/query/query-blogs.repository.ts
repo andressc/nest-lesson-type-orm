@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogModel } from '../../entity/blog.schema';
+import { Blog, BlogModel } from '../../domain/blog.schema';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
 import { MainQueryRepository } from '../../../shared/infrastructure/query/main.query.repository';
-import { Ban, BanModel } from '../../entity/ban.schema';
+import { Ban, BanModel } from '../../domain/ban.schema';
 import { Sort } from '../../../../common/dto';
 
 @Injectable()

@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsService } from '../posts.service';
 import { BlogsService } from '../../../blogs/application/blogs.service';
-import { BlogModel } from '../../../blogs/entity/blog.schema';
-import { PostModel } from '../../entity/post.schema';
+import { BlogModel } from '../../../blogs/domain/blog.schema';
+import { PostModel } from '../../domain/post.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
 import { ForbiddenException, Inject } from '@nestjs/common';

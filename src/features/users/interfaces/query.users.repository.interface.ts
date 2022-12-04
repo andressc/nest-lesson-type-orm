@@ -1,4 +1,4 @@
-import { UserModel } from '../entity/user.schema';
+import { UserModel } from '../domain/user.schema';
 import { MainQueryRepositoryInterface } from '../../shared/interfaces/main.query.repository.interface';
 
 /* eslint-disable */

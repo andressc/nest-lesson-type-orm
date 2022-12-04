@@ -1,4 +1,4 @@
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentNotFoundException } from '../../../../common/exceptions';
 import { ResponseCommentDto } from '../../dto';

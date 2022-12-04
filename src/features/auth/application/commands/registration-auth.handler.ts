@@ -3,7 +3,7 @@ import { RegistrationDto } from '../../dto';
 import { CreateUserCommand } from '../../../users/application/commands/create-user.handler';
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { Inject, RequestTimeoutException } from '@nestjs/common';
-import { UserModel } from '../../../users/entity/user.schema';
+import { UserModel } from '../../../users/domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { SendEmailRegistrationMessageMailerCommand } from '../../../../shared/mailer/application/commands/send-email-registration-message-mailer.handler';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';

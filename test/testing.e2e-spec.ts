@@ -10,12 +10,12 @@ import { postCreator } from './dbSeeding/postCreator';
 import { userCreator } from './dbSeeding/userCreator';
 import { sessionCreator } from './dbSeeding/sessionCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
-import { Blog } from '../src/features/blogs/entity/blog.schema';
-import { Post } from '../src/features/posts/entity/post.schema';
+import { Blog } from '../src/features/blogs/domain/blog.schema';
+import { Post } from '../src/features/posts/domain/post.schema';
 import { Session } from 'inspector';
-import { User } from '../src/features/users/entity/user.schema';
-import { Comment } from '../src/features/comments/entity/comment.schema';
-import { Ban } from '../src/features/blogs/entity/ban.schema';
+import { User } from '../src/features/users/domain/user.schema';
+import { Comment } from '../src/features/comments/domain/comment.schema';
+import { Ban } from '../src/features/blogs/domain/ban.schema';
 import { banCreator } from './dbSeeding/banCreator';
 import { ObjectId } from 'mongodb';
 

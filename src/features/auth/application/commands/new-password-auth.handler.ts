@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NewPasswordDto } from '../../dto';
 import { UserNotFoundException } from '../../../../common/exceptions';
-import { UserModel } from '../../../users/entity/user.schema';
+import { UserModel } from '../../../users/domain/user.schema';
 import { UsersRepositoryInterface } from '../../../users/interfaces/users.repository.interface';
 import { Inject } from '@nestjs/common';
 import { UserInjectionToken } from '../../../users/application/user.injection.token';

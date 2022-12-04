@@ -1,4 +1,4 @@
-import { SessionModel } from '../entity/session.schema';
+import { SessionModel } from '../domain/session.schema';
 import { MainRepositoryInterface } from '../../shared/interfaces/main.repository.interface';
 import { CreateSessionDto } from '../dto/create-session.dto';
 

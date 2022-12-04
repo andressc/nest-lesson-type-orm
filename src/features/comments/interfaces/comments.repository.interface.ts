@@ -1,5 +1,5 @@
 import { CreateCommentExtendsDto } from '../dto';
-import { CommentModel } from '../entity/comment.schema';
+import { CommentModel } from '../domain/comment.schema';
 import { BanRepositoryInterface } from '../../shared/interfaces/ban.repository.interface';
 
 /* eslint-disable */

@@ -6,9 +6,9 @@ import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repo
 import { ForbiddenException, Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';
 import { ResponseBannedBlogOfUserDto } from '../../dto/response-banned-blog-of-user.dto';
-import { BanModel } from '../../entity/ban.schema';
+import { BanModel } from '../../domain/ban.schema';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { BlogsService } from '../blogs.service';
 
 export class FindAllBannedBlogOfUserCommand {

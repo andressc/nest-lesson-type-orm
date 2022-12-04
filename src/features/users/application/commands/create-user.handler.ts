@@ -3,7 +3,7 @@ import { CreateUserDto } from '../../dto';
 import * as bcrypt from 'bcrypt';
 import { createDate, generateConfirmationCode, generateHash } from '../../../../common/helpers';
 import { UsersService } from '../users.service';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../domain/user.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { UsersRepositoryInterface } from '../../interfaces/users.repository.interface';
 import { Inject } from '@nestjs/common';

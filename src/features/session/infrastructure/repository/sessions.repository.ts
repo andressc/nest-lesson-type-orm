@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { SessionsRepositoryInterface } from '../../interfaces/sessions.repository.interface';
-import { Session, SessionModel } from '../../entity/session.schema';
+import { Session, SessionModel } from '../../domain/session.schema';
 import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
 import { CreateSessionDto } from '../../dto/create-session.dto';
 

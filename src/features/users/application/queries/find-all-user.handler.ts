@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { QueryUserDto, ResponseUserDto } from '../../dto';
 import { PaginationCalc, PaginationDto } from '../../../../common/dto';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../domain/user.schema';
 import { PaginationService } from '../../../../shared/pagination/application/pagination.service';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
 import { Inject } from '@nestjs/common';

@@ -1,7 +1,7 @@
 import { ResponseBlogDto } from '../../dto';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogNotFoundException } from '../../../../common/exceptions';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { QueryBlogsRepositoryInterface } from '../../interfaces/query.blogs.repository.interface';
 import { Inject } from '@nestjs/common';
 import { BlogInjectionToken } from '../blog.injection.token';

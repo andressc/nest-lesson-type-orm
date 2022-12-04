@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { PasswordRecoveryTokenDataDto } from '../dto';
 import { EmailBadRequestException } from '../../../common/exceptions';
 import { AuthConfig } from '../../../configuration';
-import { UserModel } from '../../users/entity/user.schema';
+import { UserModel } from '../../users/domain/user.schema';
 import { UsersRepositoryInterface } from '../../users/interfaces/users.repository.interface';
 import { UserInjectionToken } from '../../users/application/user.injection.token';
 

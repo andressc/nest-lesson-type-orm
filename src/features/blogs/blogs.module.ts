@@ -10,7 +10,7 @@ import { FindAllBlogHandler } from './application/queries/find-all-blog.handler'
 import { RemoveBlogHandler } from './application/commands/remove-blog.handler';
 import { CqrsModule } from '@nestjs/cqrs';
 import { QueryBlogsRepository } from './infrastructure/query/query-blogs.repository';
-import { Blog, BlogSchema } from './entity/blog.schema';
+import { Blog, BlogSchema } from './domain/blog.schema';
 import { IsUserCommentValidatorConstraint } from '../../common/decorators/Validation';
 import { PaginationModule } from '../../shared/pagination/pagination.module';
 import { BlogInjectionToken } from './application/blog.injection.token';
@@ -21,7 +21,7 @@ import { BindBlogWithUserHandler } from './application/commands/bind-blog-with-u
 import { UsersModule } from '../users/users.module';
 import { BanBlogHandler } from './application/commands/ban-blog.handler';
 import { BanUnbanBlogOfUserHandler } from './application/commands/ban-unban-blog-of-user.handler';
-import { Ban, BanSchema } from './entity/ban.schema';
+import { Ban, BanSchema } from './domain/ban.schema';
 import { BloggerUsersController } from '../users/api/blogger.users.controller';
 import { FindAllBannedBlogOfUserHandler } from './application/queries/find-all-banned-blog-of-user.handler';
 

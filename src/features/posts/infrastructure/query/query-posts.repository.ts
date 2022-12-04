@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LikesInfoExtended, LikeStatusEnum } from '../../../../common/dto';
-import { Post, PostModel } from '../../entity/post.schema';
+import { Post, PostModel } from '../../domain/post.schema';
 import { QueryPostsRepositoryInterface } from '../../interfaces/query.posts.repository.interface';
 import { ObjectId } from 'mongodb';
 import { LikeDbDto } from '../../../likes/dto/like-db.dto';

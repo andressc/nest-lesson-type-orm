@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Like, LikeSchema } from './entity/like.schema';
+import { Like, LikeSchema } from './domain/like.schema';
 import { LikesRepository } from './infrastructure/repository/likes.repository';
 import { CreateLikeHandler } from './application/command/create-like.handler';
 import { BanUnbanLikeHandler } from './application/command/ban-unban-like.handler';

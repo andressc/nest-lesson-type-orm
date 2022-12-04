@@ -1,6 +1,6 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsService } from '../blogs.service';
-import { BlogModel } from '../../entity/blog.schema';
+import { BlogModel } from '../../domain/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
 import { Inject } from '@nestjs/common';

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateUserAuthCommand } from '../application/commands/validate-user-auth.handler';
-import { UserModel } from '../../users/entity/user.schema';
+import { UserModel } from '../../users/domain/user.schema';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

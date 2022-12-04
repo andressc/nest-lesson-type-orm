@@ -1,4 +1,4 @@
-import { LikeModel } from '../entity/like.schema';
+import { LikeModel } from '../domain/like.schema';
 import { CreateLikeExtendsDto } from '../dto/create-like-extends.dto';
 import { ObjectId } from 'mongodb';
 import { BanRepositoryInterface } from '../../shared/interfaces/ban.repository.interface';

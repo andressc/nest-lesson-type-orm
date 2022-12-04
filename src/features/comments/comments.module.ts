@@ -12,7 +12,7 @@ import { QueryCommentsRepository } from './infrastructure/query/query-comments.r
 import { CommentsRepository } from './infrastructure/repository/comments.repository';
 import { UsersModule } from '../users/users.module';
 import { PostsModule } from '../posts/posts.module';
-import { Comment, CommentSchema } from './entity/comment.schema';
+import { Comment, CommentSchema } from './domain/comment.schema';
 import { LikesModule } from '../likes/likes.module';
 import { BanUnbanCommentHandler } from './application/commands/ban-unban-comment.handler';
 import { CreateLikeCommentHandler } from './application/commands/create-like-comment.handler';

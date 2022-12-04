@@ -4,7 +4,7 @@ import { payloadDateCreator } from '../../../../common/helpers';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { Inject, UnauthorizedException } from '@nestjs/common';
-import { SessionModel } from '../../../session/entity/session.schema';
+import { SessionModel } from '../../../session/domain/session.schema';
 import { SessionsRepositoryInterface } from '../../../session/interfaces/sessions.repository.interface';
 import { SessionInjectionToken } from '../../../session/application/session.injection.token';
 

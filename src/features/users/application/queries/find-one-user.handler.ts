@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserNotFoundException } from '../../../../common/exceptions';
 import { ResponseUserDto } from '../../dto';
-import { UserModel } from '../../entity/user.schema';
+import { UserModel } from '../../domain/user.schema';
 import { QueryUsersRepositoryInterface } from '../../interfaces/query.users.repository.interface';
 import { ObjectId } from 'mongodb';
 import { Inject } from '@nestjs/common';

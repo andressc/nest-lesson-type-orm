@@ -1,4 +1,4 @@
-import { BlogModel } from '../../../blogs/entity/blog.schema';
+import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto';

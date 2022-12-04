@@ -1,6 +1,6 @@
-import { BlogModel } from '../entity/blog.schema';
+import { BlogModel } from '../domain/blog.schema';
 import { MainQueryRepositoryInterface } from '../../shared/interfaces/main.query.repository.interface';
-import { BanModel } from '../entity/ban.schema';
+import { BanModel } from '../domain/ban.schema';
 import { Sort } from '../../../common/dto';
 
 /* eslint-disable */

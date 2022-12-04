@@ -3,7 +3,7 @@ import { SessionsController } from './api/sessions.controller';
 import { SessionsRepository } from './infrastructure/repository/sessions.repository';
 import { QuerySessionsRepository } from './infrastructure/query/query-sessions.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Session, SessionSchema } from './entity/session.schema';
+import { Session, SessionSchema } from './domain/session.schema';
 import { FindAllSessionHandler } from './application/queries/find-all-session.handler';
 import { RemoveAllUserSessionHandler } from './application/commands/remove-all-user-session.handler';
 import { RemoveUserSessionHandler } from './application/commands/remove-user-session.handler';

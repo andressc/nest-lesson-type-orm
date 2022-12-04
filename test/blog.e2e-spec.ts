@@ -8,9 +8,9 @@ import { ObjectId } from 'mongodb';
 import { blogCreator } from './dbSeeding/blogCreator';
 import { stopMongoMemoryServer } from '../src/common/utils';
 import { BASIC_AUTH } from './constants';
-import { Blog } from '../src/features/blogs/entity/blog.schema';
+import { Blog } from '../src/features/blogs/domain/blog.schema';
 import { userCreator } from './dbSeeding/userCreator';
-import { User } from '../src/features/users/entity/user.schema';
+import { User } from '../src/features/users/domain/user.schema';
 
 describe('BlogController (e2e)', () => {
 	let dataApp: { app: INestApplication; module: TestingModule; connection: Connection };

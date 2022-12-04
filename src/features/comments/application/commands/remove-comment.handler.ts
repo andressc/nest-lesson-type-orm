@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsService } from '../comments.service';
 import { UsersService } from '../../../users/application/users.service';
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { Inject } from '@nestjs/common';
 import { CommentsRepositoryInterface } from '../../interfaces/comments.repository.interface';
 import { CommentInjectionToken } from '../comment.injection.token';

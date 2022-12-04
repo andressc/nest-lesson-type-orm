@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogModel } from '../../entity/blog.schema';
+import { Blog, BlogModel } from '../../domain/blog.schema';
 import { CreateBlogExtendsDto } from '../../dto';
 import { BlogsRepositoryInterface } from '../../interfaces/blogs.repository.interface';
 import { MainRepository } from '../../../shared/infrastructure/repository/main.repository';
-import { Ban, BanModel } from '../../entity/ban.schema';
+import { Ban, BanModel } from '../../domain/ban.schema';
 import { BanUnbanBlogOfUserExtendsDto } from '../../dto/ban-unban-blog-of-user-extends.dto';
 
 @Injectable()

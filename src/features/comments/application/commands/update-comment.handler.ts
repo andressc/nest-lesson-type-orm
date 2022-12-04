@@ -1,4 +1,4 @@
-import { CommentModel } from '../../entity/comment.schema';
+import { CommentModel } from '../../domain/comment.schema';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateCommentDto } from '../../dto';
 import { CommentsService } from '../comments.service';

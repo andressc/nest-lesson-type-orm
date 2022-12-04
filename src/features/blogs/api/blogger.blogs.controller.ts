@@ -48,10 +48,10 @@ export class BloggerBlogsController {
 	async createBlog(
 		@Body() data: CreateBlogDto,
 		@CurrentUserId() currentUserId,
-		@CurrentUserLogin() CurrentUserLogin,
+		@CurrentUserLogin() currentUserLogin,
 	) {
 		const blogId = await this.commandBus.execute(
-			new CreateBlogCommand(data, currentUserId, CurrentUserLogin),
+			new CreateBlogCommand(data, currentUserId, currentUserLogin),
 		);
 		return this.queryBus.execute(new FindOneBlogCommand(blogId));
 	}

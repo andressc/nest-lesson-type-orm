@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PostModel } from '../entity/post.schema';
+import { PostModel } from '../domain/post.schema';
 import { PostNotFoundException } from '../../../common/exceptions';
 import { PostsRepositoryInterface } from '../interfaces/posts.repository.interface';
 import { PostInjectionToken } from './post.injection.token';

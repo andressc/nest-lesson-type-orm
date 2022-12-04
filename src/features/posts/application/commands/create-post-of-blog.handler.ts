@@ -2,7 +2,7 @@ import { createDate } from '../../../../common/helpers';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostOfBlogDto } from '../../dto';
 import { BlogsService } from '../../../blogs/application/blogs.service';
-import { BlogModel } from '../../../blogs/entity/blog.schema';
+import { BlogModel } from '../../../blogs/domain/blog.schema';
 import { ValidationService } from '../../../../shared/validation/application/validation.service';
 import { PostsRepositoryInterface } from '../../interfaces/posts.repository.interface';
 import { ForbiddenException, Inject } from '@nestjs/common';
